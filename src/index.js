@@ -411,6 +411,7 @@ app.use(APP_PATHS, (req, res) => {
   const context = {}
   
   initialData.pageMeta = res.locals.pageMeta
+  console.log("PAGE_META_INIT", initialData)
   
   if(initialData.user == null) {
     component = ReactDOMServer.renderToString(

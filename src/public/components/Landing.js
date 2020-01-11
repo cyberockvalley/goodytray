@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { SITE_TITLE, API_ROOT, PAID_AD_NAME } from "../utils/Constants"
+import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME } from "../utils/Constants"
 import { productLink, catLink, catIconName, countryLink } from "../utils/LinkBuilder"
 import { commaNum, id, overflows} from "../utils/Funcs"
 import { Link } from "react-router-dom"
@@ -441,6 +441,35 @@ class Landing extends Component {
                                                 <div>
                                                         <div className="b-main-page__banners-block h-mb-20 row hidden-xs hidden-sm">
                                                 <div className="col-md-9">
+                                                    <div className="b-marketing-activities-carousel-wrapper home-autopromo">
+                                                        <div className="home-autopromo-image"></div>
+
+                                                        <div className="home-autopromo-texts">
+                                                            <div style={{fontSize: "22px", fontWeight: "700", color: "#747474"}}>
+                                                                Fly your business with {SITE_NAME}
+                                                            </div>
+                                                            <div style={{padding: "10px", textAlign: "center", fontSize: "13px", color: "#747474", fontWeight: "lighter"}}>
+                                                                Get new customers and more sales with our business services
+                                                            </div>
+                                                            <div style={{display: "flex", justifyContent: "space-around"}}>
+                                                                <div className="home-autopromo-counter">
+                                                                    <div className="home-autopromo-focus">12 million</div>
+                                                                    <div>of visits per month</div>
+                                                                </div>
+                                                                <div className="home-autopromo-counter">
+                                                                    <div className="home-autopromo-focus">150 million</div>
+                                                                    <div>of available impressions</div>
+                                                                </div>
+                                                                <div className="home-autopromo-counter">
+                                                                    <div className="home-autopromo-focus">4 million</div>
+                                                                    <div>of sales per month</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <a href="/sell" className="btn btn-lg btn-orange">Get started</a>
+                                                    </div>
+                                                    
+                                                    {/*
                                                     <div className="b-marketing-activities-carousel-wrapper">
                                                         <div className="b-marketing-activities-carousel">
                                                             <div className="VueCarousel">
@@ -474,8 +503,8 @@ class Landing extends Component {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </div>
+                                                                    </div>
+                                                    </div>*/}
                                                 </div>
                                                 <div className="col-md-3">
                                                     {

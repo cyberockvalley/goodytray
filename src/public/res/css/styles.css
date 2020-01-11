@@ -91,7 +91,7 @@
 	.xsc-hide-down {display:none !important}
 }
 
-a:hover{color: #fff !important;}
+a:hover{color: inherit !important;}
 .disabled-section[data-v-2f9b1610].loading-section:after {background: #E7422D;font-size: 12px;border-radius: 5px;padding:5px;font-style:italic;color:#fff;content:"Loading...Please wait."}
 .fw-field__error {
 	font-size: 12px;
@@ -114,7 +114,7 @@ button[data-sending=false]:after{content: attr(data-text);}
 button[data-sending=true]:after{content: attr(data-text-sending);font-style: italic;}
 .nav > li > a:focus, .nav > li > a:hover {
 	text-decoration: underline;
-	background-color: transparent !important;
+	background-color: inherit !important;
 }
 a.b-notification, a.b-notification:hover , a.b-notification:focus{
 	background: #fff !important;
@@ -358,7 +358,7 @@ src: local('Baskerville BT Bold Italic'), url('../fonts/baskaville/BaskervilleBo
 }
 .b-app-footer__wrapper{bottom: 0px !important;}
 .b-app-footer__group-link{display: inline !important}
-a:hover {background-color: transparent}
+a:hover {background-color: inherit}
 
 .upload-link {
 	color: #36c;
@@ -450,4 +450,59 @@ a:hover {background-color: transparent}
   border-top-right-radius: 0;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 0;
+}
+.footer-title {font-size: 20px;}
+.footer {
+	padding: 15px 20%;
+	background: linear-gradient(to bottom,#70b93f 40%, #70b94a 60%);
+	color: #fff;
+	text-align: center;
+	border-bottom-left-radius: 20px;
+	border-bottom-right-radius: 20px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	display: flex;
+	flex-direction: column;
+}
+.btn-orange {
+	background: #f98a1a;
+	color: #fff;
+}
+a.btn-over-orange:hover {
+	background: #febf53 !important;
+	color: #fff !important;
+}
+.footer-grids {
+	display: flex;
+	justify-content: space-between;
+}
+.home-autopromo {
+	padding: 20px;
+	background: #fff;
+	display: flex;
+	justify-content: start;
+	align-items: center;
+}
+.home-autopromo-image {
+	background-image: url(/public/res/images/static/missile.png);
+	background-size: 100% auto !important;
+	height: 80%;
+	width: 30%;
+	margin: auto 0;
+	background-repeat: no-repeat;
+}
+.home-autopromo-texts {
+	background: #fff;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.home-autopromo-counter {
+	font-size: 13px;
+	color:#404040;
+}
+.home-autopromo-focus {
+	font-weight: 600;
+	color: #febf53;
+	font-size: 20px;
 }

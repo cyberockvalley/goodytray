@@ -166,7 +166,7 @@ class Navbar extends Component {
       <div id="header" className="b-app-header-wrapper">
         <div style={{height: "66px"}}></div>
         <nav className="navbar b-app-header navbar-fixed-top">
-          <div className="container-fluid nav-container">
+          <div className="container nav-container">
             <div className="navbar-header">
               <button type="button" className="navbar-toggle" data-toggle="collapse"  onClick={this.toggleNavbar}>
                 <span className="icon-bar"></span>
