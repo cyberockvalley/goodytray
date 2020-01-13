@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import {Link} from "react-router-dom"
 import { register } from './UserFunctions'
 import {isValidNumber, isValidEmail, id, cls, shuffleHash, randomHashString} from '../utils/Funcs'
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 class Register extends Component {
     constructor() {
@@ -137,6 +139,8 @@ class Register extends Component {
     }
     render() {
         return (
+            <div>
+            <Navbar user={this.props.user} />
             <div>
                 <div className="h-bg-grey  h-pb-15">
                     <div>
@@ -303,6 +307,8 @@ class Register extends Component {
 
                 <div className="fw-fixed-background" style={{ display: "none" }}></div>
                 <div className="vue-portal-target"></div>
+            </div>
+            <Footer />
             </div>
         )
     }

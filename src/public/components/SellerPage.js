@@ -4,7 +4,8 @@ import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_O
 import { getIdFromPath, commaNum } from "../utils/Funcs";
 const browser = require("../utils/Browser")
 var dateFormat = require('dateformat');
-
+import Navbar from './Navbar'
+import Footer from "./Footer"
 import TimeAgo from 'javascript-time-ago'
 
 // Load locale-specific relative date/time formatting rules.
@@ -84,7 +85,8 @@ class SellerPage extends Component {
 
     render() {
         return (
-            
+            <div>
+            <Navbar user={this.props.user} />
 <div className="h-bg-grey container h-pt-10 h-pb-15">
  <div>
   <div className="b-notifications b-notification__reds qa-confirm-email-notifications">
@@ -281,6 +283,8 @@ class SellerPage extends Component {
    <div className="before-data-load"></div>
   }
  </div>
+</div>
+<Footer />
 </div>
         )
     }

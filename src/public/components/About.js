@@ -8,6 +8,14 @@ class About extends Component {
         super()
     }
 
+    sell = () => {
+        document.location.href = "/sell"
+    }
+
+    shop = () => {
+        this.props.history.push("/")
+    }
+
     render() {
         return (
 <div className="h-bg-grey h-pb-15">
@@ -36,7 +44,7 @@ class About extends Component {
       <span className="b-about-scroll-to-header">
        Table of contents
       </span>
-      <div className="b-about-scroll-to">
+      <a href="#howToSell" className="b-about-scroll-to div">
        {"How to sell on "+SITE_NAME+"?"}
        <div className="b-about-scroll-to-icon">
         <svg className="bottom" strokeWidth="0" style={{width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(189, 189, 189)", stroke: "inherit"}}>
@@ -44,8 +52,8 @@ class About extends Component {
          </use>
         </svg>
        </div>
-      </div>
-      <div className="b-about-scroll-to">
+      </a>
+      <a href="#howToBuy" className="b-about-scroll-to div">
        {"How to buy on "+SITE_NAME+"?"}
        <div className="b-about-scroll-to-icon">
         <svg className="bottom" strokeWidth="0" style={{width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(189, 189, 189)", stroke: "inherit"}}>
@@ -53,8 +61,8 @@ class About extends Component {
          </use>
         </svg>
        </div>
-      </div>
-      <div className="b-about-scroll-to">
+      </a>
+      <a href="#safety" className="b-about-scroll-to div">
        Safety
        <div className="b-about-scroll-to-icon">
         <svg className="bottom" strokeWidth="0" style={{width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(189, 189, 189)", stroke: "inherit"}}>
@@ -62,8 +70,8 @@ class About extends Component {
          </use>
         </svg>
        </div>
-      </div>
-      <div className="b-about-scroll-to">
+      </a>
+      <a href="#sellLikePro" className="hidden b-about-scroll-to div">
        Sell like a pro!
        <div className="b-about-scroll-to-icon">
         <svg className="bottom" strokeWidth="0" style={{width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(189, 189, 189)", stroke: "inherit"}}>
@@ -71,7 +79,7 @@ class About extends Component {
          </use>
         </svg>
        </div>
-      </div>
+      </a>
      </div>
     </div>
     <div className="b-about-side">
@@ -86,7 +94,7 @@ class About extends Component {
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
        1.
-       <a href="/registration.html">
+       <a href="/register">
         Register
        </a>
       </h3>
@@ -104,11 +112,7 @@ class About extends Component {
      </div>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       3. Press
-       <a href="/add-free-ad.html">
-        SELL
-       </a>
-       .
+       3. Click the <a href="/sell">SELL Button</a>.
       </h3>
       <span>
        Choose a proper category, upload your photos and write a clear title and full description of your item.                                 Enter a fair price, select attributes and send your advert to review!
@@ -119,17 +123,16 @@ class About extends Component {
        4. Answer the messages and calls from your clients!
       </h3>
       <span>
-       If everything is ok with your advert, it’ll be on Jiji in a couple of hours after sending to moderation.                                 We’ll send you a letter and notification when your advert goes live.                                 Check your messages and be ready to earn money!
-       <span>
-        Do you want to sell like a pro? Check out our
-        <a className="" href="/sc/premium-services">
+{"       If everything is ok with your advert, it’ll be on " + SITE_NAME + " in a couple of hours after sending to moderation.                                 We’ll send you a letter and notification when your advert goes live.                                 Check your messages and be ready to earn money!"}
+       <span className="hidden">
+        Do you want to sell like a pro? Check out our <a className="" href="/sc/premium-services">
          Premium Services
         </a>
         .
        </span>
       </span>
      </div>
-     <button className="b-primary-button about accent h-mt-30">
+     <button onClick={this.sell} className="b-primary-button about accent h-mt-30">
       Sell
      </button>
     </div>
@@ -155,7 +158,7 @@ class About extends Component {
        2. Contact a seller.
       </h3>
       <span>
-       You may use chat on Jiji or call them via phone.                                 Discuss all the details, negotiate about the price.
+{"       You may use chat on " + SITE_NAME + " or call them via phone.                                 Discuss all the details, negotiate about the price."}
       </span>
      </div>
      <div className="b-about-list-element">
@@ -174,7 +177,7 @@ class About extends Component {
        Feel free to tell us about your purchase.                                 Your feedback will be published online on the seller’s page and will be very helpful for other buyers.                                 Let’s build a safe and professional business community together!
       </span>
      </div>
-     <button className="b-primary-button about accent h-mt-30">
+     <button onClick={this.shop} className="b-primary-button about accent h-mt-30">
       Go shopping
      </button>
     </div>
@@ -192,7 +195,7 @@ class About extends Component {
        1. General
       </h3>
       <span>
-       We are highly focused on the security and can solve any issues in short-terms.                                 That’s why we ask you, kindly, to leave a review after purchasing.                                 If you run into any problems with a seller, you can report us and Jiji Team will check this seller as soon as possible.
+{"       We are highly focused on the security and can solve any issues in short-terms.                                 That’s why we ask you, kindly, to leave a review after purchasing.                                 If you run into any problems with a seller, you can report us and " + SITE_NAME + " Team will check this seller as soon as possible."}
       </span>
      </div>
      <div className="b-about-list-element">
@@ -209,16 +212,15 @@ class About extends Component {
           <br/>
       </span>
      </div>
-     <div className="b-about-list-element">
+     <div className="hidden b-about-list-element">
       <h3 className="b-about-list-element-title">
        3. Secure payments.
       </h3>
       <span>
-       Jiji provides
-       <a className="" href="/sc/premium-services">
+{"       " + SITE_NAME + " provides"} <a className="" href="/sc/premium-services">
         Premium Services
        </a>
-       for those who want to sell and earn more.                                 We accept both online and offline payments for these services.                                 We guarantee secure and reliable payments on Jiji.
+{"       for those who want to sell and earn more.                                 We accept both online and offline payments for these services.                                 We guarantee secure and reliable payments on " + SITE_NAME + "."}
       </span>
      </div>
     </div>
@@ -226,7 +228,7 @@ class About extends Component {
      <img alt="fourth" src="/public/res/images/static/fourth.svg"/>
     </div>
    </div>
-   <div className="b-about-section" id="sellLikePro">
+   <div className="hidden b-about-section" id="sellLikePro">
     <div className="b-about-side">
      <h2 className="b-about-header-title">
       Sell like a pro!
@@ -278,7 +280,7 @@ class About extends Component {
     </div>
    </div>
    <div className="b-about-questions">
-    <button className="b-primary-button about">
+    <button className="hidden b-primary-button about">
      Still have questions? Read FAQ.
     </button>
    </div>

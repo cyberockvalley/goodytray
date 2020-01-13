@@ -5,6 +5,8 @@ import { commaNum, truncText, cls } from "../utils/Funcs"
 const browser = require("../utils/Browser")
 var dateFormat = require('dateformat');
 import TimeAgo from 'javascript-time-ago'
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 // Load locale-specific relative date/time formatting rules.
 import en from 'javascript-time-ago/locale/en'
@@ -239,6 +241,8 @@ class ProductPage extends Component {
 
     render () {
         return (
+            <div>
+            <Navbar user={this.props.user} />
             <div className="h-bg-grey h-pb-15">
             <div>
              <div className="qa-advert-page h-pos-rel b-advert-page-wrapper container h-pt-10" data-v-67bc6bc4="">
@@ -1133,7 +1137,9 @@ class ProductPage extends Component {
               </div>
              </div>
             </div>
-           </div>                  
+           </div>  
+           <Footer />
+           </div>                
         )
     }
 }

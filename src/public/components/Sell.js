@@ -5,7 +5,8 @@ const browser = require('../utils/Browser')
 import {id, cls, commaNum, remove, currencyLogo} from '../utils/Funcs'
 import {MAX_PRODUCT_PHOTOS_SIZE} from "../utils/Constants"
 import { productLink } from '../utils/LinkBuilder'
-
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 class Sell extends Component {
   constructor(props) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { SITE_NAME } from '../utils/Constants'
+import { SITE_NAME, EMAIL_SUPPORT } from '../utils/Constants'
 
 
 class Contact extends Component {
@@ -26,10 +26,11 @@ class Contact extends Component {
       </div>
       <div className="b-tip__content-wrapper">
        <div className="h-bold h-font-16 h-mb-5">
-        Answer your calls and chats
+        {SITE_NAME + " customer support team is always ready to answer your questions and provide all the necessary assistance."}
        </div>
        <div className="h-font-14">
-        Indicate correct contact details. Try to respond all the incoming calls or to call back your customers once available.
+        {SITE_NAME + "  customer care department - you can email your questions, suggestions, and comments at "}
+        <a href={"mailto:" + EMAIL_SUPPORT}>{EMAIL_SUPPORT}</a>
        </div>
       </div>
      </div>

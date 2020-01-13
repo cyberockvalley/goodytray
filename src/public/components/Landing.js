@@ -474,7 +474,7 @@ class Landing extends Component {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <a href="/about" className="btn btn-lg btn-orange">Learn More</a>
+                                                        <Link to="/about" className="btn btn-lg btn-orange">Learn More</Link>
                                                     </div>
                                                     
                                                     {/*

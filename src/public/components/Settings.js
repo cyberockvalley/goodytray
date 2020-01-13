@@ -3,7 +3,8 @@ import { Link } from "react-router-dom"
 import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIENT_DIR, SITE_NAME } from '../utils/Constants'
 import { commaNum } from '../utils/Funcs'
 const browser = require("../utils/Browser")
-
+import Navbar from './Navbar'
+import Footer from "./Footer"
 class Settings extends Component {
     constructor(props) {
         super(props)
@@ -206,6 +207,8 @@ class Settings extends Component {
 
     render() {
         return (
+          <div>
+            <Navbar user={this.props.user} />
             <div className="h-bg-grey container h-pt-10 h-pb-15">
     {
     !this.state.user?
@@ -384,6 +387,8 @@ class Settings extends Component {
     </div>
    </div>
   }
+</div>
+<Footer />
 </div>
         )
     }

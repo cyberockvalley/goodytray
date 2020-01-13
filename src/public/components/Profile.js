@@ -6,6 +6,8 @@ const browser = require("../utils/Browser")
 import queryString from 'querystring'
 import { productLink } from '../utils/LinkBuilder'
 var dateFormat = require('dateformat');
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 class Profile extends Component {
   constructor(props) {
@@ -234,6 +236,8 @@ class Profile extends Component {
 
   render() {
     return (
+      <div>
+            <Navbar user={this.props.user} />
 <div className="h-bg-grey container h-pt-10 h-pb-15">
   {
     !this.state.user?
@@ -480,6 +484,8 @@ class Profile extends Component {
     </div>
    </div>
   }
+</div>
+<Footer />
 </div>
     )
   }

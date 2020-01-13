@@ -3,6 +3,8 @@ import {Link} from "react-router-dom"
 import { login } from './UserFunctions'
 import {id, cls} from '../utils/Funcs'
 import queryString from 'querystring'
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 class Login extends Component {
   constructor() {
@@ -107,6 +109,8 @@ onChange(e) {
 
   render() {
     return (
+      <div>
+            <Navbar user={this.props.user} />
       <div>
         <div className="h-bg-grey  h-pb-15">
           <div>
@@ -230,6 +234,8 @@ onChange(e) {
     <div className="fw-fixed-background" style={{ display: "none" }}></div>
     <div className="vue-portal-target"></div>
   </div >
+  <Footer />
+  </div>
     )
   }
 }

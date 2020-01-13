@@ -3,7 +3,8 @@ import { Link } from "react-router-dom"
 import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE } from "../utils/Constants"
 const browser = require("../utils/Browser")
 var dateFormat = require('dateformat');
-
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 class ProductReviews extends Component {
     constructor() {
@@ -61,6 +62,8 @@ class ProductReviews extends Component {
 
     render () {
         return (
+          <div>
+            <Navbar user={this.props.user} />
             <div className="h-bg-grey h-pb-15">
             <div>
              <div className="container">
@@ -180,6 +183,8 @@ class ProductReviews extends Component {
               </div>
              </div>
             </div>
+           </div>
+           <Footer />
            </div>
         )
     }

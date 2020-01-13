@@ -1,4 +1,6 @@
 import React, { Component } from "react"
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 class CreateReview extends Component {
     constructor() {
@@ -36,6 +38,8 @@ class CreateReview extends Component {
 
     render () {
         return (
+          <div>
+            <Navbar user={this.props.user} />
             <div className="h-bg-grey h-pb-15">
             <div>
              <div className="container">
@@ -129,6 +133,8 @@ class CreateReview extends Component {
               </div>
              </div>
             </div>
+           </div>
+           <Footer />
            </div>
         )
     }

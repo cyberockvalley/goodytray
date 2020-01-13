@@ -451,6 +451,15 @@ a:hover {background-color: inherit}
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 0;
 }
+a.b-about-scroll-to.div {
+	color: #303a4b;
+	display: block;
+}
+a.b-about-scroll-to.div {
+	color: #303a4b;
+	background: #eef2f4;
+	text-decoration: none;
+}
 .footer-title {font-size: 20px;}
 .footer {
 	padding: 15px 20%;
@@ -505,4 +514,49 @@ a.btn-over-orange:hover {
 	font-weight: 600;
 	color: #febf53;
 	font-size: 20px;
+}
+.footer-color-grid-wrapper {
+	height: 5px;
+	padding: 0;
+}
+.footer-color-grid {
+	height: 100%;
+	padding: 0;
+}
+.footer-color-grid:nth-last-child(3n) {
+	background-color: #00B7B5;
+}
+.footer-color-grid:nth-last-child(3n + 1) {
+	background-color: #f39225;
+}
+.footer-color-grid:nth-last-child(3n + 2) {
+	background-color: #ff0004;
+}
+.footer-links-wrapper {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	font-weight: 700;
+	color: rgb(116, 116, 116);
+}
+.footer-links-external {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 10px;
+}
+.footer-links-wrapper a {
+	color: inherit;
+	margin: 0px 0.5rem;
+}
+.footer-links-wrapper a:hover {
+	color: inherit;
+	background: transparent;
+	text-decoration: underline;
+}
+.footer-links-internal {
+	max-width: 900px;
+}
+.footer-links-internal-box {
+	display: flex;
+	justify-content: space-around;
 }

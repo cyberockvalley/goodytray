@@ -4,6 +4,8 @@ import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIE
 import { commaNum, truncText, profilePhoto, modalAlert, dataCall, id } from '../utils/Funcs'
 const browser = require("../utils/Browser")
 import $ from 'jquery';
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 class Messages extends Component {
     constructor(props) {
@@ -158,7 +160,8 @@ class Messages extends Component {
 
     render() {
         return (
-
+<div>
+            <Navbar user={this.props.user} />
 <div style={{minHeight: "200px"}}>
     {
     this.state.loading?
@@ -407,6 +410,7 @@ class Messages extends Component {
   </div>
  </div>
     }
+</div>
 </div>
         )
     }

@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
 import { SITE_NAME } from '../utils/Constants'
-
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 class CreateTips extends Component {
     constructor() {
@@ -10,6 +11,8 @@ class CreateTips extends Component {
 
     render() {
         return (
+            <div>
+            <Navbar user={this.props.user} />
             <div className="h-bg-grey h-pb-15">
  <div>
   <div firstLoad="true">
@@ -125,6 +128,8 @@ class CreateTips extends Component {
    </div>
   </div>
  </div>
+</div>
+<Footer />
 </div>
         )
     }

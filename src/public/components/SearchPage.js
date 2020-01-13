@@ -4,6 +4,8 @@ import { productLink, catLink, catIconName, countryLink } from "../utils/LinkBui
 import { commaNum, id, remove } from "../utils/Funcs"
 import queryString from 'querystring'
 import { Link } from "react-router-dom"
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 const browser = require("../utils/Browser")
 
@@ -302,6 +304,8 @@ class SearchPage extends Component {
 
     render() {
         return (
+          <div>
+            <Navbar user={this.props.user} />
                 <div className="h-bg-grey  h-pb-15">
                     <div>
                         <div className="b-main-page">
@@ -594,6 +598,8 @@ class SearchPage extends Component {
                         </div>
                     </div>
                     <div onClick={this.toggleCountries} className={this.state.countries_visible?"fw-fixed-background":"fw-fixed-background hide"}></div>
+                </div>
+                <Footer />
                 </div>
 
         )

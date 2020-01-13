@@ -30,7 +30,7 @@ export const REGISTER_PATHS = [
 ]
 
 export const FOOTER_PATHS = [
-    '/about', '/contact', 'privacy', 'tos'
+    '/about', '/contact', '/privacy', '/tos'
 ]
 
 export const GUEST_PATHS = LOGIN_PATHS.concat(REGISTER_PATHS)

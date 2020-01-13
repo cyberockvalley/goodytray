@@ -476,10 +476,10 @@ export default ({ body, initialData }) => {
     function modalAlert(error, func) {
       //alert(error);
       if(func) {
-        $("#modalOk).click(func)
+        $("#modalOk").click(func)
       }
       $("#modalBody").text(error)
-      $("#modal).show();
+      $("#modal").show();
     }
     $(document).ready(function(){
       $("input[data-type='number']").keyup(function(event){

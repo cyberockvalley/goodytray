@@ -1,9 +1,13 @@
 import React, { Component } from "react"
 import {getCopy} from "../utils/Funcs"
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 class Account extends Component {
     render() {
         return (
+        <div>
+            <Navbar user={this.props.user} />
             <div className="js-body-wrapper b-body-wrapper">
                 <div className="js-content h-bg-grey h-flex" data-use-spa="true" data-web-id="1573237260##534d110b8ac58e6d2a64119336f6a80aac2fffad" id="js-vue-scope">
                     <div className="b-stickers-wrapper" id="js-stickers-wrapper">
@@ -179,6 +183,8 @@ class Account extends Component {
                 {getCopy()}
             </div>
 </div >
+<Footer />
+</div>
         )
     }
 }
