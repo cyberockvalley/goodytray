@@ -14,13 +14,13 @@ import SearchPage from "./SearchPage"
 
 import Settings from "./Settings"
 import Messages from "./Messages"
+import About from './About'
+import Contact from './Contact'
+import Privacy from './Privacy'
+import Tos from './Tos'
 
 const MultipleRoutesLogin = (props) => (
   <div className="App">
-    <Route 
-      path="/*" 
-      render={(propz) => <Navbar {...propz} user={props.initialData.user} />}
-    />
     <Route exact path="(/|/index.html|/index.php|/index.js|/products)" 
       render={(propz) => <Landing {...propz} user={props.initialData.user} />}
     />
@@ -55,7 +55,10 @@ const MultipleRoutesLogin = (props) => (
     <Route exact path="/messages/:id" 
       render={(propz) => <Messages {...propz} user={props.initialData.user} />}
     />
-    <Route path="/*" component={Footer} />
+    <Route path="/about" component={About} />
+    <Route path="/contact" component={Contact} />
+    <Route path="/privacy" component={Privacy} />
+    <Route path="/tos" component={Tos} />
   </div>
 )
 

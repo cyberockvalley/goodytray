@@ -457,8 +457,8 @@ a:hover {background-color: inherit}
 	background: linear-gradient(to bottom,#70b93f 40%, #70b94a 60%);
 	color: #fff;
 	text-align: center;
-	border-bottom-left-radius: 20px;
-	border-bottom-right-radius: 20px;
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
 	font-size: 14px;
 	line-height: 1.42857143;
 	display: flex;

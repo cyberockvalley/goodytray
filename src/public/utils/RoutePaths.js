@@ -1,5 +1,5 @@
 export const HOME_PATHS = [
-    '/', '/index.html', '/index.js', '/index.php'
+    '/{1}', '/index.html', '/index.js', '/index.php'
 ]
 
 export const PRODUCTS_PATHS = [
@@ -29,6 +29,10 @@ export const REGISTER_PATHS = [
     '/register'
 ]
 
+export const FOOTER_PATHS = [
+    '/about', '/contact', 'privacy', 'tos'
+]
+
 export const GUEST_PATHS = LOGIN_PATHS.concat(REGISTER_PATHS)
 
 export const USER_PATHS = [
@@ -41,5 +45,6 @@ export const APP_PATHS = HOME_PATHS.concat(PRODUCT_PATHS)
 .concat(GUEST_PATHS)
 .concat(USER_PATHS)
 .concat(CREATE_TIPS_PATHS)
+.concat(FOOTER_PATHS)
 
 export const SELL_PATHS = ['/sell', '/edit-ad']

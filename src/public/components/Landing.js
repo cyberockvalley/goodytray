@@ -3,12 +3,14 @@ import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME } from "../utils/Constant
 import { productLink, catLink, catIconName, countryLink } from "../utils/LinkBuilder"
 import { commaNum, id, overflows} from "../utils/Funcs"
 import { Link } from "react-router-dom"
+import Navbar from './Navbar'
+import Footer from "./Footer"
 
 const browser = require("../utils/Browser")
 
 class Landing extends Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.state = {
           email: '',
           lastname: '',
@@ -159,7 +161,11 @@ class Landing extends Component {
     }
     
     componentDidMount() {
-        console.log("mounted")
+        console.log("AYAM READY", 2)
+        $(document).ready(function(){
+            console.log("AYAM READY", 3)
+            $(".b-fixed-element-static").stick_in_parent();
+        });
         //window.location.replace("#")
         document.title = SITE_TITLE
         this.changeCarousel(this.state.carousel_id)
@@ -197,6 +203,8 @@ class Landing extends Component {
 
     render() {
         return (
+            <div>
+                <Navbar user={this.props.user} />
                 <div className="h-bg-grey  h-pb-15">
                     <div>
                         <div className="b-main-page">
@@ -466,7 +474,7 @@ class Landing extends Component {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <a href="/sell" className="btn btn-lg btn-orange">Get started</a>
+                                                        <a href="/about" className="btn btn-lg btn-orange">Learn More</a>
                                                     </div>
                                                     
                                                     {/*
@@ -581,6 +589,8 @@ class Landing extends Component {
                     </div>
                     <div onClick={this.toggleCountries} className={this.state.countries_visible?"fw-fixed-background":"fw-fixed-background hide"}></div>
                 </div>
+                <Footer />
+            </div>
 
         )
     }

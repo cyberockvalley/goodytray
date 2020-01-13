@@ -11,13 +11,13 @@ import ProductReviews from "./ProductReviews"
 import SellerPage from "./SellerPage"
 import CreateTips from "./CreateTips"
 import SearchPage from "./SearchPage"
+import About from './About'
+import Contact from './Contact'
+import Privacy from './Privacy'
+import Tos from './Tos'
 
 const MultipleRoutes = (props) => (
   <div className="App">
-    <Route 
-      path="/*" 
-      render={(propz) => <Navbar {...propz} user={props.initialData.user} />}
-    />
     <Route exact path="(/|/index.html|/index.php|/index.js|/products)" 
       render={(propz) => <Landing {...propz} user={props.initialData.user} />}
     />
@@ -42,7 +42,10 @@ const MultipleRoutes = (props) => (
     <Route exact path="/create-ad-tips" 
       render={(propz) => <CreateTips {...propz} user={props.initialData.user} />}
     />
-    <Route path="/*" component={Footer} />
+    <Route path="/about" component={About} />
+    <Route path="/contact" component={Contact} />
+    <Route path="/privacy" component={Privacy} />
+    <Route path="/tos" component={Tos} />
   </div>
 )
 
