@@ -50,16 +50,16 @@ class Footer extends Component {
                 </div>
                 <div className="footer-links-internal container">
                     <div className="footer-links-internal-box">
-                        <Link target="_blank" to="/about">
+                        <Link to="/about">
                             About Us
                         </Link>
-                        <Link target="_blank" to="/contact">
+                        <Link to="/contact">
                             Contact Us
                         </Link>
                         <Link to="/privacy">
                             Privacy Policy
                         </Link>
-                        <Link target="_blank" to="/tos">
+                        <Link to="/tos">
                             Terms Of Services
                         </Link>
                     </div>
