@@ -329,7 +329,9 @@ class Landing extends Component {
                                     </div>
                                 </div>
                             </div>
-                            <div id="mobile-cats-tab" className={"mobile-cats-tab md-hide-up" + (this.state.cats && this.state.cats.length > 0?"": " hide")}>
+                            {
+                                this.state.cats && this.state.cats.length > 0?
+                                <div id="mobile-cats-tab" className={"mobile-cats-tab md-hide-up" + (this.state.cats && this.state.cats.length > 0?"": " hide")}>
                                     <a onClick={this.hideMobileCatsTab} className="mobile-cats-tab-link mobile-cats-tab-link" id="categories-tab" data-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="false">
                                         <span className="fa fa-2x fa-list" style={{color: "#3db83a", padding: "2px", width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px"}}></span>
                                         <span>
@@ -348,7 +350,9 @@ class Landing extends Component {
                                             </Link>
                                         ))
                                     }
-                            </div>
+                                </div>
+                                :""
+                            }
                             <div className="container">
                                 <div className="cat-tab row tab-content">
                                     <div id="categories" className="mobile-cats fade md-block-up tab-pane b-main-page-categories-wrapper col-xs-12 col-sm-12 col-md-3 b-main-page-categories-wrapper--desktops">

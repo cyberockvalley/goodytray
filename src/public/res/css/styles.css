@@ -652,3 +652,6 @@ a.btn-over-orange:hover {
 	}
 }
 .navbar-header a:hover, .navbar-header a:hover{text-decoration: none !important;}
+.navbar-toggle {
+	margin-right: 8px !important;
+}

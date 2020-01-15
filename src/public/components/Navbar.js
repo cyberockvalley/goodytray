@@ -173,8 +173,8 @@ class Navbar extends Component {
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
               </button>
-              <a style={{height: "40px", fontSize: "1.5em"}} onClick={this.toggleNavbar} className="navbar-toggle md-hide-up fa fa-2x fa-search"></a>
-              <a style={{height: "40px"}} href="/sell" className="navbar-toggle fw-button--type-warning">Sell</a>
+              <a style={{height: "30px", width: "30px", fontSize: "1.5em"}} onClick={this.toggleNavbar} className="navbar-toggle md-hide-up fa fa-2x fa-search"></a>
+              <a style={{height: "35px"}} href="/sell" className="navbar-toggle fw-button--type-warning">Sell</a>
               <Link onClick={this.closeNavbar} to="/" className="navbar-brand logo font-bask-normal">
                 <img src="/public/logo.png" width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
                 <span>{SITE_NAME}</span>
