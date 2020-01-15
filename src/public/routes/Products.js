@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt")
 const Product = require("../models/Product")
 const TopAd = require("../models/TopAd")
 const Cat = require("../models/Cat")
+const SubCat = require("../models/SubCat")
 const imageEditor = require("../utils/imageEditor")
 
 products.use(cors())
@@ -22,6 +23,7 @@ const Op = Sequelize.Op
 
 import fs from "fs"
 import { nameToId, userDetails, EXCHANGE_RATE } from "../utils/ExpressFunc"
+import { subCatLink } from "../utils/LinkBuilder"
 
 const andQuery = function(query, filter) {
     return query.includes("WHERE")? query + " AND " + filter : query + " WHERE " + filter
@@ -264,7 +266,7 @@ products.get("/", async function(req, res) {
 //get products counts by category and sub category
 products.get("/cats_and_sub_cats", (req, res) => {
     var q = "SELECT cats.id, cat.name, sub_cats.id as sub_cat_id"
-    db.sequelize.query("SELECT sub_cats.*, cats.name as cat_name FROM sub_cats, cats WHERE sub_cats.cat_id = cats.id ORDER BY cat_id ASC", {
+    db.sequelize.query("SELECT sub_cats.*, cats.name as cat_name, cats.total_products as cat_total_products FROM sub_cats, cats WHERE sub_cats.cat_id = cats.id ORDER BY cat_id ASC", {
         replacements: [],
         raw: false, 
         type: Sequelize.QueryTypes.SELECT
@@ -281,11 +283,12 @@ products.get("/cats_and_sub_cats", (req, res) => {
                 current = {}
                 current.id = cats[i].cat_id
                 current.name = cats[i].cat_name
+                current.total_products = cats[i].cat_total_products
                 current.sub_cats = []
-                current.sub_cats.push({id: cats[i].id, name: cats[i].name})
+                current.sub_cats.push({id: cats[i].id, name: cats[i].name, total_products: cats[i].total_products})
                 lastCatId = cats[i].cat_id
             } else {
-                current.sub_cats.push({id: cats[i].id, name: cats[i].name})
+                current.sub_cats.push({id: cats[i].id, name: cats[i].name, total_products: cats[i].total_products})
             }
         }
         if(current) {
@@ -613,7 +616,41 @@ products.post("/upload", checkUserAuth,  (req, res) => {
             productData.photos = photos
             Product.create(productData)
             .then(prod => {
-                return res.status(200).json({status: 1, message: "Ad posted successfully"+JSON.stringify(prod), product_id: prod.id})
+                Cat.findOne({
+                    where: {
+                        id: productData.cat_id
+                    }
+                })
+                .then(cat => {
+                    if(cat) {
+                        const newCat = {total_products: cat.total_products + 1};
+                        cat.update(newCat)
+                        SubCat.findOne({
+                            where: {
+                                id: productData.sub_cat_id
+                            }
+                        })
+                        .then(sub_cat => {
+                            if(sub_cat) {
+                                const newSubCat = {total_products: sub_cat.total_products + 1};
+                                sub_cat.update(newSubCat)
+                                return res.status(200).json({status: 1, message: "Ad posted successfully"+JSON.stringify(prod), product_id: prod.id})
+                
+                            } else {
+                                return res.status(200).json({status: -1, message: ERROR_DB_OP})
+                            }
+                        })
+                        .catch(err => {
+                            return res.status(200).json({status: -1, message: ERROR_DB_OP+err})
+                        })
+        
+                    } else {
+                        return res.status(200).json({status: -1, message: ERROR_DB_OP})
+                    }
+                })
+                .catch(err => {
+                    return res.status(200).json({status: -1, message: ERROR_DB_OP+err})
+                })
             })
             .catch(e => {
                 return res.status(200).json({status: -1, message: ERROR_DB_OP+e, c: productData.currency_symbol})

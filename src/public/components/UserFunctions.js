@@ -69,11 +69,12 @@ export const uploadProduct = function(product) {
 }
 
 export const getUser = function(req, idOrEmail) {
+    console.log("getUser", idOrEmail)
     return browser.axios.get(API_ROOT + "users?id="+idOrEmail)
-    .then(res => {
+    .then(res => {console.log("getUser", idOrEmail, res.data)
         return res.data
     })
-    .catch(err => {
+    .catch(err => {console.log("getUser", idOrEmail, err)
         return idOrEmail+err
     })
 }
@@ -109,7 +110,7 @@ export const checkUserAuth = function(req, res, next) {
         }
         
         //login token from header or cookie
-        if(req.headers.authorization) {
+        if(req.headers.authorization) {console.log("TOKEN_USER", "req.headers.authorization", req.headers.authorization)
             //from header(Authorization: Bearer jwt_token_string).
             //when we split the authorization(nodejs convert to header keys to lowercase automatically) 
             // header value, the string "Bearer will be at the 0 index while the token will be at 1"
@@ -136,11 +137,11 @@ export const checkUserAuth = function(req, res, next) {
                 next()
             }
 
-        } else if(req.signedCookies.login_token) {
+        } else if(req.signedCookies.login_token) {console.log("TOKEN_USER", "req.signedCookies.login_token", req.signedCookies.login_token)
             const unsigned_login_token = cookieParser.signedCookie(req.signedCookies.login_token, 
                 process.env.COOKIES_SECRET_KEY)
 
-            if(!unsigned_login_token) {
+            if(!unsigned_login_token) {console.log("TOKEN_USER", "invalid auth on signed token")
                 locals.message = "invalid auth on signed token"
                 res.locals = locals
                 next()
@@ -150,23 +151,24 @@ export const checkUserAuth = function(req, res, next) {
                 try {
                     decoded = jwt.verify(unsigned_login_token, process.env.SECRET_KEY)
                     getUser(req, decoded.id)
-                    .then(data => {
+                    .then(data => {console.log("TOKEN_USER", "then", decoded.id, data.user)
                         locals.token_user = data.user
                         res.locals = locals
                         next()
-                    }).catch(err => {
+                    }).catch(err => {console.log("TOKEN_USER", "thenCatch", err)
                         locals.token_user = null
                         res.locals = locals
                         next()
                     })
     
-                } catch(e) {
+                } catch(e) {console.log("TOKEN_USER", "catch", e)
                     locals.message = "invalid auth on unsigned token"
                     res.locals = locals
                     next()
                 }
             }
         } else {
+            console.log("TOKEN_USER", "req.login_token", "No token")
             locals.message = "No token"
             res.locals = locals
             next()

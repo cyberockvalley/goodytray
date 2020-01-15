@@ -257,12 +257,18 @@ class SearchPage extends Component {
         var pathname = this.props.location.pathname;
         var sect, sub_sect = null
         console.log("pathname: ", pathname)
-        var sectMatches = pathname.match(/\/search\/(cat|sub_cat|country|state|city|)\/([^\/]+)/i)
+        var sectMatches = pathname.match(/\/search\/(cat|sub_cat|state|city)\/([^\/]+)/i)
         console.log("sectMatches: ", sectMatches)
+        //check country
+        var countryMatches = pathname.match(/\/search\/([A-Z-a-z]+)/i)
+        console.log("countryMatches: ", countryMatches)
 
         var apiPath = "products/?"
         if(sectMatches != null) {
             apiPath += sectMatches[1].toLowerCase()+"_name="+sectMatches[2].toLowerCase();
+
+        } else if(countryMatches) {
+          apiPath += "country_name="+countryMatches[1].toLowerCase();
 
         } else {
             const queryValues = queryString.parse(this.props.location.search.substring(1))

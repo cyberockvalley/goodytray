@@ -81,7 +81,7 @@ export const truncText = (text, len, append) => {
       return text;
 
     } else {
-      return text.substr(0, len)+(append?append:"");
+      return text.substr(0, len)+(append?append:"...");
     }
 }
 export const dataCall = (e) => {

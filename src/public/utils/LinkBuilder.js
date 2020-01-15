@@ -17,7 +17,7 @@ export const subCatLink = (name) => {
 }
 
 export const countryLink = (name) => {
-    return "/search/country/"+encodeURIComponent(name)
+    return "/search/"+encodeURIComponent(name)
 }
 
 export const stateLink = (name) => {

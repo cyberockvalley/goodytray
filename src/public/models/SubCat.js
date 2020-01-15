@@ -16,6 +16,10 @@ module.exports = db.sequelize.define(
 
         name: {
             type: Sequelize.STRING
+        },
+
+        total_products: {
+            type: Sequelize.INTEGER
         }
     }, 
     {

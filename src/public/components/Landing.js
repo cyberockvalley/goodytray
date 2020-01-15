@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME } from "../utils/Constants"
 import { productLink, catLink, catIconName, countryLink } from "../utils/LinkBuilder"
-import { commaNum, id, overflows} from "../utils/Funcs"
+import { commaNum, id, overflows, truncText} from "../utils/Funcs"
 import { Link } from "react-router-dom"
 import Navbar from './Navbar'
 import Footer from "./Footer"
@@ -201,6 +201,15 @@ class Landing extends Component {
         })
     }
 
+    hideMobileCatsTab = () => {
+        $("#mobile-cats-tab").hide();
+        $("#mobile-cats-header").show();
+    }
+    showMobileCatsTab = () => {
+        $("#mobile-cats-tab").show();
+        $("#mobile-cats-header").hide();
+    }
+
     render() {
         return (
             <div>
@@ -320,17 +329,35 @@ class Landing extends Component {
                                     </div>
                                 </div>
                             </div>
+                            <div id="mobile-cats-tab" className={"mobile-cats-tab md-hide-up" + (this.state.cats && this.state.cats.length > 0?"": " hide")}>
+                                    <a onClick={this.hideMobileCatsTab} className="mobile-cats-tab-link mobile-cats-tab-link" id="categories-tab" data-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="false">
+                                        <span className="fa fa-2x fa-list" style={{color: "#3db83a", padding: "2px", width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px"}}></span>
+                                        <span>
+                                            Browse All
+                                        </span>
+                                    </a>
+                                    {
+                                        this.state.cats.slice(0, 3).map((cat, index) => (
+                                            <Link className="mobile-cats-tab-link" key={index} to={catLink(cat.name)}>
+                                                <svg className={"cat-"+catIconName(cat.name)} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
+                                                    <use xlinkHref={"#cat-"+catIconName(cat.name)} data-index={index} data-id={cat.id}></use>
+                                                </svg>
+                                                <span className="">
+                                                    {truncText(cat.name, 10)}
+                                                </span>
+                                            </Link>
+                                        ))
+                                    }
+                            </div>
                             <div className="container">
-                                <ul className="goods-cat-tab nav-tab md-hide-up nav row" role="tablist">
-                                    <li className="nav-item active col-xs-6">
-                                        <a className="nav-link" id="goods-tab" data-toggle="tab" href="#goods" role="tab" aria-controls="goods" aria-selected="true">Trending goods</a>
-                                    </li>
-                                    <li class="nav-item col-xs-6">
-                                        <a className="nav-link" id="categories-tab" data-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="false">Categories</a>
-                                    </li>
-                                </ul>
-                                <div className="row tab-content">
-                                    <div id="categories" className="md-block-up tab-pane fade b-main-page-categories-wrapper col-xs-12 col-sm-12 col-md-3 b-main-page-categories-wrapper--desktops">
+                                <div className="cat-tab row tab-content">
+                                    <div id="categories" className="mobile-cats fade md-block-up tab-pane b-main-page-categories-wrapper col-xs-12 col-sm-12 col-md-3 b-main-page-categories-wrapper--desktops">
+                                        <div id="mobile-cats-header" style={{height: "50px"}} className="mobile-cats-header md-hide-up">
+                                            <div style={{cursor: "pointer"}} onClick={this.showMobileCatsTab} id="goods-tab" data-toggle="tab" href="#goods" role="tab" aria-controls="goods" aria-selected="true">
+                                                 <i className="fa fa-chevron-left"></i>
+                                            </div>
+                                            <div className="mobile-cats-header-title">Categories</div>
+                                        </div>
                                         <div className="b-fixed-element-outer">
                                             <div className="b-fixed-element b-fixed-element-static" style={{ left: "0px", bottom: "auto", top: "71px"}}>
                                                 <div className="h-mb-15">
@@ -357,8 +384,8 @@ class Landing extends Component {
                                                                                                 </svg>
                                                                                                 <span className="b-categories-item--inner" data-index={index} data-id={cat.id}>
                                                                                                     <span className="qa-category-parent-name b-category-parent-name" data-index={index} data-id={cat.id}>{cat.name}</span>
-                                                                                                    <span className="hide b-list-category-stack__item-link--found b-black" data-index={index} data-id={cat.id}>
-                                                                                                        <span data-index={index} data-id={cat.id}>115,215 ads</span>
+                                                                                                    <span className="b-list-category-stack__item-link--found b-black" data-index={index} data-id={cat.id}>
+                                                                                    <span data-index={index} data-id={cat.id}>{commaNum(cat.total_products) + " ads"}</span>
                                                                                                     </span>
                                                                                                 </span>
                                                                                             </span>
@@ -383,7 +410,7 @@ class Landing extends Component {
                                                                     <div className="b-categories-listing__item b-categories-listing__parents">
                                                                         <div id="side_bar_scroll_sub" className="b-categories-listing__item__inner">
                                                                             <div>
-                                                                                <div id="scat-up" onClick={this.handleClick} data-source="sup" className="b-scrolling-helper b-scrolling-helper--top">
+                                                                                <div id="scat-up" onClick={this.handleClick} data-source="sup" className="hide b-scrolling-helper b-scrolling-helper--top">
                                                                                     <svg data-source="sup" className="up" style={{width: "16px", height: "16px", maxWidth: "16px", maxHeight: "16px", fill: "rgb(128, 128, 128)", stroke: "inherit"}}>
                                                                                         <use data-source="up" xlinkHref="#up">
                                                                                         </use>
@@ -399,9 +426,9 @@ class Landing extends Component {
                                                                                                             <span className="qa-category-parent-name b-category-parent-name" data-index={index} data-id={this.state.cat_id}>
                                                                                                                 {sCat.name}
                                                                                                             </span>
-                                                                                                            <span className="hide b-list-category-stack__item-link--found b-black" data-index={index} data-id={this.state.cat_id}>
+                                                                                                            <span className="b-list-category-stack__item-link--found b-black" data-index={index} data-id={this.state.cat_id}>
                                                                                                                 <span data-index={index} data-id={this.state.cat_id}>
-                                                                                                                    153,808 ads
+                                                                                                                    {commaNum(sCat.total_products) + " ads"}
                                                                                                                 </span>
                                                                                                             </span>
                                                                                                         </span>
@@ -411,7 +438,7 @@ class Landing extends Component {
                                                                                         ))
                                                                                     }
                                                                                 </div>
-                                                                                <div id="scat-down" onClick={this.handleClick} data-source="sdown" className="b-scrolling-helper b-scrolling-helper--bottom">
+                                                                                <div id="scat-down" onClick={this.handleClick} data-source="sdown" className="hide b-scrolling-helper b-scrolling-helper--bottom">
                                                                                     <svg data-source="sdown" className="down" style={{width: "16px", height: "16px", maxWidth: "16px", maxHeight: "16px", fill: "rgb(128, 128, 128)", stroke: "inherit"}}>
                                                                                         <use data-source="sdown" xlinkHref="#down">
                                                                                         </use>

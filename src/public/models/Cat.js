@@ -16,6 +16,10 @@ module.exports = db.sequelize.define(
 
         sub_cats: {
             type: Sequelize.JSON
+        },
+
+        total_products: {
+            type: Sequelize.INTEGER
         }
 
     }, 

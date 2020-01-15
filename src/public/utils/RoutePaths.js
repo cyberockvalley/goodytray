@@ -1,5 +1,5 @@
 export const HOME_PATHS = [
-    '/{1}', '/index.html', '/index.js', '/index.php'
+    '/', '/index.html', '/index.js', '/index.php'
 ]
 
 export const PRODUCTS_PATHS = [

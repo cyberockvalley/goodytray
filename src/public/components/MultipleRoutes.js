@@ -18,7 +18,7 @@ import Tos from './Tos'
 
 const MultipleRoutes = (props) => (
   <div className="App">
-    <Route exact path="(/|/index.html|/index.php|/index.js|/products)" 
+    <Route exact path="/(|index.html|index.php|index.js|test)" 
       render={(propz) => <Landing {...propz} user={props.initialData.user} />}
     />
     <Route path="/(search|search/:sect/:sub_sect)" 

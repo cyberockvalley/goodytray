@@ -404,7 +404,7 @@ app.get(SELL_PATHS, (req, res) => {
   }
 })
 
-app.use(APP_PATHS, (req, res) => {
+app.use(APP_PATHS, (req, res) => {console.log("TOKEN_USER", res.locals.token_user)
   const initialData = {isSingle: false, user: res.locals.token_user, last_product_cat_id: res.locals.last_product_cat_id}
 
   var component;
