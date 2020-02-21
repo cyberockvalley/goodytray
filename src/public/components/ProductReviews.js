@@ -82,7 +82,7 @@ class ProductReviews extends Component {
                   {
                     this.state.product.id?
                     <Link to={"/seller/"+this.state.product.user_id}>
-                      {this.state.product.poster_firstname + " " +this.state.product.poster_lastname}
+                      {this.state.product.poster_fullname}
                     </Link>
                     :
                     ""
@@ -143,7 +143,7 @@ class ProductReviews extends Component {
                           </div>
                           <div className="b-feedback-item--profile-info">
                            <span className="b-feedback-item--profile-info-name">
-                            {review.writer_firstname + " " + review.writer_lastname}
+                            {review.writer_fullname}
                            </span>
                            <span className="b-feedback-item--profile-info-status b-feedback-item--profile-info-status--negative">
                             {review.weight < 0? "Negative" : review.weight > 0? "Positive" : "Neutral"}

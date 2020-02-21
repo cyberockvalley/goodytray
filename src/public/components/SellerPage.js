@@ -118,7 +118,7 @@ class SellerPage extends Component {
           </div>
           <div className="b-seller-info__name">
            <h1>
-            {this.state.seller.firstname + " " + this.state.seller.lastname}
+            {this.state.seller.fullname}
            </h1>
           </div>
          </div>
@@ -162,14 +162,14 @@ class SellerPage extends Component {
          <div>
           <ul className="b-seller-info__soc h-ph-15">
             <li>
-                <a className="b-share-button h-dflex mail qa-social-mail" data-v-6ffe10ec="" href={"mailto:?utm_source=mail_share&subject="+this.state.seller.firstname+" "+this.state.seller.lastname+" Page&body="+encodeURI(SERVER_ADDR+"/seller/"+this.state.seller.id)} rel="nofollow" target="_blank">
+                <a className="b-share-button h-dflex mail qa-social-mail" data-v-6ffe10ec="" href={"mailto:?utm_source=mail_share&subject="+this.state.seller.fullname+" Page&body="+encodeURI(SERVER_ADDR+"/seller/"+this.state.seller.id)} rel="nofollow" target="_blank">
                     <svg className="mail" data-v-6ffe10ec="" style={{width: "13px", height: "13px", maxWidth: "13px", maxHeight: "13px", fill: "rgb(255, 255, 255)", stroke: "inherit"}}>
                         <use xlinkHref="#mail"></use>
                     </svg>
                 </a>
             </li>
             <li>
-                <a className="b-share-button h-dflex twitter qa-social-twitter" data-v-6ffe10ec="" href={"https://twitter.com/share?utm_source=twitter_share&text="+this.state.seller.firstname+" "+this.state.seller.lastname+" Page&url="+encodeURI(SERVER_ADDR+"/seller/"+this.state.seller.id)} rel="nofollow" target="_blank">
+                <a className="b-share-button h-dflex twitter qa-social-twitter" data-v-6ffe10ec="" href={"https://twitter.com/share?utm_source=twitter_share&text="+this.state.seller.fullname+" Page&url="+encodeURI(SERVER_ADDR+"/seller/"+this.state.seller.id)} rel="nofollow" target="_blank">
                     <svg className="twitter" data-v-6ffe10ec="" style={{width: "13px", height: "13px", maxWidth: "13px", maxHeight: "13px", fill: "rgb(255, 255, 255)", stroke: "inherit"}}>
                         <use xlinkHref="#twitter"></use>
                     </svg>

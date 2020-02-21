@@ -11,7 +11,7 @@ class Settings extends Component {
         this.state = {
             user: props.user,
             password_form: { password: "", new_password: "" },
-            profile_form: { fname: props.user.firstname, lname: props.user.lastname, number: props.user.number }
+            profile_form: { fullname: props.user.fullname, number: props.user.number }
 
         }
         
@@ -35,8 +35,7 @@ class Settings extends Component {
 
       //set profile data
       /*
-      $("[name='fname']").attr("name", this.state.user.firstname)
-      $("[name='lname']").attr("name", this.state.user.lastname)
+      $("[name='fullname']").attr("name", this.state.user.fullname)
       $("[name='number']").attr("name", this.state.user.number)
       */
       console.log("password_form", password_form)
@@ -73,12 +72,8 @@ class Settings extends Component {
         return object;
       }, {});
       var canSend = false
-      if(this.state.profile_form.fname.length > 0 && this.state.profile_form.fname != this.state.user.firstname) {
-        formData.firstname = this.state.profile_form.fname
-        canSend = true
-      }
-      if(this.state.profile_form.lname.length > 0 && this.state.profile_form.lname != this.state.user.lastname) {
-        formData.lastname = this.state.profile_form.lname
+      if(this.state.profile_form.fullname.length > 0 && this.state.profile_form.fullname != this.state.user.fullname) {
+        formData.fullname = this.state.profile_form.fullname
         canSend = true
       }
       if(this.state.profile_form.number.length > 0 && this.state.profile_form.number != this.state.user.number) {
@@ -235,7 +230,7 @@ class Settings extends Component {
        </div>
        <div className="b-user-settings__avatarblock__name">
         <a href={"/seller/"+this.state.user.id}>
-         {this.state.user.firstname + " "+this.state.user.lastname}
+         {this.state.user.fullname}
         </a>
        </div>
        <div className={this.state.profile_photo_error?"fw-field__error qa-fw-field__error":"fw-field__error qa-fw-field__error"} id="img_status">
@@ -321,22 +316,13 @@ class Settings extends Component {
             <div className="tab-pane fade active in" id="profile-update">
             <form method="POST" name="change-profile" onSubmit={this.changeProfile}>
                     <div className="form-group row">
-                        <label className="col-md-2" for="fname">
-                        Firstname:
+                        <label className="col-md-2" for="fullname">
+                        Fullname:
                         </label>
                         <div className="col-md-10">
-                            <input ariaDescribedby="fname" onChange={this.handleProfileChange} value={this.state.profile_form.fname} name="fname" className="form-control" data-form="change-profile" placeholder="Enter firstname" type="text"/>
-                            <div className="error" data-error="" id="fname-error"></div>
+                            <input ariaDescribedby="fullname" onChange={this.handleProfileChange} value={this.state.profile_form.fullname} name="fullname" className="form-control" data-form="change-profile" placeholder="Enter fullname" type="text"/>
+                            <div className="error" data-error="" id="fullname-error"></div>
                         </div>
-                    </div>
-                    <div className="form-group row">
-                      <label className="col-md-2" for="lname">
-                      Lastname:
-                      </label>
-                      <div className="col-md-10">
-                        <input ariaDescribedby="lname" onChange={this.handleProfileChange} value={this.state.profile_form.lname} name="lname" className="form-control" data-form="change-profile" placeholder="Enter lastname" type="text"/>
-                        <div className="error" data-error="" id="lname-error"></div>
-                      </div>
                     </div>
                     <div className="form-group row">
                       <label className="col-md-2" for="number">

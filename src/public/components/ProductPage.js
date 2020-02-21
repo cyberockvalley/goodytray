@@ -71,8 +71,7 @@ class ProductPage extends Component {
 
                 const poster = {}
                 poster.username = response.data.details.poster_username
-                poster.firstname = response.data.details.poster_firstname
-                poster.lastname = response.data.details.poster_lastname
+                poster.fullname = response.data.details.poster_fullname
                 poster.profile_photo = response.data.details.poster_profile_photo
                 poster.created = response.data.details.poster_created
                 poster.last_seen = response.data.details.poster_last_seen
@@ -696,7 +695,7 @@ class ProductPage extends Component {
                        <div className="b-seller-info-outer">
                         <Link className="b-seller-info-name" to={"/seller/"+this.state.product.user_id}>
                          <span className="h-text-center">
-                          {this.state.poster?this.state.poster.firstname+" "+this.state.poster.lastname:""}
+                          {this.state.poster?this.state.poster.fullname:""}
                          </span>
                         </Link>
                        </div>

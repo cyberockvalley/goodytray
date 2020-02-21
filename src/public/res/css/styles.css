@@ -5,7 +5,7 @@
 }
 
 body, html{width: 100% !important; overflow-x: hidden !important;}
-
+a.js-handle-link-event:hover {color: #fff !important;}
 .h-bg-grey.h-pb-15 {
 	min-height: 100vh;
 	padding-left: auto;
@@ -98,7 +98,6 @@ body, html{width: 100% !important; overflow-x: hidden !important;}
 	.xsc-hide-down {display:none !important}
 }
 
-a:hover{color: inherit !important;}
 .disabled-section[data-v-2f9b1610].loading-section:after {background: #E7422D;font-size: 12px;border-radius: 5px;padding:5px;font-style:italic;color:#fff;content:"Loading...Please wait."}
 .fw-field__error {
 	font-size: 12px;
@@ -365,7 +364,6 @@ src: local('Baskerville BT Bold Italic'), url('../fonts/baskaville/BaskervilleBo
 }
 .b-app-footer__wrapper{bottom: 0px !important;}
 .b-app-footer__group-link{display: inline !important}
-a:hover {background-color: inherit}
 
 .upload-link {
 	color: #36c;

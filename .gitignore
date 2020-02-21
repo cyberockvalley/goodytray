@@ -3,3 +3,4 @@ node_modules/*
 ignore/*
 dist/*
 package-lock.json
+src/public/utils/Constants.js

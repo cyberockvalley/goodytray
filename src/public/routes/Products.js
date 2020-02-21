@@ -77,7 +77,7 @@ products.get("/", async function(req, res) {
     }
     const user_name = req.query.user_name
     if(user_name && user_name.length > 0) {
-        query = andQuery(query, "UPPER(username) LIKE ? OR UPPER(firstname) LIKE ? OR UPPER(lastname) LIKE ? OR UPPER(username) LIKE ? OR UPPER(firstname) LIKE ? OR UPPER(lastname) LIKE ? OR UPPER(username) LIKE ? OR UPPER(firstname) LIKE ? OR UPPER(lastname) LIKE ?")
+        query = andQuery(query, "UPPER(username) LIKE ? OR UPPER(fullname) LIKE ? OR UPPER(username) LIKE ? OR UPPER(fullname) LIKE ? OR UPPER(username) LIKE ? OR UPPER(fullname) LIKE ?")
         i = 0
         while(i < 3) {
             replacements.push("%"+user_name.toUpperCase()+"%")
@@ -310,7 +310,7 @@ products.get("/details", function(req, res) {
         res.json({details: null, message: "No identifier provided"})
 
     } else {
-        db.sequelize.query("SELECT products.*, users.username AS poster_username, users.firstname AS poster_firstname, users.lastname AS poster_lastname, users.profile_photo AS poster_profile_photo, users.number AS poster_number, users.created AS poster_created, users.last_seen AS poster_last_seen FROM products, users WHERE products.id = ? AND users.id = products.user_id LIMIT 1", {
+        db.sequelize.query("SELECT products.*, users.username AS poster_username, users.fullname AS poster_fullname, users.profile_photo AS poster_profile_photo, users.number AS poster_number, users.created AS poster_created, users.last_seen AS poster_last_seen FROM products, users WHERE products.id = ? AND users.id = products.user_id LIMIT 1", {
             replacements: [id],
             raw: false, 
             type: Sequelize.QueryTypes.SELECT,

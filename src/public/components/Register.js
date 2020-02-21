@@ -9,8 +9,7 @@ class Register extends Component {
     constructor() {
         super()
         this.state = {
-          firstname: '',
-          lastname: '',
+          fullname: '',
           number: '',
           email: '',
           password: '',
@@ -59,8 +58,8 @@ class Register extends Component {
         
         this.removeErrors()
         this.state.hasErrors = false
-        if(this.state.firstname.length == 0) {
-            this.setError("firstname", "Please enter your firstname")
+        if(this.state.fullname.length == 0) {
+            this.setError("fullname", "Please enter your fullname")
             this.state.hasErrors = true
         }
 
@@ -91,8 +90,7 @@ class Register extends Component {
 
         if(!this.state.hasErrors) {
             const newUser = {
-                firstname: this.state.firstname,
-                lastname: this.state.lastname,
+                fullname: this.state.fullname,
                 email: this.state.email,
                 password: this.state.password,
                 number: this.state.number
@@ -106,15 +104,14 @@ class Register extends Component {
                 {
                     email_error: String, 
                     password_error: String, 
-                    firstname_error: String, 
-                    lastname_error: String, 
+                    fullname_error: String, 
                     number_error: String
                 }
                 */
                if(res.login_token != null) {
                     localStorage.setItem("login_token", res.login_token)
                     //redirect to after after login page
-                    this.props.history.push('/profile')
+                    window.location.href = "/profile"
                } else if(res.form_errors != null) {
                    for(var key in res.form_errors) {
                     console.log("error_key: "+ key)
@@ -144,7 +141,7 @@ class Register extends Component {
             <div>
                 <div className="h-bg-grey  h-pb-15">
                     <div>
-                        <div className="container" postUrl="https://jiji.ng/add-free-ad.html" firstload="true">
+                        <div className="container">
                             <div className="row center-xs">
                                 <div className="col-sm-10 col-xs-12">
                                     
@@ -167,7 +164,7 @@ class Register extends Component {
                                                                     href="https://jiji.ng/social-auth.html?url=%2Fregistration.html"
                                                                     target=""
                                                                     className="js-handle-link-event h-width-100p bc-facebook fw-button qa-fw-button fw-button--type-success fw-button--size-large"
-                                                                    dataGa_params="[&quot;FB_Login&quot;, &quot;Click_to_login_button&quot;, &quot;registration_page&quot;]"><span
+                                                                    ><span
                                                                         className="fw-button__content"> <span
                                                                             className="fw-button__slot-wrapper"><svg
                                                                                 strokeWidth="0" className="facebook"
@@ -180,7 +177,7 @@ class Register extends Component {
                                                                     href="https://jiji.ng/google-auth.html?url=%2Fregistration.html"
                                                                     target=""
                                                                     className="js-handle-link-event h-width-100p bc-google fw-button qa-fw-button fw-button--type-success fw-button--size-large"
-                                                                    dataGa_params="[&quot;Google_Login&quot;, &quot;Click_to_login_button&quot;, &quot;registration_page&quot;]"><span
+                                                                    ><span
                                                                         className="fw-button__content"> <span
                                                                             className="fw-button__slot-wrapper"><svg
                                                                                 strokeWidth="0" className="google"
@@ -221,28 +218,15 @@ class Register extends Component {
                                                                 </span>
                                                             </div>
 
-                                                            <div id="firstname-group" className="form-group input-group-lg">
-                                                                <label for="firstname">Firstname:</label>
+                                                            <div id="fullname-group" className="form-group input-group-lg">
+                                                                <label for="fullname">Fullname:</label>
                                                                 <input autoComplete="off" type="text"
                                                                         className="form-control"
-                                                                        name="firstname"
-                                                                        id="firstname"
-                                                                        value={this.state.firstname}
+                                                                        name="fullname"
+                                                                        id="fullname"
+                                                                        value={this.state.fullname}
                                                                         onChange={this.onChange}/>
-                                                                <span id="firstname-error" className="fw-field__error qa-fw-field__error hide">
-                                                                    This field is required.
-                                                                </span>
-                                                            </div>
-
-                                                            <div id="lastname-group" className="form-group input-group-lg">
-                                                                <label for="lastname">Lastname (optional):</label>
-                                                                <input autoComplete="off" type="text"
-                                                                        className="form-control"
-                                                                        name="lastname"
-                                                                        id="lastname"
-                                                                        value={this.state.lastname}
-                                                                        onChange={this.onChange}/>
-                                                                <span id="lastname-error" className="fw-field__error qa-fw-field__error hide">
+                                                                <span id="fullname-error" className="fw-field__error qa-fw-field__error hide">
                                                                     This field is required.
                                                                 </span>
                                                             </div>

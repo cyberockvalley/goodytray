@@ -26,11 +26,10 @@ const validOnReg = 0
 users.post("/register", function(req, res) {
     const today = new Date()
     const userData = {
-        email: req.body.email == null? "" : req.body.email.trim(),
+        email: req.body.email == null? "" : req.body.email.trim().toLowerCase(),
         password: req.body.password == null? "" : req.body.password.trim(),
         number: req.body.number == null? "" : req.body.number.trim(),
-        firstname: req.body.firstname == null? "" : req.body.firstname.trim(),
-        lastname: req.body.lastname == null? "" : req.body.lastname.trim(),
+        fullname: req.body.fullname == null? "" : req.body.fullname.trim(),
         created: today,
         var_key: "verkey",
         validated: validOnReg
@@ -43,8 +42,8 @@ users.post("/register", function(req, res) {
     if(!isValidNumber(userData.number)) {
         form_errors.number_error = "Please enter a valid phone number"
     }
-    if(userData.firstname.length < 2) {
-        form_errors.firstname_error = "Please enter your firstname"
+    if(userData.fullname.length < 2) {
+        form_errors.fullname_error = "Please enter your fullname"
     }
     if(userData.password.length == 0) {
         form_errors.password_error = "Please enter your password"
@@ -71,7 +70,7 @@ users.post("/register", function(req, res) {
                         User.create(userData)
                         .then(function(user) {
                             var message
-                            var login_token
+                            var token
 
                             //send email verification link here
                             message = "Registration successfull. You can login now."
@@ -110,7 +109,7 @@ users.post("/register", function(req, res) {
 //login
 users.post("/login", function(req, res) {
     const userData = {
-        email: req.body.email == null? "" : req.body.email.trim(),
+        email: req.body.email == null? "" : req.body.email.trim().toLowerCase(),
         password: req.body.password == null? "" : req.body.password.trim()
     }
     const form_errors = {}
@@ -222,16 +221,12 @@ users.post("/update_profile", (req, res) => {
 
     } else {
         const data = {}
-        var firstname = req.body.fname || req.body.firstname
-        var lastname = req.body.lname || req.body.lastname
+        var fullname = req.body.fullname
         var number = req.body.number
-        if(firstname && firstname.length > 0) {
-            data.firstname = firstname
+        if(fullname && fullname.length > 0) {
+            data.fullname = fullname
         }
-        if(lastname && lastname.length > 0) {
-            data.lastname = lastname
-        }
-        if(number && lastname.length > 0) {
+        if(number && number.length > 0) {
             data.number = number
         }
         User.findOne({

@@ -51,8 +51,7 @@ class Messages extends Component {
                         const message = this.state.messages[i]
                         var recipient = {
                             id: this.state.recipient_id,
-                            firstname: message.user_firstname,
-                            lastname: message.user_lastname,
+                            fullname: message.user_fullname,
                             profile_photo: message.user_photo,
                             message: message
                         }
@@ -203,7 +202,7 @@ class Messages extends Component {
              <header data-index={index}>
               <div data-index={index} className="h-text-one-line h-lh-em-1_3">
                <span data-index={index} className="qa-room-label-link-name">
-                {message.user_firstname + " " + message.user_lastname}
+                {message.user_fullname}
                </span>
               </div>
               <div data-index={index} className="hide b-room-label-date">
@@ -257,7 +256,7 @@ class Messages extends Component {
         </div>
         <div className="b-messenger-room-header-part b-messenger-room-header-part--middle">
          <Link className="qa-messenger-room-user-name b-messenger-room-header-user-name h-text-one-line" to={"/seller/"+this.state.recipient.id} style={{transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
-          {this.state.recipient.firstname+" "+this.state.recipient.lastname}
+          {this.state.recipient.fullname}
          </Link>
         </div>
         <div className="b-messenger-room-header-part b-messenger-room-header-part--right">

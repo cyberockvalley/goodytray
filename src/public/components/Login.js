@@ -7,9 +7,10 @@ import Navbar from './Navbar'
 import Footer from "./Footer"
 
 class Login extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
+      third_party_login_links: props.third_party_login_links,
       email: '',
       password: '',
       posting_form: false,
@@ -19,6 +20,7 @@ class Login extends Component {
     this.onChange = this.onChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
   }
+  
 
 setError(elId, error) {
     var err = id(elId + "-error")
@@ -114,7 +116,7 @@ onChange(e) {
       <div>
         <div className="h-bg-grey  h-pb-15">
           <div>
-            <div className="container" postUrl="https://jiji.ng/add-free-ad.html" firstload="true">
+            <div className="container">
               <div className="row center-xs"> 
               <div className="col-sm-10 col-xs-12"> 
                 <div className="bc-auth-notification fw-notification fw-notification--success">
@@ -134,10 +136,10 @@ onChange(e) {
                 <div className="fw-card-content qa-fw-card-content">
                   <div className="row center-xs">
                     <form noValidate onSubmit={this.onSubmit} className="bc-auth-card__form-holder">
-                      <div className="bc-social-buttons hide">
+                      <div className="bc-social-buttons">
                         <div className="row">
                           <div className="col-xs-12">
-                            <a href="https://jiji.ng/social-auth.html?url=%2Flogin.html" target="" className="js-handle-link-event h-width-100p bc-facebook fw-button qa-fw-button fw-button--type-success fw-button--size-large" dataGa_params="[&quot;FB_Login&quot;, &quot;Click_to_login_button&quot;, &quot;registration_page&quot;]">
+                            <a href={this.state.third_party_login_links.facebook} target="" className="js-handle-link-event h-width-100p bc-facebook fw-button qa-fw-button fw-button--type-success fw-button--size-large">
                               <span className="fw-button__content"> 
                                 <span className="fw-button__slot-wrapper">
                                   <svg strokeWidth="0" className="facebook" style={{ width: "20px", height: "20px", maxWidth: "20px", maxHeight: "20px", fill: "rgb(255, 255, 255)", stroke: "inherit" }}>
@@ -149,7 +151,7 @@ onChange(e) {
                             </a>
                           </div> 
                           <div className="col-xs-12">
-                            <a href="https://jiji.ng/google-auth.html?url=%2Flogin.html" target="" className="js-handle-link-event h-width-100p bc-google fw-button qa-fw-button fw-button--type-success fw-button--size-large" dataGa_params="[&quot;Google_Login&quot;, &quot;Click_to_login_button&quot;, &quot;registration_page&quot;]">
+                            <a href={this.state.third_party_login_links.google} target="" className="js-handle-link-event h-width-100p bc-google fw-button qa-fw-button fw-button--type-success fw-button--size-large">
                               <span className="fw-button__content"> 
                                 <span className="fw-button__slot-wrapper">
                                   <svg strokeWidth="0" className="google" style={{ width: "30px", height: "30px", maxWidth: "30px", maxHeight: "30px", fill: "rgb(255, 255, 255)", stroke: "inherit" }}>

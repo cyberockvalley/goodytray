@@ -12,8 +12,7 @@ export const register = function(newUser) {
         email: newUser.email,
         number: newUser.number,
         password: newUser.password,
-        firstname: newUser.firstname,
-        lastname: newUser.lastname
+        fullname: newUser.fullname
     })
     .then(function(res) {
         return res.data

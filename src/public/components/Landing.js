@@ -13,7 +13,6 @@ class Landing extends Component {
         super(props)
         this.state = {
           email: '',
-          lastname: '',
           email: '',
           errors: {},
           carousel_id: 0,

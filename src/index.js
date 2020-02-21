@@ -18,6 +18,7 @@ import SingleRoute from './public/components/SingleRoute'
 import template from "./public/views/template"
 import templateSell from "./public/views/template-sell"
 
+import ThirdPartyAuth from "./public/routes/ThirdPartyAuth"
 import Users from "./public/routes/Users";
 import Products from "./public/routes/Products";
 import Cats from "./public/routes/Cats"
@@ -39,6 +40,8 @@ import { SELL_PATHS, APP_PATHS, LOGIN_PATHS } from './public/utils/RoutePaths'
 import { truncText, sleep, randNum, genFilename } from './public/utils/Funcs'
 
 import { EXCHANGE_RATE, urlToFileStream } from './public/utils/ExpressFunc'
+import { THIRD_PARTY_AUTH_PATH } from './public/routes/ThirdPartyAuth'
+import { reverse } from 'dns'
 
 const browser = require("../src/public/utils/Browser")
 
@@ -59,7 +62,7 @@ app.use(bodyParser.json());
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
-// for compressing hhml and resources
+// for compressing html and resources
 app.use(compression());
 // set static folder for generated css and front js files
 
@@ -73,6 +76,7 @@ app.use(function(req, res, next) {
 });
 
 // set routes
+app.use(ThirdPartyAuth.THIRD_PARTY_AUTH_PATH, ThirdPartyAuth)
 app.use(API_ROOT + "users", Users)
 app.use(API_ROOT + "products", Products)
 app.use(API_ROOT + "cats", Cats)
@@ -264,8 +268,7 @@ const saveProductFromJson = async (user, json, catId, subCatId, subCatLink, res,
           email: email,
           password: "67941595",
           number: "+2348035389118",
-          firstname: seller.name.split(" ")[0],
-          lastname: seller.name.split(" ")[1]?seller.name.split(" ")[1]:"",
+          fullname: seller.name.split(" ")[0],
           created: date,
           var_key: "verkey",
           validated: 0,
@@ -414,6 +417,10 @@ app.use(APP_PATHS, (req, res) => {console.log("TOKEN_USER", res.locals.token_use
   console.log("PAGE_META_INIT", initialData)
   
   if(initialData.user == null) {
+    const third_party_login_links = {}
+    third_party_login_links.google = ThirdPartyAuth.googleLoginLink()
+    third_party_login_links.facebook = ThirdPartyAuth.facebookLoginLink()
+    initialData.third_party_login_links = third_party_login_links
     component = ReactDOMServer.renderToString(
       <Router location={req.url} context={context}>
         <MultipleRoutes initialData={initialData}/>
@@ -442,7 +449,7 @@ app.get('*', (req, res) =>
     )
 )
 app.listen(PORT, () => console.log('Server running on port: ' + PORT))
-if(process.env.SSL_KEY && process.env.SSL_CHAIN && process.env.SSL_KEY.length > 0 && process.env.SSL_CHAIN.length > 0) {
+if(process.env.SSL_KEY/* && process.env.SSL_CHAIN && process.env.SSL_KEY.length > 0 && process.env.SSL_CHAIN.length > 0*/) {
   console.log("SAW", "YEAS")
   const https = require("https"),
   fs = require("fs");

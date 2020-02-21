@@ -3,8 +3,8 @@ export const LOGO_ADDR = "dist/public/logo.png"
 
 export const PORT = 8080
 export const PORT_SSL = 4433
-export const SERVER_HOST = "http://dev.domain.com"
-export const SERVER_ADDR = SERVER_HOST + ":" + PORT
+export const SERVER_HOST = "https://dev.domain.com"
+export const SERVER_ADDR = SERVER_HOST + ":" + PORT_SSL
 
 export const EMAIL_SUPPORT = "support@goodytray.com"
 export const ERROR_NET_UNKNOWN = "An unexpected error occurred. Please make sure you're connected to the internet"

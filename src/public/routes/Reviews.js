@@ -40,7 +40,7 @@ reviews.get("/", checkUserAuth, (req, res) => {
                 const offset = (page - 1) * REVIEWS_PER_PAGE
 
                 //get the reviews
-                db.sequelize.query("SELECT reviews.*, users.username AS writer_username, users.firstname AS writer_firstname, users.lastname AS writer_lastname, users.profile_photo AS writer_profile_photo FROM reviews, users WHERE reviews.product_id = ? AND users.id = reviews.user_id ORDER BY reviews.created DESC LIMIT ?, ?", {
+                db.sequelize.query("SELECT reviews.*, users.username AS writer_username, users.fullname AS writer_fullname, users.profile_photo AS writer_profile_photo FROM reviews, users WHERE reviews.product_id = ? AND users.id = reviews.user_id ORDER BY reviews.created DESC LIMIT ?, ?", {
                     replacements: [req.query.product_id, offset, REVIEWS_PER_PAGE],
                     raw: false, 
                     type: Sequelize.QueryTypes.SELECT,

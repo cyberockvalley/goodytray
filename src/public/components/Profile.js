@@ -264,7 +264,7 @@ class Profile extends Component {
        </div>
        <div className="b-user-settings__avatarblock__name">
         <a href={"/seller/"+this.state.user.id}>
-         {this.state.user.firstname + " "+this.state.user.lastname}
+         {this.state.user.fullname}
         </a>
        </div>
        <div className={this.state.profile_photo_error?"fw-field__error qa-fw-field__error":"fw-field__error qa-fw-field__error"} id="img_status">

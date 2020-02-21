@@ -14,10 +14,7 @@ class Sell extends Component {
     this.state()
 
     this.state.user = props.initialData.user
-    this.state.fullname = props.initialData.user.firstname
-    if(props.initialData.user.lastname) {
-      this.state.fullname += " " + props.initialData.user.lastname
-    }
+    this.state.fullname = props.initialData.user.fullname
 
     this.state.number = props.initialData.user.number
     this.state.email = props.initialData.user.email
