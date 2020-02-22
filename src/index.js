@@ -33,7 +33,7 @@ import Reviews from "./public/routes/Reviews"
 import PageMetaSetter from "./public/routes/PageMetaSetter"
 
 import {checkUserAuth, logOut} from "./public/components/UserFunctions"
-import {API_ROOT, PORT, PORT_SSL} from "./public/utils/Constants"
+import {API_ROOT, PORT, PORT_SSL} from "../Constants"
 import {error400, error500} from "../src/public/utils/Errors"
 import { SELL_PATHS, APP_PATHS, LOGIN_PATHS } from './public/utils/RoutePaths'
 

@@ -1,4 +1,4 @@
-import {PRODUCTS_PHOTOS_SERVER_DIR, USERS_PHOTOS_SERVER_DIR} from "./Constants"
+import {PRODUCTS_PHOTOS_SERVER_DIR, USERS_PHOTOS_SERVER_DIR} from "../../../Constants"
 import { genFilename } from "./Funcs"
 let multer = require('multer'), 
     uuidv4 = require('uuid/v4')

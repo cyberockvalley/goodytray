@@ -1,4 +1,4 @@
-import { API_ROOT, LOGIN_SPAN_IN_SECONDS } from "../utils/Constants"
+import { API_ROOT, LOGIN_SPAN_IN_SECONDS } from "../../../Constants"
 
 export const THIRD_PARTY_AUTH_PATH = "/third_party_auth"
 

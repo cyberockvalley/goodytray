@@ -10,7 +10,7 @@ const User = require("../models/User")
 reviews.use(cors())
 
 import {checkUserAuth} from "../components/UserFunctions"
-import { DISTINCNT_MESSAGES_PER_HOUR, ERROR_DB_OP, REVIEWS_PER_PAGE } from "../utils/Constants"
+import { DISTINCNT_MESSAGES_PER_HOUR, ERROR_DB_OP, REVIEWS_PER_PAGE } from "../../../Constants"
 import { userDetails } from "../utils/ExpressFunc"
 const db = require("../database/db")
 const Sequelize = require("sequelize")

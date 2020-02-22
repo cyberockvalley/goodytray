@@ -12,7 +12,7 @@ const fileUploader = require("../utils/FileUploader")
 
 users.use(cors())
 import {isValidEmail, isValidNumber, jsonEmpty} from "../utils/Funcs"
-import {ERROR_DB_OP, LOGIN_SPAN_IN_SECONDS, USERS_PHOTOS_CLIENT_DIR, USERS_PHOTOS_SERVER_DIR} from "../utils/Constants"
+import {ERROR_DB_OP, LOGIN_SPAN_IN_SECONDS, USERS_PHOTOS_CLIENT_DIR, USERS_PHOTOS_SERVER_DIR} from "../../../Constants"
 import {checkUserAuth} from "../components/UserFunctions"
 const cryptoRandomString = require('crypto-random-string');
 

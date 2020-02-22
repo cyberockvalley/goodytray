@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { uploadProduct } from './UserFunctions'
-import { SITE_NAME, API_ROOT, SITE_DOT_COM } from '../utils/Constants'
+import { SITE_NAME, API_ROOT, SITE_DOT_COM } from '../../../Constants'
 const browser = require('../utils/Browser')
 import {id, cls, commaNum, remove, currencyLogo} from '../utils/Funcs'
-import {MAX_PRODUCT_PHOTOS_SIZE} from "../utils/Constants"
+import {MAX_PRODUCT_PHOTOS_SIZE} from "../../../Constants"
 import { productLink } from '../utils/LinkBuilder'
 import Navbar from './Navbar'
 import Footer from "./Footer"

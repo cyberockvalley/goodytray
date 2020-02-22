@@ -5,7 +5,7 @@ const cors = require("cors")
 metaSetter.use(cors())
 
 import { SELL_PATHS, LOGIN_PATHS, REGISTER_PATHS, HOME_PATHS, PRODUCT_PATHS, SEARCH_PATHS, PRODUCTS_PATHS, CREATE_TIPS_PATHS } from "../utils/RoutePaths";
-import { SITE_TITLE, SITE_NAME } from "../utils/Constants";
+import { SITE_TITLE, SITE_NAME } from "../../../Constants";
 import { getProduct } from "../components/UserFunctions";
 import { productLink } from "../utils/LinkBuilder";
 import { mimeFromFilename } from "../utils/Funcs";

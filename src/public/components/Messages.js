@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIENT_DIR, SITE_NAME, PRODUCTS_PHOTOS_CLIENT_DIR } from '../utils/Constants'
+import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIENT_DIR, SITE_NAME, PRODUCTS_PHOTOS_CLIENT_DIR } from '../../../Constants'
 import { commaNum, truncText, profilePhoto, modalAlert, dataCall, id } from '../utils/Funcs'
 const browser = require("../utils/Browser")
 import $ from 'jquery';

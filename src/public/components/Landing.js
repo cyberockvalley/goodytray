@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME } from "../utils/Constants"
+import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME } from "../../../Constants"
 import { productLink, catLink, catIconName, countryLink } from "../utils/LinkBuilder"
 import { commaNum, id, overflows, truncText} from "../utils/Funcs"
 import { Link } from "react-router-dom"

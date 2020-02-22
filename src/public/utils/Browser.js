@@ -1,6 +1,6 @@
 import axios from "axios"
 const https = require("https")
-import {SERVER_ADDR} from "./Constants"
+import {SERVER_ADDR} from "../../../Constants"
 const browser = {}
 
 const axiosBrowser = axios.create({

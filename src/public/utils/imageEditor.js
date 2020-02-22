@@ -3,7 +3,7 @@ let Jimp = require('jimp')
     ,path = require('path')
     ,Promise = require('bluebird')
     ,fileType = require('file-type');*/
-import {LOGO_ADDR} from "../utils/Constants"
+import {LOGO_ADDR} from "../../../Constants"
 import { getRandomInt } from "./Funcs";
 
 const resize = (w, h, nw) => {

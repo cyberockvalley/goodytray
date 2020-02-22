@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { Link } from "react-router-dom"
-import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS, FACEBOOK_PAGE_LINK, FACEBOOK_PAGE_NAME } from "../utils/Constants"
+import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS, FACEBOOK_PAGE_LINK, FACEBOOK_PAGE_NAME } from "../../../Constants"
 import { getIdFromPath, commaNum } from "../utils/Funcs";
 const browser = require("../utils/Browser")
 var dateFormat = require('dateformat');

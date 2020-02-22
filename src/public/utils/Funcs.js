@@ -1,4 +1,4 @@
-import { SITE_DOT_COM, NO_PROFILE_PHOTO_IMAGE } from "./Constants"
+import { SITE_DOT_COM, NO_PROFILE_PHOTO_IMAGE } from "../../../Constants"
 const uuidv4 = require('uuid/v4')
 
 export const okResponse = (res, data) => {

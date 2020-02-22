@@ -1,4 +1,4 @@
-import { SITE_TRADE_MARK, SITE_NAME } from "../utils/Constants";
+import { SITE_TRADE_MARK, SITE_NAME } from "../../../Constants";
 
 export default ({ body, initialData }) => {
     return `

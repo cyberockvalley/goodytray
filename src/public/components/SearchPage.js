@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { SITE_TITLE, API_ROOT, PAID_AD_NAME, STATIC_IMAGES_CLIENT_DIR } from "../utils/Constants"
+import { SITE_TITLE, API_ROOT, PAID_AD_NAME, STATIC_IMAGES_CLIENT_DIR } from "../../../Constants"
 import { productLink, catLink, catIconName, countryLink } from "../utils/LinkBuilder"
 import { commaNum, id, remove } from "../utils/Funcs"
 import queryString from 'querystring'

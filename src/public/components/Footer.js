@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import {Link, withRouter} from "react-router-dom"
 import { getCopy } from "../utils/Funcs"
-import { SITE_NAME, FACEBOOK_PAGE_LINK, INSTAGRAM_PAGE_LINK, TWITTER_PAGE_LINK } from "../utils/Constants"
+import { SITE_NAME, FACEBOOK_PAGE_LINK, INSTAGRAM_PAGE_LINK, TWITTER_PAGE_LINK } from "../../../Constants"
 //import { unlink } from "fs"
 
 class Footer extends Component {

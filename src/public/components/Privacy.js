@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { SITE_NAME, SITE_DOT_COM, EMAIL_SUPPORT } from '../utils/Constants'
+import { SITE_NAME, SITE_DOT_COM, EMAIL_SUPPORT } from '../../../Constants'
 
 
 class About extends Component {

@@ -7,7 +7,7 @@ attrs.use(cors())
 const Sequelize = require("sequelize")
 const Op = Sequelize.Op
 
-import {ERROR_DB_OP} from "../utils/Constants"
+import {ERROR_DB_OP} from "../../../Constants"
 
 const db = require("../database/db")
 

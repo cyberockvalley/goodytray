@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { Link } from "react-router-dom"
-import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE } from "../utils/Constants"
+import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE } from "../../../Constants"
 const browser = require("../utils/Browser")
 var dateFormat = require('dateformat');
 import Navbar from './Navbar'

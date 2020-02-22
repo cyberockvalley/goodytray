@@ -16,7 +16,7 @@ const fileUploader = require("../utils/FileUploader")
 
 import {checkUserAuth} from "../components/UserFunctions"
 import {truncText, jsonEmpty, randNum} from "../utils/Funcs"
-import { ERROR_DB_OP, MAX_PRODUCT_PHOTOS_SIZE, PRODUCTS_PER_PAGE, PRODUCTS_PHOTOS_CLIENT_DIR, SERVER_ADDR, PRODUCTS_PHOTOS_SERVER_DIR } from "../utils/Constants"
+import { ERROR_DB_OP, MAX_PRODUCT_PHOTOS_SIZE, PRODUCTS_PER_PAGE, PRODUCTS_PHOTOS_CLIENT_DIR, SERVER_ADDR, PRODUCTS_PHOTOS_SERVER_DIR } from "../../../Constants"
 const db = require("../database/db")
 const Sequelize = require("sequelize")
 const Op = Sequelize.Op
