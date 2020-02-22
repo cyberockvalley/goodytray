@@ -33,9 +33,10 @@ function getGoogleClient() {
 const googleData = {
     redirect_url: SERVER_ADDR + THIRD_PARTY_AUTH_PATH + GOOGLE_LOGIN_CALL_BACK_PATH
 }
-const facebokData = {
+const facebookData = {
     redirect_url: SERVER_ADDR + THIRD_PARTY_AUTH_PATH + FACEBOOK_LOGIN_CALL_BACK_PATH,
-    scopes: 'name,email'
+    scopes: 'email',
+    fields: 'name,email'
 }
 
 route.googleLoginLink = () => {
@@ -69,9 +70,9 @@ const stateNumber = () => {
 route.facebookLoginLink = () => {
     return "https://www.facebook.com/v2.2/dialog/oauth?client_id=" 
     +   process.env.FACEBOOK_APP_ID + "&redirect_uri=" 
-    +   encodeURI(facebokData.redirect_url) 
-    + "&scope=" + facebokData.scopes + "&state=" 
-    +stateNumber()
+    +   encodeURI(facebookData.redirect_url) 
+    + "&scope=" + encodeURIComponent(facebookData.scopes) 
+    + "&state=" +stateNumber()
     + "&display=popup"
 }
 
@@ -80,11 +81,11 @@ const getFacebookTokenUrl = (code) => {
     + "?client_id=" + encodeURIComponent(process.env.FACEBOOK_APP_ID)
     + "&client_secret=" + encodeURIComponent(process.env.FACEBOOK_SECRET)
     + "&code=" + encodeURIComponent(code)
-    + "&redirect_uri=" + encodeURI(facebokData.redirect_url)
+    + "&redirect_uri=" + encodeURI(facebookData.redirect_url)
 }
 const getFacebookProfileUrl = (token) => {
     return "https://graph.facebook.com/me?access_token=" + token
-    + "&fields=" + encodeURIComponent(facebokData.scopes)
+    + "&fields=" + encodeURIComponent(facebookData.fields)
 }
 const http = require("https")
 const httpGet = (url) => {
