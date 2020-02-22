@@ -67,7 +67,7 @@ export const uploadProduct = function(product) {
     }
 }
 
-export const getUser = function(req, idOrEmail) {
+export const getUser = function(idOrEmail) {
     console.log("getUser", idOrEmail)
     return browser.axios.get(API_ROOT + "users?id="+idOrEmail)
     .then(res => {console.log("getUser", idOrEmail, res.data)
@@ -119,7 +119,7 @@ export const checkUserAuth = function(req, res, next) {
             try {
                 decoded = jwt.verify(auth, process.env.SECRET_KEY)
 
-                getUser(req, decoded.id)
+                getUser(decoded.id)
                 .then(data => {
                     locals.token_user = data.user
                     res.locals = locals
@@ -149,7 +149,7 @@ export const checkUserAuth = function(req, res, next) {
                 var decoded
                 try {
                     decoded = jwt.verify(unsigned_login_token, process.env.SECRET_KEY)
-                    getUser(req, decoded.id)
+                    getUser(decoded.id)
                     .then(data => {console.log("TOKEN_USER", "then", decoded.id, data.user)
                         locals.token_user = data.user
                         res.locals = locals

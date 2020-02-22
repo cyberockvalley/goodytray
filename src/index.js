@@ -3,7 +3,7 @@ const result = dotenv.config({ path: 'env/.env' })
 if (result.error) {
   throw result.error
 }
- 
+//require('https').globalAgent.options.ca = require('ssl-root-cas/latest').create();
 console.log("PROCESS_ENV_DATA", result.parsed)
 console.log("DB_PASS", process.env.DB_PASS)
 import compression from 'compression'
