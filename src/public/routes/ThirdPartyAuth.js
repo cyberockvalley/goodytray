@@ -1,4 +1,4 @@
-import { API_ROOT, LOGIN_SPAN_IN_SECONDS } from "../../../Constants"
+import { LOGIN_SPAN_IN_SECONDS, SERVER_ADDR } from "../../../Constants"
 
 export const THIRD_PARTY_AUTH_PATH = "/third_party_auth"
 
@@ -31,10 +31,10 @@ function getGoogleClient() {
     return new OAuth2(process.env.GOOGLE_AUTH_CLIENT_ID, process.env.GOOGLE_AUTH_CLIENT_SECRET, googleData.redirect_url);
 }
 const googleData = {
-    redirect_url: "https://dev.domain.com:4433" + THIRD_PARTY_AUTH_PATH + GOOGLE_LOGIN_CALL_BACK_PATH
+    redirect_url: SERVER_ADDR + THIRD_PARTY_AUTH_PATH + GOOGLE_LOGIN_CALL_BACK_PATH
 }
 const facebokData = {
-    redirect_url: "https://dev.domain.com:4433" + THIRD_PARTY_AUTH_PATH + FACEBOOK_LOGIN_CALL_BACK_PATH,
+    redirect_url: SERVER_ADDR + THIRD_PARTY_AUTH_PATH + FACEBOOK_LOGIN_CALL_BACK_PATH,
     scopes: 'name,email'
 }
 
