@@ -557,7 +557,7 @@ class Landing extends Component {
                                                             </div>
                                                         </a>
                                                         :
-                                                        <Link to="/login">
+                                                        <Link to="/login?next=/sell">
                                                             <div className="b-post-advert-banner b-main-page__post-advert-banner">
                                                                 <p className="b-post-advert-banner__heading">Got something to sell?</p>
                                                                 <button className="b-post-advert-banner__button">

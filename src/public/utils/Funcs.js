@@ -43,6 +43,15 @@ export const remove = function(chrs, text) {
 export const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
+
+export const addQueryParam = (name, link, next) => {
+    var state = name + "="
+    if(!link.includes(state) ) {
+      link += (link.includes("?") ? "&" : "?") + state
+  
+    }
+    return link.replace(new RegExp(name + "=[^&]*"), state + next)
+}
   
 export const randNum = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;

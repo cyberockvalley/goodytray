@@ -107,7 +107,7 @@ class Navbar extends Component {
           </li>
           <li className="nav-item md-hide-down">
             <div className="h-width-120">
-              <Link onClick={this.closeNavbar} to="/login" className="h-width-100p fw-button qa-fw-button fw-button--type-warning fw-button--size-medium">
+              <Link onClick={this.closeNavbar} to="/login?next=/sell" className="h-width-100p fw-button qa-fw-button fw-button--type-warning fw-button--size-medium">
                 <span className="fw-button__content">
                   <span className="fw-button__slot-wrapper">SELL</span>
                 </span>

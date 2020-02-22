@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {Link} from "react-router-dom"
 import { login } from './UserFunctions'
-import {id, cls} from '../utils/Funcs'
+import {id, cls, addQueryParam} from '../utils/Funcs'
 import queryString from 'querystring'
 import Navbar from './Navbar'
 import Footer from "./Footer"
@@ -14,13 +14,25 @@ class Login extends Component {
       email: '',
       password: '',
       posting_form: false,
-      errors: {}
+      errors: {},
+      query_values: queryString.parse(this.props.location.search.substring(1))
+    }
+    if(this.state.query_values.next) {
+      var links = this.state.third_party_login_links
+      links.facebook = addQueryParam("state", links.facebook, this.state.query_values.next)
+      links.google = addQueryParam("state", links.google, this.state.query_values.next)
+      console.log("LINKS", 2, links)
+  
+      this.setState({third_party_login_links: links})
     }
 
     this.onChange = this.onChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
   }
   
+componentDidMount() {
+  console.log("LINKS", "lll", this.state.third_party_login_links)
+}
 
 setError(elId, error) {
     var err = id(elId + "-error")
@@ -79,12 +91,9 @@ onChange(e) {
          if(res.login_token != null) {console.log("login_token: "+res.login_token)
            localStorage.setItem("login_token", res.login_token)
             //redirect to after after login page
-            console.log("this.props.location: "+JSON.stringify(this.props.location))
-            const queryValues = queryString.parse(this.props.location.search.substring(1))
-            console.log("LOGIN_REZ: "+res.data)
             
-            if(queryValues.next) {
-              window.location.href = decodeURI(queryValues.next)
+            if(this.state.query_values.next) {
+              window.location.href = decodeURI(this.state.query_values.next)
 
             } else {console.log("q2")
               window.location.href = "/profile"

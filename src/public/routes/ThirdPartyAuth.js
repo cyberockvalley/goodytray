@@ -2,8 +2,8 @@ import { LOGIN_SPAN_IN_SECONDS, SERVER_ADDR } from "../../../Constants"
 
 export const THIRD_PARTY_AUTH_PATH = "/third_party_auth"
 
-const GOOGLE_LOGIN_CALL_BACK_PATH = "/google/callback"
-const FACEBOOK_LOGIN_CALL_BACK_PATH = "/facebook/callback"
+export const GOOGLE_LOGIN_CALL_BACK_PATH = "/google/callback"
+export const FACEBOOK_LOGIN_CALL_BACK_PATH = "/facebook/callback"
 
 const express = require("express")
 const route = express.Router()
@@ -23,17 +23,15 @@ const cryptoRandomString = require('crypto-random-string');
 //route.use(cors())
 import {okResponse} from "../utils/Funcs"
 
-const axios = require('axios');
-
 route.THIRD_PARTY_AUTH_PATH = THIRD_PARTY_AUTH_PATH
 
 function getGoogleClient() {
     return new OAuth2(process.env.GOOGLE_AUTH_CLIENT_ID, process.env.GOOGLE_AUTH_CLIENT_SECRET, googleData.redirect_url);
 }
-const googleData = {
+export const googleData = {
     redirect_url: SERVER_ADDR + THIRD_PARTY_AUTH_PATH + GOOGLE_LOGIN_CALL_BACK_PATH
 }
-const facebookData = {
+export const facebookData = {
     redirect_url: SERVER_ADDR + THIRD_PARTY_AUTH_PATH + FACEBOOK_LOGIN_CALL_BACK_PATH,
     scopes: 'email',
     fields: 'name,email'
@@ -72,7 +70,6 @@ route.facebookLoginLink = () => {
     +   process.env.FACEBOOK_APP_ID + "&redirect_uri=" 
     +   encodeURI(facebookData.redirect_url) 
     + "&scope=" + encodeURIComponent(facebookData.scopes) 
-    + "&state=" +stateNumber()
     + "&display=popup"
 }
 
@@ -110,8 +107,7 @@ const httpGet = (url) => {
 }
 route.get(FACEBOOK_LOGIN_CALL_BACK_PATH, async (req, res) => {
     const code = req.query.code
-    const state = req.query.state
-    
+    const state = req.query.state? req.query.state : "/profile"
     if(!code) {
         res.redirect("/login")
         
@@ -122,7 +118,7 @@ route.get(FACEBOOK_LOGIN_CALL_BACK_PATH, async (req, res) => {
             httpGet(getFacebookProfileUrl(tokenObject.access_token))
             .then(profile => {
                 profile = JSON.parse(profile)
-                saveUserAuthDetails(res, {email: profile.email, fullname: profile.name})
+                saveUserAuthDetails(res, {email: profile.email, fullname: profile.name}, state)
             })
             .catch(e => {
                 res.redirect("/login")
@@ -140,6 +136,7 @@ route.get(GOOGLE_LOGIN_CALL_BACK_PATH, (req, res) => {
     var oauth2Client = getGoogleClient()
     var session = req.session;
     var code = req.query.code;
+    const state = req.query.state? req.query.state : "/profile"
     oauth2Client.getToken(code, function(err, tokens) {
         console.log("tokens : ", tokens);
         // Now tokens contains an access_token and an optional refresh_token. Save them.
@@ -157,7 +154,7 @@ route.get(GOOGLE_LOGIN_CALL_BACK_PATH, (req, res) => {
                         res.redirect("/login")
 
                   } else {
-                        saveUserAuthDetails(res, {email: resp.data.email, fullname: resp.data.name})
+                        saveUserAuthDetails(res, {email: resp.data.email, fullname: resp.data.name}, state)
                   }
                 }
             );
@@ -167,7 +164,7 @@ route.get(GOOGLE_LOGIN_CALL_BACK_PATH, (req, res) => {
     });
 })
 
-const saveUserAuthDetails = (res, details) => {
+const saveUserAuthDetails = (res, details, nextPage) => {
     User.findOne({
         where: {
             email: details.email.trim().toLowerCase()
@@ -176,7 +173,7 @@ const saveUserAuthDetails = (res, details) => {
     .then(user => {
         if(user) {
             //if there is a user with that email, log the user in
-            login({id: user.id}, res)
+            login({id: user.id}, res, nextPage)
 
         } else {
             //create an account for the user
@@ -191,7 +188,7 @@ const saveUserAuthDetails = (res, details) => {
             }
             User.create(userData)
             .then(function(user) {
-                login({id: user.id}, res)
+                login({id: user.id}, res, nextPage)
             })
             .catch(function(err) {
                 console.log("REG_ERROR: "+err)
@@ -204,7 +201,7 @@ const saveUserAuthDetails = (res, details) => {
     })
 }
 
-const login = (tokenObject, res) => {
+const login = (tokenObject, res, nextPage) => {
     var token = jwt.sign(tokenObject, process.env.SECRET_KEY, {
         expiresIn: "7d"
     })
@@ -213,7 +210,6 @@ const login = (tokenObject, res) => {
         maxAge: LOGIN_SPAN_IN_SECONDS * 1000,
         httpOnly: true
     })
-    res.redirect("/profile")
+    res.redirect(nextPage)
 }
-
 module.exports = route
