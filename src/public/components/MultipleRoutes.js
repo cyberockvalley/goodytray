@@ -7,7 +7,7 @@ import ProductPage from "./ProductPage"
 import ProductReviews from "./ProductReviews"
 import SellerPage from "./SellerPage"
 import CreateTips from "./CreateTips"
-import SearchPage from "./SearchPage2"
+import SearchPage from "./SearchPage"
 import About from './About'
 import Contact from './Contact'
 import Privacy from './Privacy'

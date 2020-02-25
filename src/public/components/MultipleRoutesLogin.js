@@ -8,7 +8,7 @@ import ProductReviews from "./ProductReviews"
 import CreateReview from "./CreateReview"
 import SellerPage from "./SellerPage"
 import CreateTips from "./CreateTips"
-import SearchPage from "./SearchPage2"
+import SearchPage from "./SearchPage"
 
 import Settings from "./Settings"
 import Messages from "./Messages"

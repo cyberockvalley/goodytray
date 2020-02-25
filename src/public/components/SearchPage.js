@@ -10,38 +10,40 @@ import Footer from "./Footer"
 const browser = require("../utils/Browser")
 
 class SearchPage extends Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.state = {
-          errors: {},
-          products: [],
-          loading_products: false,
-          cats: [],
-          sub_cats: [],
-          countries: [],
-          states: [],
-          cities: [],
-          input_attrs: [],
-          checkbox_attrs: [],
-          select_attrs: [],
-          
-          cat: -1,
-          sub_cat: -1,
-          country: -1,
-          state: -1,
-          city: -1,
-          attrs: "",
-          price_min: 0,
-          max_price: 0,
+            errors: {},
+            products: [],
+            loading_products: false,
+            cats: [],
+            sub_cats: [],
+            countries: [],
+            states: [],
+            cities: [],
+            input_attrs: [],
+            checkbox_attrs: [],
+            select_attrs: [],
+            
+            cat: -1,
+            sub_cat: -1,
+            country: -1,
+            state: -1,
+            city: -1,
+            attrs: "",
+            price_min: 0,
+            max_price: 0,
+  
+            result_count: 0
+          }  
 
-          result_count: 0
-        }
-
-        this.handleClick = this.handleClick.bind(this)
-        this.handleChange = this.handleChange.bind(this)
-        this.handleKeyUp = this.handleKeyUp.bind(this)
-        this.applyFilter = this.applyFilter.bind(this)
+          this.handleClick = this.handleClick.bind(this)
+          this.handleChange = this.handleChange.bind(this)
+          this.handleKeyUp = this.handleKeyUp.bind(this)
+          this.applyFilter = this.applyFilter.bind(this)
+          this.catSelected = this.catSelected.bind(this)
     }
+
     handleKeyUp = e => {
         const target = e.target
         const value = e.target.value
@@ -150,7 +152,9 @@ class SearchPage extends Component {
     }
 
     applyFilter = e => {
-        e.preventDefault()
+        try {
+          e.preventDefault()
+        } catch(e){}
         var endpoint = this.getEndPoint()
         this.setState({loading_products: true})
         this.setState({products: []})
@@ -167,11 +171,11 @@ class SearchPage extends Component {
         })
         .catch(e => {
             console.log("checkResultCount", "NetworkError:", e)
-            this.setState({result_count: 0})
             this.setState({loading_products: false})
         })
 
     }
+
 
     resetCustomInputs() {
         this.setState({input_attrs: []})
@@ -275,7 +279,9 @@ class SearchPage extends Component {
             console.log("SearchPage Queries", queryValues)
             var t = {d: "lll", p: 9}
             var i = 0;
-
+            if(queryValues.q) {
+              apiPath += "q=" + queryValues.q
+            }
         }
         document.title = SITE_TITLE
         
@@ -303,35 +309,72 @@ class SearchPage extends Component {
         .then(resp => {
             if(resp && resp.data && resp.data.list) {
                 this.setState({products: resp.data.list})
+
             }
             this.setState({loading_products: false})
         })
     }
 
+    hideMobileCatsTab = () => {
+      $("#mobile-cats-tab").hide();
+      $("#categories").show();
+  }
+  showMobileCatsTab = () => {
+      $("#mobile-cats-tab").show();
+      $("#categories").hide();
+  }
+
+  catSelected = (e) => {
+    e.preventDefault()
+    var id = e.target.getAttribute("data-id")
+    if(id) {
+      this.setState({cat: parseInt(id)})
+      this.applyFilter(null)
+    }
+  }
+
     render() {
         return (
-          <div>
-            <Navbar user={this.props.user} />
+            <div>
+                <Navbar user={this.props.user} />
                 <div className="h-bg-grey  h-pb-15">
-                    <div>
-                        <div className="b-main-page">
-                                
-                            <div className="container">
-                                {
-                                    this.state.loading_products?
-                                    <div className="b-bouncing-loader-wrapper" data-v-67bc6bc4="" style={{display: "block"}}>
-                                        <div className="b-bouncing-loader spinner-absolute h-pt-20" style={{bottom: "0px"}}>
-                                            <div></div>
-                                            <div></div>
-                                            <div></div>
+                    <div className="b-main-page">
+                        {
+                                this.state.cats && this.state.cats.length > 0?
+                                <div id="mobile-cats-tab" className={"mobile-cats-tab md-hide-up" + (this.state.cats && this.state.cats.length > 0?"": " hide")}>
+                                    <a onClick={this.hideMobileCatsTab} className="mobile-cats-tab-link mobile-cats-tab-link" id="categories-tab" data-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="false">
+                                        <span className="fa fa-2x fa-filter" style={{color: "#3db83a", padding: "2px", width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px"}}></span>
+                                        <span>
+                                            All Filters
+                                        </span>
+                                    </a>
+                                    {
+                                        this.state.cats.slice(0, 3).map((cat, index) => (
+                                            <a className="mobile-cats-tab-link" key={index} onClick={this.catSelected} data-id={cat.id}>
+                                                <svg className={"cat-"+catIconName(cat.name)} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
+                                                    <use xlinkHref={"#cat-"+catIconName(cat.name)} data-index={index} data-id={cat.id}></use>
+                                                </svg>
+                                                <span className="">
+                                                    {truncText(cat.name, 10)}
+                                                </span>
+                                            </a>
+                                        ))
+                                    }
+                                </div>
+                                :""
+                            }
+                        <div className="container-fluid sm-no-padding-down">
+                            <div className="bar">
+                                <div id="categories" className="side fade md-block-up tab-pane">
+                                    <div id="mobile-cats-header" style={{height: "50px"}} className="mobile-cats-header md-hide-up">
+                                        <div style={{cursor: "pointer"}} onClick={this.showMobileCatsTab} id="goods-tab" data-toggle="tab" href="#goods" role="tab" aria-controls="goods" aria-selected="true">
+                                                <i className="fa fa-chevron-left"></i>
                                         </div>
+                                        <div className="mobile-cats-header-title">Filters</div>
                                     </div>
-                                    :
-                                    ""
-                                }
-                                <div className="row">
-                                <div className="b-filters-wrapper col-xs-12 col-md-3" data-v-4e3f0b28="">
-                                <div className="h-mb-15 h-ph-15 b-list-category-stack" style={{marginTop: "20px"}} data-v-4e3f0b28="">
+                                    <div className="side-inner">
+                                        <div className="b-categories-listing-outer">
+                                        <div className="h-mb-15 h-ph-15 b-list-category-stack" data-v-4e3f0b28="">
   <div className="" data-v-4e3f0b28="" style={{display: "none"}}>
    <div className="b-bouncing-loader" style={{bottom: "0px"}}>
     <div>
@@ -540,18 +583,34 @@ class SearchPage extends Component {
     
    </div>
   </div>
- </div>
+ </div>       
+                                        </div>
+                                    </div>
                                 </div>
-                                    <div className="b-main-page__main-section-wrapper col-xs-12 col-md-9">
+                                <div id="goods" className="main md-block-up tab-pane fade show active in">
+                                <div>
                                         <main>
                                             {
+                                                this.state.loading_products?
+                                                <div className="b-bouncing-loader-wrapper" data-v-67bc6bc4="" style={{display: "block"}}>
+                                                    <div className="b-bouncing-loader spinner-absolute h-pt-20" style={{bottom: "0px"}}>
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
+                                                    </div>
+                                                </div>
+                                                :
+                                                ""
+                                            }
+                                            {
                                                 this.state.products.length > 0?
-                                            <div>
-                                                <h3 className="b-listing-cards-title">Search/Filter results</h3>
+                                                <div>
+                                                   
+                                                <h3 className="sm-hide-down b-listing-cards-title">Result</h3>
                                                 <div className="row">
                                                     {
                                                         this.state.products.map((product, index) => (
-                                                            <div className="col-xs-6 col-sm-3 h-mb-15">
+                                                            <div key={index} className="col-xs-6 col-sm-3 h-mb-15">
                                                             <div className="fw-card qa-fw-card b-trending-card h-height-100p">
                                                                 <Link to={productLink(product.title, product.id)} className="">
                                                                     <div className="fw-card-media qa-fw-card-media" style={{ backgroundColor: "rgb(255, 255, 255)", backgroundImage: 'url('+product.photos.split(",")[0]+')' }}>
@@ -604,10 +663,9 @@ class SearchPage extends Component {
                     <div onClick={this.toggleCountries} className={this.state.countries_visible?"fw-fixed-background":"fw-fixed-background hide"}></div>
                 </div>
                 <Footer />
-                </div>
-
+            </div>
         )
     }
 }
 
-export default SearchPage
+module.exports = SearchPage
