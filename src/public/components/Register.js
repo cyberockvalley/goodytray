@@ -1,20 +1,31 @@
 import React, { Component } from 'react'
 import {Link} from "react-router-dom"
 import { register } from './UserFunctions'
-import {isValidNumber, isValidEmail, id, cls, shuffleHash, randomHashString} from '../utils/Funcs'
+import {isValidNumber, isValidEmail, id, cls, shuffleHash, randomHashString, addQueryParam} from '../utils/Funcs'
 import Navbar from './Navbar'
 import Footer from "./Footer"
+import queryString from 'querystring'
 
 class Register extends Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.state = {
-          fullname: '',
-          number: '',
-          email: '',
-          password: '',
-          posting_form: false,
-          hasErrors: false
+            third_party_login_links: props.third_party_login_links,
+            fullname: '',
+            number: '',
+            email: '',
+            password: '',
+            posting_form: false,
+            hasErrors: false,
+            query_values: queryString.parse(this.props.location.search.substring(1))
+        }
+        if(this.state.query_values.next) {
+            var links = this.state.third_party_login_links
+            links.facebook = addQueryParam("state", links.facebook, this.state.query_values.next)
+            links.google = addQueryParam("state", links.google, this.state.query_values.next)
+            console.log("LINKS", 2, links)
+        
+            this.setState({third_party_login_links: links})
         }
     
         this.onChange = this.onChange.bind(this)
@@ -158,10 +169,10 @@ class Register extends Component {
                                             <div className="row center-xs">
                                                 <div className="bc-auth-card__form-holder">
                                                     <form noValidate onSubmit={this.onSubmit}>
-                                                        <div className="bc-social-buttons hide">
+                                                        <div className="bc-social-buttons">
                                                             <div className="row">
                                                                 <div className="col-xs-12"><a
-                                                                    href="https://jiji.ng/social-auth.html?url=%2Fregistration.html"
+                                                                    href={this.state.third_party_login_links.facebook}
                                                                     target=""
                                                                     className="js-handle-link-event h-width-100p bc-facebook fw-button qa-fw-button fw-button--type-success fw-button--size-large"
                                                                     ><span
@@ -174,7 +185,7 @@ class Register extends Component {
                                                                             Login with Facebook
                                                                 </span></span></a></div>
                                                                 <div className="col-xs-12"><a
-                                                                    href="https://jiji.ng/google-auth.html?url=%2Fregistration.html"
+                                                                    href={this.state.third_party_login_links.google}
                                                                     target=""
                                                                     className="js-handle-link-event h-width-100p bc-google fw-button qa-fw-button fw-button--type-success fw-button--size-large"
                                                                     ><span
@@ -280,7 +291,7 @@ class Register extends Component {
                                     <div className="bc-social-buttons-container col-xs">
                                         <div className="h-font-12 row center-xs">
                                             <div className="bc-auth-card__form-holder">
-                                                Already registered? <Link to="/login" className="h-base-link">Sign in</Link></div>
+                                                Already registered? <Link to={"/login" +(this.state.query_values.next?"?next="+this.state.query_values.next:"")} className="h-base-link">Sign in</Link></div>
                                         </div>
                                     </div>
                                 </div>

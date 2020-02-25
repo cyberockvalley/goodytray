@@ -3,14 +3,11 @@ import { Link, Route } from 'react-router-dom'
 import Landing from './Landing'
 import Register from './Register'
 import Login from './Login'
-//import Account from './Account'
-import Navbar from './Navbar'
-import Footer from './Footer'
 import ProductPage from "./ProductPage"
 import ProductReviews from "./ProductReviews"
 import SellerPage from "./SellerPage"
 import CreateTips from "./CreateTips"
-import SearchPage from "./SearchPage"
+import SearchPage from "./SearchPage2"
 import About from './About'
 import Contact from './Contact'
 import Privacy from './Privacy'
@@ -25,7 +22,7 @@ const MultipleRoutes = (props) => (
       render={(propz) => <SearchPage {...propz} user={props.initialData.user} />}
     />
     <Route path="/register" 
-      render={(propz) => <Register {...propz} user={props.initialData.user} />}
+      render={(propz) => <Register {...propz} user={props.initialData.user} third_party_login_links={props.initialData.third_party_login_links} />}
     />
     <Route path="/(login|profile|settings|messages|notifications|create-review)" 
       render={(propz) => <Login {...propz} user={props.initialData.user} third_party_login_links={props.initialData.third_party_login_links}/>}

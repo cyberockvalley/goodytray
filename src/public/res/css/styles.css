@@ -86,6 +86,7 @@ a.js-handle-link-event:hover {color: #fff !important;}
 /* Small Devices, Tablets */
 @media only screen and (max-width : 768px) {
 	.sm-hide-down {display:none !important}
+	.sm-no-padding-down {padding-left: 0px !important; padding-right: 0px !important;}
 }
 
 /* Extra Small Devices, Phones */ 
@@ -96,6 +97,93 @@ a.js-handle-link-event:hover {color: #fff !important;}
 /* Custom, iPhone Retina */ 
 @media only screen and (max-width : 320px) {
 	.xsc-hide-down {display:none !important}
+}
+
+.container-fluid {
+	padding-left: auto !important;
+	padding-right: auto !important;
+}
+.b-app-header {
+	padding: 8px 0px;
+}
+.navbar-fixed-top .navbar-collapse {
+	padding-left: 15px !important;
+	padding-right: 15px !important;
+}
+
+.bar {
+	display: flex;
+	justify-content: space-around;
+}
+.bar .side, .side-inner[fixed="yes"] {
+	width: 305px;
+	max-width: 25%;
+}
+.bar .side {
+	height: 100%;
+	position: relative;
+}
+.bar .side .side-inner {
+	z-index: 7;
+	position: relative;
+	transform: translateY(0px);
+	bottom: auto;
+	height: 5000px;
+	max-height: 80vh !important;
+}
+.abs{position: absolute;}
+.bar .side .side-inner[fixed="yes"] {
+	position: fixed;
+	top: 81px;
+	left: 15;
+}
+.bar .main {
+	padding: 5px;
+	width: 75%;
+	margin-left: 2rem;
+}
+.b-categories-listing-outer {
+	margin-top: 15px;
+}
+@media only screen and (max-width : 768px) {
+	.b-categories-listing-outer {
+		margin-top: 0px !important;
+	}
+	.bar {
+		display: block;
+	}
+	.bar .side {
+		width: 100% !important;
+		max-width: 100% !important;
+		height: 100%;
+		position: relative;
+		display: none;
+	}
+	.bar .side .side-inner {
+		z-index: 7;
+		position: relative;
+		transform: translateY(0px);
+		bottom: auto;
+		height: 100% !important;
+	}
+	.abs{position: absolute;}
+	.bar .side .side-inner[fixed="yes"] {
+		position: relative;
+		top: 66px;
+		left: 0;
+		width: 100% !important;
+		max-width: 100% !important;
+	}
+	.bar .main {
+		padding: 5px;
+		width: 100% !important;
+		margin-left: 0px !important;
+	}
+}
+
+
+.bar[view="side"] .side {
+	width: 100;
 }
 
 .disabled-section[data-v-2f9b1610].loading-section:after {background: #E7422D;font-size: 12px;border-radius: 5px;padding:5px;font-style:italic;color:#fff;content:"Loading...Please wait."}

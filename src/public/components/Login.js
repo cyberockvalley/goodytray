@@ -232,7 +232,7 @@ onChange(e) {
               <div className="bc-social-buttons-container col-xs">
                 <div className="h-font-12 row center-xs">
                   <div className="bc-auth-card__form-holder">
-                    Don't have an account? <Link to="/register" className="h-base-link">Registration</Link>
+                    Don't have an account? <Link to={"/register" +(this.state.query_values.next?"?next="+this.state.query_values.next:"")} className="h-base-link">Registration</Link>
                   </div>
                 </div>
               </div>

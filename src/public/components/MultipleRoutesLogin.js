@@ -2,15 +2,13 @@ import React from 'react'
 import { Route } from 'react-router-dom'
 import Landing from './Landing'
 import Profile from './Profile'
-import Navbar from './Navbar'
-import Footer from './Footer'
 
 import ProductPage from "./ProductPage"
 import ProductReviews from "./ProductReviews"
 import CreateReview from "./CreateReview"
 import SellerPage from "./SellerPage"
 import CreateTips from "./CreateTips"
-import SearchPage from "./SearchPage"
+import SearchPage from "./SearchPage2"
 
 import Settings from "./Settings"
 import Messages from "./Messages"

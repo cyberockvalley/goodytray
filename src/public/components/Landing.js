@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME } from "../../../Constants"
-import { productLink, catLink, catIconName, countryLink } from "../utils/LinkBuilder"
+import { productLink, catLink, catIconName, countryLink, subCatLink } from "../utils/LinkBuilder"
 import { commaNum, id, overflows, truncText} from "../utils/Funcs"
 import { Link } from "react-router-dom"
 import Navbar from './Navbar'
@@ -123,6 +123,7 @@ class Landing extends Component {
     }
 
     setSubCat = (e) => {
+        document.getElementsByClassName("b-categories-listing-outer")[0].classList.add("abs")
         var id = e.target.getAttribute("data-id")
         $.each($(".b-categories-item"), (i, el) => {
             el.classList.remove(["b-categories-item-focused"])
@@ -140,6 +141,7 @@ class Landing extends Component {
     }
 
     clearSubCats = () => {
+        document.getElementsByClassName("b-categories-listing-outer")[0].classList.remove("abs")
         this.state.sub_cats = []
         this.setState({sub_cats: []})
         $.each($(".b-categories-item"), (i, el) => {
@@ -202,11 +204,11 @@ class Landing extends Component {
 
     hideMobileCatsTab = () => {
         $("#mobile-cats-tab").hide();
-        $("#mobile-cats-header").show();
+        $("#categories").show();
     }
     showMobileCatsTab = () => {
         $("#mobile-cats-tab").show();
-        $("#mobile-cats-header").hide();
+        $("#categories").hide();
     }
 
     render() {
@@ -214,10 +216,9 @@ class Landing extends Component {
             <div>
                 <Navbar user={this.props.user} />
                 <div className="h-bg-grey  h-pb-15">
-                    <div>
-                        <div className="b-main-page">
-                            <div className="b-main-page-header h-pos-rel sm-hide-down">
-                                <div className="b-main-page-header__inner-wrapper">
+                    <div className="b-main-page">
+                        <div className="sm-hide-down b-main-page-header h-pos-rel">
+                        <div className="b-main-page-header__inner-wrapper">
                                     <div className="b-main-page-header__inner-wrapper--content h-width-600 h-pos-rel h-height-100p">
                                         <img alt="man" className="b-main-page-header__img-man" src="/public/res/images/static/man.png" />
                                         <div className="b-main-page-header__content ">
@@ -327,8 +328,8 @@ class Landing extends Component {
                                         <img alt="girls" className="b-main-page-header__img-girls" src="/public/res/images/static/girls.png" />
                                     </div>
                                 </div>
-                            </div>
-                            {
+                        </div>
+                        {
                                 this.state.cats && this.state.cats.length > 0?
                                 <div id="mobile-cats-tab" className={"mobile-cats-tab md-hide-up" + (this.state.cats && this.state.cats.length > 0?"": " hide")}>
                                     <a onClick={this.hideMobileCatsTab} className="mobile-cats-tab-link mobile-cats-tab-link" id="categories-tab" data-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="false">
@@ -352,20 +353,17 @@ class Landing extends Component {
                                 </div>
                                 :""
                             }
-                            <div className="container">
-                                <div className="cat-tab row tab-content">
-                                    <div id="categories" className="mobile-cats fade md-block-up tab-pane b-main-page-categories-wrapper col-xs-12 col-sm-12 col-md-3 b-main-page-categories-wrapper--desktops">
-                                        <div id="mobile-cats-header" style={{height: "50px"}} className="mobile-cats-header md-hide-up">
-                                            <div style={{cursor: "pointer"}} onClick={this.showMobileCatsTab} id="goods-tab" data-toggle="tab" href="#goods" role="tab" aria-controls="goods" aria-selected="true">
-                                                 <i className="fa fa-chevron-left"></i>
-                                            </div>
-                                            <div className="mobile-cats-header-title">Categories</div>
+                        <div className="container-fluid sm-no-padding-down">
+                            <div className="bar">
+                                <div id="categories" className="side fade md-block-up tab-pane">
+                                    <div id="mobile-cats-header" style={{height: "50px"}} className="mobile-cats-header md-hide-up">
+                                        <div style={{cursor: "pointer"}} onClick={this.showMobileCatsTab} id="goods-tab" data-toggle="tab" href="#goods" role="tab" aria-controls="goods" aria-selected="true">
+                                                <i className="fa fa-chevron-left"></i>
                                         </div>
-                                        <div className="b-fixed-element-outer">
-                                            <div className="b-fixed-element b-fixed-element-static" style={{ left: "0px", bottom: "auto", top: "71px"}}>
-                                                <div className="h-mb-15">
-                                                    <div className="qa-category-tree b-categories-listing-wrapper h-mt-0 h-mb-0">
-                                                        <div className="b-categories-listing-outer">
+                                        <div className="mobile-cats-header-title">Categories</div>
+                                    </div>
+                                    <div className="side-inner">
+                                    <div className="b-categories-listing-outer">
                                                             <div onMouseLeave={this.clearSubCats} className="b-categories-listing-inner b-categories-listing-inner--small-box-shadow">
                                                                 <div className="b-categories-listing__item b-categories-listing__parents">
                                                                     <div id="side_bar_scroll" className="b-categories-listing__item__inner">
@@ -422,7 +420,7 @@ class Landing extends Component {
                                                                                 <div className="b-categories-listing__item__inner">
                                                                                     {
                                                                                         this.state.sub_cats.map((sCat, index) => (
-                                                                                            <Link to={catLink(sCat.name)} key={"sub_cat_"+index} className={"b-categories-item h-ph-10 b-categories-item--item-alt qa-category-sub-item cat_and_sub_"+this.state.cat_id} data-index={index} data-id={this.state.cat_id}>
+                                                                                            <Link to={subCatLink(sCat.name)} key={"sub_cat_"+index} className={"b-categories-item h-ph-10 b-categories-item--item-alt qa-category-sub-item cat_and_sub_"+this.state.cat_id} data-index={index} data-id={this.state.cat_id}>
                                                                                                 <span className="b-categories-item--outer" data-index={index} data-id={this.state.cat_id}>
                                                                                                     <span className="h-flex-center" data-index={index} data-id={this.state.cat_id}>
                                                                                                         <span className="b-categories-item--inner" data-index={index} data-id={this.state.cat_id}>
@@ -454,13 +452,10 @@ class Landing extends Component {
 
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div className="b-categories-listing--fixed-background" style={{ display: "none" }}></div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
-                                    <div id="goods" className="md-block-up tab-pane fade show active in b-main-page__main-section-wrapper col-xs-12 col-sm-12 col-md-9">
+                                </div>
+                                <div id="goods" className="main md-block-up tab-pane fade show active in">
+                                <div>
                                         <main>
                                             {
                                                 this.state.loading_products?
@@ -506,43 +501,6 @@ class Landing extends Component {
                                                         </div>
                                                         <Link to="/about" className="btn btn-lg btn-orange">Learn More</Link>
                                                     </div>
-                                                    
-                                                    {/*
-                                                    <div className="b-marketing-activities-carousel-wrapper">
-                                                        <div className="b-marketing-activities-carousel">
-                                                            <div className="VueCarousel">
-                                                                <div className="VueCarousel-wrapper">
-                                                                    <div className="VueCarousel-inner" style={{ transform: "translate("+(723 - ((this.state.carousel_id + 1) * 723))+"px)", transition: "transform 0.5s ease 0s", flexBasis: "723px", visibility: "visible", height: "auto" }}>
-                                                                        {
-                                                                            this.state.carousel_images.map((image, index) => (
-                                                                                <div key={index} tabIndex="-1" aria-hidden="true" role="tabpanel" className="VueCarousel-slide">
-                                                                                    <a href="/about" className="b-marketing-activities-carousel__slide" style={{ backgroundImage: "url("+image+")" }}></a>
-                                                                                </div>
-                                                                            ))
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                                <div data-v-6b6bd89c="" className="VueCarousel-navigation">
-                                                                    <button onClick={this.handleClick} data-source="change-carousel" data-id={this.state.carousel_id - 1} data-v-6b6bd89c="" type="button" aria-label="Previous page" tabIndex="-1" className={this.state.carousel_id > 0?"VueCarousel-navigation-button VueCarousel-navigation-prev" : "VueCarousel-navigation-button VueCarousel-navigation-prev VueCarousel-navigation--disabled"} style={{ padding: "8px", marginRight: "-8px" }}>
-                                                                        <svg data-source="change-carousel" data-id={this.state.carousel_id - 1} width="25" height="40" viewBox="0 0 25 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <path data-source="change-carousel" data-id={this.state.carousel_id - 1} d="M24.083 4.645L9.19801 19.5625L24.083 34.48L19.5005 39.0625L0.000512874 19.5625L19.5005 0.0624996L24.083 4.645Z" fill="white"></path>
-                                                                        </svg>
-                                                                    </button>
-                                                                    <button onClick={this.handleClick} data-source="change-carousel" data-id={this.state.carousel_id + 1} data-v-6b6bd89c="" type="button" aria-label="Next page" tabIndex="0" className={this.state.carousel_id < this.state.carousel_images.length - 1?"VueCarousel-navigation-button VueCarousel-navigation-next" : "VueCarousel-navigation-button VueCarousel-navigation-next VueCarousel-navigation--disabled"} style={{ padding: "8px", marginLeft: "-8px" }}>
-                                                                        <svg data-source="change-carousel" data-id={this.state.carousel_id + 1} width="25" height="39" viewBox="0 0 25 39" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <path data-source="change-carousel" data-id={this.state.carousel_id + 1} d="M0.916992 34.4175L15.802 19.5L0.916992 4.5825L5.49949 0L24.9995 19.5L5.49949 39L0.916992 34.4175Z" fill="white"></path>
-                                                                        </svg>
-                                                                    </button>
-                                                                </div>
-                                                                <div data-v-04ae2528="" className="VueCarousel-pagination">
-                                                                    <div data-v-04ae2528="" role="tablist" className="VueCarousel-dot-container" style={{ marginTop: "20px" }}>
-                                                                        <button data-v-04ae2528="" aria-hidden="false" role="tab" title="Item 0" value="Item 0" aria-label="Item 0" aria-selected="true" className="VueCarousel-dot VueCarousel-dot--active" style={{ marginTop: "20px", padding: "10px", width: "10px", height: "10px", backgroundColor: "white" }}></button>
-                                                                        <button data-v-04ae2528="" aria-hidden="false" role="tab" title="Item 1" value="Item 1" aria-label="Item 1" aria-selected="false" className="VueCarousel-dot" style={{ marginTop: "20px", padding: "10px", width: "10px", height: "10px", backgroundColor: "rgba(0, 0, 0, 0.5)" }}></button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                                    </div>
-                                                    </div>*/}
                                                 </div>
                                                 <div className="col-md-3">
                                                     {
@@ -621,9 +579,8 @@ class Landing extends Component {
                 </div>
                 <Footer />
             </div>
-
         )
     }
 }
 
-export default Landing
+module.exports = Landing
