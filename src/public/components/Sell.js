@@ -1028,8 +1028,57 @@ class Sell extends Component {
 
       </div>
       
-
      </div>
+     <div className="qa-premium-section block b-content-area b-content-area--shadow h-p-15" data-v-0d6ab1a8="">
+ <h4 className="title" data-v-0d6ab1a8="">
+  <b data-v-0d6ab1a8="">
+   Promote your ad
+  </b>
+ </h4>
+ <p className="h-mb-20" data-v-0d6ab1a8="">
+  Please, choose one of the following options to post your ad.
+ </p>
+ <div className="b-form-section h-mb-0" data-v-0d6ab1a8="">
+  <div className="b-form-section__row" data-v-0d6ab1a8="">
+   <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="0-free_post" name="paid_package" type="radio"/>
+   <label className="h-font-normal h-mb-0" data-v-0d6ab1a8="" for="0-free_post">
+    <span className="package-label package-label--free" data-v-0d6ab1a8="">
+     Standard ad
+    </span>
+   </label>
+  </div>
+  <div className="b-form-section__row h-mt-15" data-v-0d6ab1a8="">
+   <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="1-page_top_1" name="paid_package" type="radio"/>
+   <label className="h-font-normal h-mb-0" data-v-0d6ab1a8="" for="1-page_top_1">
+    <span className="package-label package-label--top" data-v-0d6ab1a8="">
+     1 TOP: Others
+    </span>
+    <div data-v-0d6ab1a8="" style={{display: "inline-block", padding: "3px 0px"}}>
+     One advert promotion for
+     <b>
+      7 days
+     </b>
+     .
+    </div>
+   </label>
+  </div>
+  <div className="b-form-section__row h-mt-15" data-v-0d6ab1a8="">
+   <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="2-page_top_1_30" name="paid_package" type="radio"/>
+   <label className="h-font-normal h-mb-0" data-v-0d6ab1a8="" for="2-page_top_1_30">
+    <span className="package-label package-label--top" data-v-0d6ab1a8="">
+     1 TOP 30d: Others
+    </span>
+    <div data-v-0d6ab1a8="" style={{display: "inline-block", padding: "3px 0px"}}>
+     One advert promotion for
+     <b>
+      30 days
+     </b>
+     .
+    </div>
+   </label>
+  </div>
+ </div>
+</div>
      <div className="h-text-center h-mb-50">
       <button className="qa-submit-button b-button b-button--secondary b-button--border-radius b-button--shadow" data-package-category="" data-package-id="" data-package-name="" id="submitButton" type="submit">
        <b>

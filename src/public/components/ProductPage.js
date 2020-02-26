@@ -256,7 +256,7 @@ class ProductPage extends Component {
                </div>
               </div>
               <div data-v-67bc6bc4="">
-               <ol className="qa-bread-crumbs b-breadcrumb-wrapper h-no-text-overflow h-pb-10" data-v-67bc6bc4="">
+               <ul className="qa-bread-crumbs b-breadcrumb-wrapper h-no-text-overflow h-pb-10" data-v-67bc6bc4="">
                 <li className="b-breadcrumb-inner">
                  <Link className="qa-bread-crumbs-link b-breadcrumb-link" to="/">
                   <span>
@@ -304,7 +304,7 @@ class ProductPage extends Component {
                  </a>
                  <meta/>
                 </li>
-               </ol>
+               </ul>
                <div categoryid="29" categoryslug="cars" data-v-67bc6bc4="">
                </div>
                <div className="qa-show-adsense h-mb-15" data-v-67bc6bc4="">
@@ -396,7 +396,7 @@ class ProductPage extends Component {
                      </div>
                     </div>
                     <div className="h-flex">
-                     <ol className="qa-carousel-thumbnails h-dflex h-mt-5" style={{marginLeft: "-5px", marginRight: "-5px"}}>
+                     <ul className="qa-carousel-thumbnails h-dflex h-mt-5" style={{marginLeft: "-5px", marginRight: "-5px"}}>
                       {
                           this.state.product && this.state.product.photos?
                           this.state.product.photos.split(",").slice(0, this.state.product.photos.split(",").length <= this.state.max_thumb_count?this.state.product.photos.split(",").length:this.state.max_thumb_count).map((photo, i) => (
@@ -427,7 +427,7 @@ class ProductPage extends Component {
                           :
                           ""
                         }
-                     </ol>
+                     </ul>
                     </div>
                     {
                         this.state.product && this.state.product.photos?
@@ -700,7 +700,7 @@ class ProductPage extends Component {
                         </Link>
                        </div>
                       </div>
-                      <div className={this.state.product.reviews > 0?"b-seller-feedback-block":"b-seller-feedback-block hide"}>
+                      <div className={this.state.product.reviews > 0?"b-seller-feedback-block":"b-seller-feedback-block hides"}>
                        <Link className="b-leave-feedback-button" to={"/reviews/"+this.state.product.id}>
                         <span className="b-button b-button--primary b-button--biggest-size b-button--has-feedback">
                          <span className="b-feedback-count">

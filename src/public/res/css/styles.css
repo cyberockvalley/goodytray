@@ -145,6 +145,7 @@ a.js-handle-link-event:hover {color: #fff !important;}
 .b-categories-listing-outer {
 	margin-top: 15px;
 }
+ul{list-style: none;}
 @media only screen and (max-width : 768px) {
 	.b-categories-listing-outer {
 		margin-top: 0px !important;
