@@ -189,9 +189,28 @@ class Landing extends Component {
         browser.axios.get(API_ROOT + "products?update_order=1&views_order=1")
         .then(resp => {
             if(resp && resp.data && resp.data.list) {
-                this.setState({products: resp.data.list})
+                var products = resp.data.list
+                //get the ads
+                browser.axios.get(API_ROOT + "products/sponsored")
+                .then(resp => {
+                    console.log("ADS_RESULT", resp.data)
+                    if(resp.data.list) {
+                        var ads = resp.data.list
+                        for(var i = 0; i < ads.length; i++) {
+                            ads[i].sponsored = true
+                        }
+                        this.setState({products: ads.concat(products)})
+                        this.setState({loading_products: false})
+                    } else {
+                        this.setState({products: products})
+                        this.setState({loading_products: false})
+                    }
+                    
+                })
+            } else {
+                this.setState({loading_products: false})
             }
-            this.setState({loading_products: false})
+            
         })
         //get countries
         browser.axios.get(API_ROOT + "countries")

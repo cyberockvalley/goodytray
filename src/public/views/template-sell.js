@@ -54,6 +54,7 @@ export default ({ body, initialData }) => {
   
       <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
       <title>${initialData.pageMeta.title}</title>
+      <script src="https://js.stripe.com/v3/"></script>
       
       <script>window.__initialData__ = ${JSON.stringify(initialData)}</script>
   </head>

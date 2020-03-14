@@ -9,6 +9,9 @@ var dateFormat = require('dateformat');
 import Navbar from './Navbar'
 import Footer from "./Footer"
 
+import ImageView from "./widgets/ImageView"
+import TextView from "./widgets/TextView"
+
 class Profile extends Component {
   constructor(props) {
     super(props)
@@ -43,6 +46,7 @@ class Profile extends Component {
     this.uploadPhoto = this.uploadPhoto.bind(this)
     //this.loadProducts = this.loadProducts.bind(this)
     this.updateProductsData = this.updateProductsData.bind(this)
+    this.showStats = this.showStats.bind(this)
   }
 
   componentDidMount() {
@@ -57,22 +61,16 @@ class Profile extends Component {
     this.setState({products_type: p_type})
     console.log("queryValues.products_type", queryValues.products_type, this.state.products_type)
     //get active counts
-    browser.axios.get(API_ROOT + "products/?user_id="+this.state.user.id+"&is_draft=0&count_only=1")
-    .then(resp => {
+    browser.axios.get(API_ROOT + "products/user/non_boosted/"+this.state.user.id+"?count_only=1")
+    .then(resp => {console.log("CountNonBoosted", resp.data)
       if(resp.data.counts) {
         this.setState({active_total: resp.data.counts})
       }
     })
-    //get draft counts
-    browser.axios.get(API_ROOT + "products/?user_id="+this.state.user.id+"&is_draft=1&count_only=1")
-    .then(resp => {
-      if(resp.data.counts) {
-        this.setState({draft_total: resp.data.counts})
-      }
-    })
     //get sponsored counts
-    browser.axios.get(API_ROOT + "top-ads/?user_id="+this.state.user.id+"&is_draft=1&count_only=1")
+    browser.axios.get(API_ROOT + "products/user/boosted/"+this.state.user.id+"?count_only=1")
     .then(resp => {
+      console.log("CountBoosted", resp.data)
       if(resp.data.counts) {
         this.setState({sponsored_total: resp.data.counts})
       }
@@ -98,13 +96,6 @@ class Profile extends Component {
       this.setState({products: this.state.active_products})
       this.setState({products_has_next: this.state.active_has_next})
 
-    } else if(type == "draft") {
-      console.log("updateProductsData", "draf")
-      this.state.products = this.state.draft_products
-      this.state.products_has_next = this.state.draft_has_next
-      this.setState({products: this.state.draft_products})
-      this.setState({products_has_next: this.state.draft_has_next})
-
     }
   }
 
@@ -126,16 +117,20 @@ class Profile extends Component {
 
   }
 
-  preDelete = (e) => {
+  showStats = (e) => {
     e.preventDefault()
-    var dataId = e.target.getAttribute("data-id");
-    modalAlert("Are you sue you want to delete this", function() {
-      modalAlert("Alright then")
-    })
+    var dataIndex = e.target.getAttribute("data-index")
+    this.setState({shown_stats: this.state.products[dataIndex]})
+    this.setState({modal: true})
+  }
+
+  hideStats = () => {
+    this.setState({shown_stats: null})
+    this.setState({modal: false})
   }
 
   loadProducts = () => {
-    var apiSubPath = "products/?"
+    var apiSubPath = ""
     var hasNextKey
     var productPageKey
     var productsKey
@@ -144,7 +139,7 @@ class Profile extends Component {
     console.log("State", JSON.stringify(this.state))
     if(this.state.products_type == "sponsored") {
       page = this.state.sponsored_products_page + 1
-      apiSubPath = "top-ads/?user_id="+this.state.user.id+"&page="+page
+      apiSubPath = "products/user/boosted/"+this.state.user.id+"?page="+page
       hasNextKey = "sponsored_has_next"
       productPageKey = "sponsored_products_page"
       productsKey = "sponsored_products"
@@ -152,41 +147,33 @@ class Profile extends Component {
 
     } else if(this.state.products_type == "active") {
       page = this.state.active_products_page + 1
-      apiSubPath += "user_id="+this.state.user.id+"&is_draft=0&page="+page
+      apiSubPath += "products/user/non_boosted/"+this.state.user.id+"?page="+page
       hasNextKey = "active_has_next"
       productPageKey = "active_products_page"
       productsKey = "active_products"
       productTotalKey = "active_total"
 
-    } else if(this.state.products_type == "draft") {
-      page = this.state.draft_products_page + 1
-      apiSubPath += "user_id="+this.state.user.id+"&is_draft=1&page="+page
-      hasNextKey = "draft_has_next"
-      productPageKey = "draft_products_page"
-      productsKey = "draft_products"
-      productTotalKey = "draft_total"
-
-    } else {
-      console.log("NOT DEFINED !!!", this.state.products_type)
     }
-
+    
     console.log("API_ROOT + apiSubPath", API_ROOT + apiSubPath)
     this.setState({loading: true})
     browser.axios.get(API_ROOT + apiSubPath)
     .then(response => {
-      console.log("responz a")
       if(response && response.data.list) {
-        const products = this.state[[productsKey]].concat(response.data.list)
+        var prods = response.data.list
+        if(apiSubPath.startsWith("products/user/boosted/")) {
+          for(var i = 0; i < prods.length; i++) {
+            prods[i].sponsored = true
+          }
+        }
+        const products = this.state[[productsKey]].concat(prods)
         this.setState({[[productsKey]]: products})
         this.setState({[[hasNextKey]]: response.data.has_next})
         this.setState({[[productTotalKey]]: response.data.counts})
         this.setState({[[productPageKey]]: page})
 
         this.updateProductsData(this.state.products_type)
-
-        console.log("responz 1", response.data.list, this.state.active_products)
-        console.log("responz 2", products)
-        console.log("responz 3", this.state.products)
+        
 
       }
       this.setState({loading: false})
@@ -338,7 +325,7 @@ class Profile extends Component {
        <ul>
         <li className="h-mr-15">
          <a onClick={this.changeProductsType} data-type="active" className={this.state.products_type == "active"?"active b-link-tabs__a qa-list-advert-tab":"b-link-tabs__a qa-list-advert-tab"} href="javascript:void(0)">
-          Active
+          Non-Boosted ads
          </a>
          {
            this.state.active_total > 0?
@@ -351,10 +338,10 @@ class Profile extends Component {
         </li>
         <li className="h-mr-15">
          <a onClick={this.changeProductsType} data-type="sponsored" className={this.state.products_type == "sponsored"?"active b-link-tabs__a qa-list-advert-tab":"b-link-tabs__a qa-list-advert-tab"} href="javascript:void(0)">
-          Boosted
+          Boosted ads
          </a>
          {
-           this.state.sponsored_products > 0?
+           this.state.sponsored_total > 0?
            <span className="b-link-tabs__notification qa-list-advert-notification">
             {commaNum(this.state.sponsored_total)}
            </span>
@@ -362,22 +349,9 @@ class Profile extends Component {
            ""
           }
         </li>
-        <li className="h-mr-15">
-         <a onClick={this.changeProductsType} data-type="draft" className={this.state.products_type == "draft"?"active b-link-tabs__a qa-list-advert-tab":"b-link-tabs__a qa-list-advert-tab"} href="javascript:void(0)">
-          Drafted
-         </a>
-         {
-           this.state.draft_total > 0?
-           <span className="b-link-tabs__notification qa-list-advert-notification">
-            {commaNum(this.state.draft_total)}
-           </span>
-           :
-           ""
-          }
-        </li>
        </ul>
        <div className="h-float-right h-font-16">
-        Total: {this.state.active_total + this.state.draft_total} ads
+        Total: {this.state.active_total + this.state.sponsored_total} ads
        </div>
       </div>
       {
@@ -405,11 +379,11 @@ class Profile extends Component {
              <a className="b-profile-advert__go-to-edit" href={"/edit-ad?id="+product.id}>
               Edit
              </a>
-             <a onClick={this.preDelete} href="javascript:void(0)" data-id={product.id} className="qa-fw-field__error b-profile-advert__go-to-publish qa-btn-owner-publish-draft">
-              Delete
+             <a onClick={this.showStats} href="javascript:void(0)" data-index={index} data-id={product.id} style={{paddingLeft: "5px", paddingRight: "5px"}} className="qa-fw-field__error b-profile-advert__go-to-publish qa-btn-owner-publish-draft">
+              Show Stats&nbsp;<i className="fa fa-bar-chart"></i>
              </a>
              <div className="h-inline-block">
-              <p className="b-profile-advert__footer-block">
+              <p className="hide b-profile-advert__footer-block">
                <i className="h-icon icon-profile-eye-new">
                </i>
                {product.views} views
@@ -443,15 +417,9 @@ class Profile extends Component {
            <img alt="" className="h-mb-10 h-rl-15" src={STATIC_IMAGES_CLIENT_DIR+"no_ads.png"}/>
            {
              this.state.products_type == "active"?
-              <p>You don't have active ads.<br />Post ads for free and get clients.</p>
+              <p>You don't have non-boosted ads.<br />Post ads for free and get clients.</p>
               :
-              this.state.products_type == "sponsored"?
               <p>You don't have any ad Boosted yet.<br />Boosted ads get more views, engagements and more sales.</p>
-              :
-              this.state.products_type == "draft"?
-              <p>You don't have drafted ads.<br />Note that drafted ads won't show on {SITE_NAME}.</p>
-              :
-              ""
           }
           </div>
          </div>
@@ -486,6 +454,93 @@ class Profile extends Component {
   }
 </div>
 <Footer />
+<div style={{display: "flex", justifyContent: "space-around"}} className={this.state.modal?"fw-fixed-background":"fw-fixed-background hide"}>
+  {
+    !this.state.shown_stats?"":
+    <div id="stats" style={
+      { 
+        borderRadius: "4px",
+        backgroundColor: "#fff",
+        minWidth: "50px", 
+        maxWidth: "90%",
+        minHeight: "10px",
+        maxHeight: "70%",
+        display: "flex", 
+        justifyContent: "space-between",
+        padding: "10px",
+        flexDirection: "column",
+        margin: "auto 0"
+       }
+    }>
+      <TextView 
+          click={this.hideStats} 
+          padding="10px"
+          align_parent_end={true}
+          color="red"
+          text_size="18px"
+          cursor="pointer"
+          text="X" />
+      <div>
+        <div style={{marginBottom: "15px", display: "flex", flexDirection: "row"}}>
+          <ImageView 
+              src={this.state.shown_stats.photos.split(",")[0]}
+              width="25px"
+              height="25px"
+              margin_right="10px" />
+          <TextView 
+            class="b-profile-advert__title"
+            text={this.state.shown_stats.title} />
+        </div>
+        <div style={{display: "flex", flexDirection: "column"}}>
+          <div style={{marginBottom: "10px", display: "flex", flexDirection: "row"}}>
+            <TextView  
+              text_size="18px"
+              margin_right="5px"
+              text="Currently Boosted:" />
+            <TextView  
+              text_size="18px"
+              font_weight="bold"
+              text={this.state.shown_stats.sponsored?"Yes":"No"} />
+          </div>
+
+          <div style={{marginBottom: "10px", display: "flex", flexDirection: "row"}}>
+            <TextView  
+              text_size="18px"
+              margin_right="5px"
+              text="Total Views:" />
+            <TextView  
+              text_size="18px"
+              font_weight="bold"
+              text={this.state.shown_stats.views} />
+          </div>
+
+          <div style={{marginBottom: "10px", display: "flex", flexDirection: "row"}}>
+            <TextView  
+              text_size="18px"
+              margin_right="5px"
+              text="Total Boosted packages views:" />
+            <TextView  
+              text_size="18px"
+              font_weight="bold"
+              text={this.state.shown_stats.sponsored_views} />
+          </div>
+
+          <div style={{marginBottom: "10px", display: "flex", flexDirection: "row"}}>
+            <TextView  
+              text_size="18px"
+              margin_right="5px"
+              text="Total Boosted packages ends/ended on:" />
+            <TextView  
+              text_size="18px"
+              font_weight="bold"
+              text={this.state.shown_stats.sponsored_end_time == 0?"This ad has no boosted package"
+              :dateFormat(new Date(this.state.shown_stats.sponsored_end_time), "d mmm yyyy")} />
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
 </div>
     )
   }

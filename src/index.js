@@ -58,10 +58,17 @@ if(process.env.SSL_KEY && process.env.SSL_CHAIN) {
 app.use(cookieParser(process.env.COOKIES_SECRET_KEY));
 
 app.use(bodyParser.urlencoded());
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+  // Because Stripe needs the raw body, we compute it but only when hitting the Stripe callback URL.
+  verify: function(req,res,buf) {
+      var url = req.originalUrl;
+      if (url.startsWith('/api/v1/stripe/webhook')) {
+          req.rawBody = buf.toString()
+      }
+}}));
 
-app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(cors());
 // for compressing html and resources
 app.use(compression());
 // set static folder for generated css and front js files
@@ -72,6 +79,7 @@ app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', req.headers.origin);
   res.header('Access-Control-Allow-Methods', 'GET,POST');
   res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  res.header("X-FRAME-OPTIONS", "ALLOW-FROM https://stripe.com")
   next();
 });
 
@@ -87,6 +95,8 @@ app.use(API_ROOT + "states", States)
 app.use(API_ROOT + "cities", Cities)
 app.use(API_ROOT + "messages", Messages)
 app.use(API_ROOT + "reviews", Reviews)
+const Stripe = require('./public/routes/Stripe')
+app.use(API_ROOT + "stripe", Stripe)
 
 app.use('/public', express.static(path.resolve(__dirname, 'public')))
 

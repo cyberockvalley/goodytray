@@ -1,18 +1,32 @@
 import React, { Component } from 'react'
-import { uploadProduct } from './UserFunctions'
-import { SITE_NAME, API_ROOT, SITE_DOT_COM } from '../../../Constants'
+import { SITE_NAME, API_ROOT, SITE_DOT_COM, AD_PACKAGES, SERVER_ADDR } from '../../../Constants'
 const browser = require('../utils/Browser')
-import {id, cls, commaNum, remove, currencyLogo} from '../utils/Funcs'
+import {id, cls, commaNum, remove, removeObject, currencyLogo, getObjectValue, queries, uniqueArray, isFile, jsonEmpty} from '../utils/Funcs'
 import {MAX_PRODUCT_PHOTOS_SIZE} from "../../../Constants"
 import { productLink } from '../utils/LinkBuilder'
-import Navbar from './Navbar'
-import Footer from "./Footer"
+const StripeView = require("../components/third_party/stripe/StripeView")
+import TextView from "./widgets/TextView"
 
-class Sell extends Component {
+class SellEdit extends Component {
   constructor(props) {
     super(props)
     this.state()
-
+    this.state.seven_days_advert = {
+      amount: AD_PACKAGES.paid_package_b.amount,
+      description: "Payment to get more people to see your ad for 7 days"
+    },
+    this.state.thirty_days_advert = {
+      amount: AD_PACKAGES.paid_package_c.amount,
+      description: "Payment to get more people to see your ad for 30 days"
+    }
+    this.state.payment_data = {
+      amount: this.state.thirty_days_advert.amount,
+      currency: "usd",
+      currency_symbol: "$",
+      description: this.state.thirty_days_advert.description,
+      name: props.initialData.user.fullname,
+      email: props.initialData.user.email
+    }
     this.state.user = props.initialData.user
     this.state.fullname = props.initialData.user.fullname
 
@@ -26,7 +40,11 @@ class Sell extends Component {
     this.state.price_currency_symbol = this.state.currency_symbols[0]
     
     this.handleChange = this.handleChange.bind(this)
-    this.handleCheckboxChange = this.handleCheckboxChange.bind(this)
+    this.handleIntChange = this.handleIntChange.bind(this)
+    this.handleSingleCheckbox = this.handleSingleCheckbox.bind(this)
+    this.handleAttrCheckbox = this.handleAttrCheckbox.bind(this)
+    this.handleAttrSelect = this.handleAttrSelect.bind(this)
+    this.handleAttrInput = this.handleAttrInput.bind(this)
     this.onPhotoChangedHandler = this.onPhotoChangedHandler.bind(this)
     this.removePhoto = this.removePhoto.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -35,6 +53,8 @@ class Sell extends Component {
   state () {
     
     this.state = {
+      queries: queries(this.props),
+      product: null,
       cat: -1,
       sub_cat: -1,
       country: -1,
@@ -65,57 +85,210 @@ class Sell extends Component {
       compulsory_attrs: [],
 
       
-      currency_symbols: []
+      currency_symbols: [],
+      payment_form_visible: false
+    }
+  }
+
+  getProduct = () => {
+    if(this.state.product) {
+      return this.state.product
+
+    } else if(this.state.queries) {
+      const product = {}
+      if(this.state.queries.cat > -1) {
+        product.cat_id = parseInt(this.state.queries.cat)
+      }
+      if(this.state.queries.sub_cat > -1) {
+        product.sub_cat_id = parseInt(this.state.queries.sub_cat)
+      }
+      if(this.state.queries.country > -1) {
+        product.country_id = parseInt(this.state.queries.country)
+      }
+      if(this.state.queries.state > -1) {
+        product.state_id = parseInt(this.state.queries.state)
+      }
+      if(this.state.queries.city > -1) {
+        product.city_id = parseInt(this.state.queries.city)
+      }
+      return jsonEmpty(product)? null : product
+
+    } else {
+      return null
     }
   }
 
   resetState() {
-    const states = [
-      {cat: -1},
-      {sub_cat: -1},
-      {country: -1},
-      {state: -1},
-      {city: -1},
-      {title: ''},
-      {desc: ''},
-      {price: ''},
-      {photos: []},
-      {photo_size: 0},
-      {loaded: 0},
-      {attrs: []},
+    this.setState({del_photos: []})
+    const product = this.getProduct()
+    if(product) {
+      var hide = product.hide_phone_number == 1? 1 : 0
+      this.state.hide_phone_number = hide
+      this.setState({hide_phone_number: hide})
 
-      {sub_cats: []},
-      {states: []},
-      {cities: []},
-      {input_attrs: []},
-      {checkbox_attrs: []},
-      {select_attrs: []},
-      {compulsory_attrs: []}
-    ]
+      if(product.cat_id > -1) {
+        this.state.cat = product.cat_id
+        this.setState({cat: product.cat_id})
+        this.onCatChanged()
+        console.log("QueryLike", product.cat_id, this.state.cat, product)
 
-    var i = 0
-    while(i < states.length) {
-      try {
-        this.setState(states[i])
-      }catch(e) {
-        console.log("SET_ERROR", e)
+        this.state.sub_cat = product.sub_cat_id
+        this.setState({sub_cat: product.sub_cat_id})
+        this.onSubCatChanged()
       }
-      i++
-    }
 
-    //set photos
-    i = 0
-    const files = []
-    while(i < 20) {
-      files.push(null)
-      i++
+      if(product.country_id > -1) {
+        this.state.country = product.country_id
+        this.setState({country: product.country_id})
+        this.onCountryChanged()
+
+        this.state.state = product.state_id
+        this.setState({state: product.state_id})
+        this.onStateChanged()
+
+        if(product.city_id > -1) {
+          this.state.city = product.city_id
+          this.setState({city: product.city_id})
+        }
+      }
+
+      
+      if(product.attrs) {
+        this.state.attrs = product.attrs
+        this.setState({attrs: product.attrs})
+      }
+
+      if(product.title) {
+        this.state.title = product.title
+        this.setState({title: product.title})
+      }
+
+      if(product.description) {
+        this.state.desc = product.description
+        this.setState({desc: product.description})
+      }
+
+      if(product.currency_symbol) {
+        this.state.price_currency_symbol = product.currency_symbol
+        this.setState({price_currency_symbol: product.currency_symbol})
+      }
+
+      if(product.price) {
+        this.state.price = product.price
+        this.setState({price: commaNum(product.price)})
+      }
+
+      /*
+      var i = 0
+      while(i < states.length) {
+        try {
+          this.setState(states[i])
+        }catch(e) {
+          console.log("SET_ERROR", e)
+        }
+        i++
+      }*/
+
+      //set photos
+      console.log("EditProduct", product)
+      i = 0
+      const files = product.photos? product.photos.split(",") : []
+      const maxUpload = 20 - files.length
+      while(i < maxUpload) {
+        files.push(null)
+        i++
+      }
+      this.setState({photos: files})
+
+    } else {
+      const states = [
+        {hide_phone_number: 0},
+        {cat: -1},
+        {sub_cat: -1},
+        {country: -1},
+        {state: -1},
+        {city: -1},
+        {title: ""},
+        {desc: ""},
+        {price_currency_symbol: ""},
+        {price: ""},
+        {photos: []},
+        {photo_size: 0},
+        {loaded: 0},
+        {attrs: []},
+  
+        {sub_cats: []},
+        {states: []},
+        {cities: []},
+        {input_attrs: []},
+        {checkbox_attrs: []},
+        {select_attrs: []},
+        {compulsory_attrs: []}
+      ]
+
+      var i = 0
+      while(i < states.length) {
+        try {
+          this.setState(states[i])
+        }catch(e) {
+          console.log("SET_ERROR", e)
+        }
+        i++
+      }
+  
+      //set photos
+      i = 0
+      const files = []
+      while(i < 20) {
+        files.push(null)
+        i++
+      }
+      this.setState({photos: files})
     }
-    this.setState({photos: files})
+    
   }
 
   componentDidMount() {
-    console.log("Mounted YYY")
-    this.resetState()
+    this.setState({queries: queries(this.props)})
+    console.log("Mounted YYY", this.props.location, this.state.queries)
+    const id = this.state.queries.id
+    console.log("productId", id)
+    if(id > -1) {
+        //get load product from id
+        this.onServerRequest()//to show the loading indicator
+        browser.axios.get(API_ROOT + "products/details?vi=1&id="+id)
+        .then(response => {
+            if(response.data.details) {
+                const product = response.data.details
+                console.log("Product", product)
+
+                //set attributes
+                var attrs = response.data.details.attrs
+                if(attrs) {
+                  if(attrs.startsWith("_")) attrs = attrs.substring(1)
+                  if(attrs.endsWith("_")) attrs = attrs.substring(0, attrs.length - 1)
+                  product.attrs = attrs.split(",")
+                }
+
+                console.log("Product", 2, product)
+                this.setState({product_id: id})
+                this.state.product_id = id
+                this.setState({product: product})
+                this.resetState()
+                this.onServerResponse()
+
+            } else {
+                console.log("No product from response:", response.data, API_ROOT + "products/details?id="+id)
+            }
+
+        })
+        .catch(e => {
+            console.log("error from request:", e)
+        })
+
+    } else {
+        this.resetState()
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -138,25 +311,44 @@ class Sell extends Component {
     err.classList.remove(["hide"])
   }
 
-  beforePost() {
+  onServerRequest() {
     id("spiner").classList.remove(["hide"])
     id("ad-form").classList.add(["hide"])
   }
 
-  afterPost() {
+  onServerResponse() {
     id("spiner").classList.add(["hide"])
     id("ad-form").classList.remove(["hide"])
   }
 
+  isEdit = () => {
+    return this.state.product? true : false
+  }
+
   handleSubmit = (e) => {
     e.preventDefault()
-    console.log("submit detected")
+
     this.removeErrors()
     var hasError = false
 
+    const editProduct = {
+
+    }
     const product = {
 
     }
+
+    const allowed_packages = ["0", "1", "2"]
+    if(!this.state.paid_package || !allowed_packages.includes(this.state.paid_package)) {
+      this.setError("paid_package", "Please select a package")
+      hasError = true
+    }
+    
+    product.hide_phone_number = this.state.hide_phone_number
+    try {
+      editProduct.hide_phone_number = this.state.product.hide_phone_number
+    }catch(e) {}
+    console.log("product.hide_phone_number", product.hide_phone_number, this.state.hide_phone_number, this.state)
 
     if(this.state.cat == -1) {
       this.setError("cat", "Please select a category")
@@ -164,6 +356,9 @@ class Sell extends Component {
 
     } else {
       product.cat = this.state.cat
+      try{
+        editProduct.cat = this.state.product.cat || this.state.product.cat_id
+      }catch(e) {}
     }
 
     if(this.state.sub_cat == -1) {
@@ -172,84 +367,43 @@ class Sell extends Component {
 
     } else {
       product.sub_cat = this.state.sub_cat
+      try{
+        editProduct.sub_cat = this.state.product.sub_cat || this.state.product.sub_cat_id
+      }catch(e) {}
     }
-
-    if(this.state.attrs == -1) {
-      this.setError("email", "Please select your category")
-      hasError = true
-    }
-
-    const all_attrs = this.state.input_attrs.concat(this.state.select_attrs).concat(this.state.checkbox_attrs)
-    console.log("all_attrs: ", all_attrs)
-    this.state.attrs = [];
-    this.setState({attrs: []})
-    if(all_attrs.length > 0) {
-      for(var i = 0; i < all_attrs.length; i++) {
-        //if the attribute value was not provided and the attr is compulsory
-        if(this.state.compulsory_attrs.includes(all_attrs[i].key) 
-        && 
-          (!this.state[all_attrs[i].key] 
-            || this.state[all_attrs[i].key].length == 0 
-            || this.state[all_attrs[i].key].startsWith("-- Select"))) {
-          this.setError(all_attrs[i].key, all_attrs[i].key+" cannot be empty")
-          hasError = true
-
-        } //if the attribute value was provided
-        else if(this.state[all_attrs[i].key] && this.state[all_attrs[i].key].length > 0 && !this.state[all_attrs[i].key].startsWith("-- Select")) {
-          var attr_list = []
-          var values = []
-          if(all_attrs[i].input_type.startsWith("input")) {
-            attr_list = this.state.input_attrs
-
-          } else if(all_attrs[i].input_type.startsWith("select")) {
-            attr_list = this.state.select_attrs
-
-          } else if(all_attrs[i].input_type.startsWith("check")) {
-            attr_list = this.state.checkbox_attrs
-            
-          }
-          console.log("attr_list: "+attr_list)
-          for(var v = 0; v < attr_list.length; v++) {
-            if(attr_list[v].key == all_attrs[i].key) {
-              values = attr_list[v].values
-            }
-          }
-          console.log("attr_values 1: "+JSON.stringify(values))
-          //if the provided attribute is not in the list of attributes values
-          if(!all_attrs[i].input_type.startsWith("input") && !all_attrs[i].input_type.startsWith("check") && !values.includes(this.state[all_attrs[i].key])) {
-            this.setError(all_attrs[i].key, "Invalid " + all_attrs[i].key)
-            hasError = true
-
-          } else {
-            var value = this.state[all_attrs[i].key]
-            if(all_attrs[i].input_type == "input_int") {
-              value = parseInt(remove([",", "."], value))
-              if(!isNaN(value)) {
-                this.state.attrs.push(all_attrs[i].key +":"+ value)
-              }
-
-            } else if(all_attrs[i].input_type == "check_box") {
-              this.state.attrs.push(value)
-
-            } else {
-              this.state.attrs.push(all_attrs[i].key +":"+ value)
-            }
-            console.log("push 1: "+all_attrs[i].key +" = "+ value)
-          }
-        }
+    
+    
+    console.log("this.state.compulsory_attrs", this.state.compulsory_attrs)
+    var hasAttrError = false
+    for(var index = 0; index < this.state.compulsory_attrs.length; index++) {
+      var key = this.state.compulsory_attrs[index]
+      if(this.getAttrKeyValues(key).length == 0) {
+        this.setError(key, key+" cannot be empty")
+        hasError = hasAttrError = true
       }
+    }
+    if(!hasAttrError) {
       product.attrs = this.state.attrs
-      console.log("this.product.attrs: "+JSON.stringify(product.attrs))
+      try{
+        editProduct.attrs = this.state.product.attrs
+      }catch(e) {}
     }
 
     var noPhoto = true
+    var hasOnlyPhotoUrls = true
+    const photoFilePlusUrl = []
     const formData = new FormData()
-    const dataPhotos = []
     for(var i = 0; i < this.state.photos.length; i++) {
       if(this.state.photos[i] != null && this.state.photos[i] != "") {
         noPhoto = false
-        formData.append("file", this.state.photos[i])
-        dataPhotos.push(this.state.photos[i])
+        if(isFile(this.state.photos[i])) {
+          formData.append("file", this.state.photos[i])
+          photoFilePlusUrl.push(i)
+          hasOnlyPhotoUrls = false
+        } else {
+          photoFilePlusUrl.push(this.state.photos[i])
+        }
+        
       }
     }
     console.log("noPhoto", noPhoto)
@@ -269,8 +423,14 @@ class Sell extends Component {
 
     } else {
       product.price_currency_symbol = this.state.price_currency_symbol
-      console.log("product.price_currency_symbol", product.price_currency_symbol)
+      try{
+        editProduct.price_currency_symbol = this.state.product.price_currency_symbol || this.state.product.currency_symbol
+      }catch(e) {}
+
       product.price = parseInt(remove([",", "."], this.state.price))
+      try{
+        editProduct.price = parseInt(remove([",", "."], this.state.product.price))
+      }catch(e) {}
     }
 
     if(this.state.title.length == 0) {
@@ -279,6 +439,9 @@ class Sell extends Component {
 
     } else {
       product.title = this.state.title
+      try{
+        editProduct.title = this.state.product.title
+      }catch(e) {}
     }
 
     if(this.state.desc.length == 0) {
@@ -287,6 +450,9 @@ class Sell extends Component {
 
     } else {
       product.desc = this.state.desc
+      try{
+        editProduct.desc = this.state.product.desc || this.state.product.description
+      }catch(e) {}
     }
 
     if(this.state.country == -1) {
@@ -295,6 +461,9 @@ class Sell extends Component {
 
     } else {
       product.country = this.state.country
+      try{
+        editProduct.country = this.state.product.country || this.state.product.country_id
+      }catch(e) {}
     }
 
     if(this.state.state == -1) {
@@ -303,6 +472,9 @@ class Sell extends Component {
 
     } else {
       product.state = this.state.state
+      try{
+        editProduct.state = this.state.product.state || this.state.product.state_id
+      }catch(e) {}
     }
 
     if(this.state.city == -1) {
@@ -311,83 +483,259 @@ class Sell extends Component {
 
     } else {
       product.city = this.state.city
+      try{
+        editProduct.city = this.state.product.city || this.state.product.city_id
+      }catch(e) {}
     }
 
-
     if(!hasError) {
-      this.beforePost()
-      
-      const config = {/*
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded'//'multipart/form-data'
-        },*/
-        onUploadProgress: ProgressEvent => {
-          this.setState({
-            loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
-          })
+      this.onServerRequest()
+      if(hasOnlyPhotoUrls) {
+        //skip the photo files upload since there is none
+        //send the product with the photo urls to the server
+        product.photos = photoFilePlusUrl
+        try{
+          editProduct.photos = this.state.product.photos.split(",")
+        }catch(e) {}
+
+        //Prevent unneccessary server request if nothing has changed
+        if(JSON.stringify(product) == JSON.stringify(editProduct)) {
+          this.sponsorAd(this.state.title, this.state.product.id)
+          console.log("ServerRequestRequired", false)
+          return
         }
+        console.log("ServerReuestRequired", true)
+        
+        this.uploadProduct(product, this.isEdit())
+
+      } else {
+        //upload the photo files then join the returned photo urls to the 
+        // the product photo urls and send the product with the photo urls to the server
+        const config = {/*
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded'//'multipart/form-data'
+          },*/
+          onUploadProgress: ProgressEvent => {
+            this.setState({
+              loaded: (ProgressEvent.loaded / ProgressEvent.total * 100),
+            })
+          }
+        }
+        browser.axios.post(API_ROOT + "products/upload/photos", formData)
+        .then(response => {
+          console.log("photoUrls", "response.data", response.data)
+          if(response.data.status == 1) {
+            const fileNames = response.data.filenames
+            var fileNameIndex = 0
+            const photoUrls = []
+            for(var i = 0; i < photoFilePlusUrl.length; i++) {
+              if(photoFilePlusUrl[i] == i) {
+                photoUrls.push(fileNames[fileNameIndex])
+                fileNameIndex++
+
+              } else {
+                photoUrls.push(photoFilePlusUrl[i])
+              }
+            }
+            product.photos = photoUrls
+            console.log("photoUrls", photoUrls)
+            this.uploadProduct(product, this.isEdit())
+
+          } else {
+            console.log("photoUrls", "failed", response.data.message)
+            this.setError("photo", response.data.message)
+            this.onServerResponse()
+          }
+        })
+        .catch(err => {
+          console.log("UploadError: "+JSON.stringify(err))
+          this.onServerResponse()
+        })
+
       }
 
-      browser.axios.post(API_ROOT + "products/upload/photos", formData)
-      .then(response => {
-        var respData = response.data
-        if(respData.status == 1) {
-
-          product.photos = respData.filenames
-          browser.axios.post(API_ROOT + "products/upload/", {product: product})
-          .then(response => {
-            respData = response.data
-            console.log("respData: ", respData)
-            if(respData.status == 1) {
-              const productId = respData.product_id
-              console.log("pid", productId)
-              //alert("Success")
-              window.location.href = productLink(this.state.title, productId)
-            } else {
-              for(var er = 0; er < respData.form_errors.length; er++) {
-                //console.log("respData.form_errors[er].key, respData.form_errors[er].value: ", respData.form_errors[er].key, respData.form_errors[er].value)
-                this.setError(respData.form_errors[er].key, respData.form_errors[er].value)
-              }
-              this.afterPost()
-            }
-          })
-          .catch(err => {
-            console.log("UploadError inner: "+JSON.stringify(err))
-            this.afterPost()
-          })
-
-        } else {
-          this.setError("photo", status.message)
-          this.afterPost()
-        }
-        console.log("UploadResult: "+JSON.stringify(response.data))
-      })
-      .catch(err => {
-        console.log("UploadError: "+JSON.stringify(err))
-        this.afterPost()
-      })
     }
     
   }
 
-  handleCheckboxChange = e => {
-    const key = e.target.name;
-    var values = "";
-    const elements = document.getElementsByName(key);
-    for(var i = 0; i < elements.length; i++) {
-      var element = elements[i];
-      if(element.checked) {
-        values += key+":"+element.value+",";console.log("handleCheckboxChange", "key:value", key+":"+element.value+",")
+  uploadProduct = (product, isEdit) => {
+    if(isEdit) {
+      product.id = this.state.product.id
+      product.del_photos = this.state.del_photos
+      product.prev_cat = this.state.product.cat_id || this.state.product.cat
+      product.prev_sub_cat = this.state.product.sub_cat_id || this.state.product.sub_cat
+      product.prev_country = this.state.product.country_id || this.state.product.country
+      product.prev_state = this.state.product.state_id || this.state.product.state
+      product.prev_city = this.state.product.city_id || this.state.product.city
+      
+      console.log("productEdit", product, this.state.product)
+    }
+    browser.axios.post(API_ROOT + "products/" + (!isEdit?"upload/":"edit/"), {product: product})
+    .then(response => {
+      const respData = response.data
+      console.log("respData: ", respData)
+      if(respData.status == 1) {
+        const productId = respData.product_id
+        console.log("pid", productId)
+        //alert("Success")
+        this.state.product = product
+        this.setState({product: product})
+        this.sponsorAd(this.state.title, productId)
+      } else {
+        for(var er = 0; er < respData.form_errors.length; er++) {
+          //console.log("respData.form_errors[er].key, respData.form_errors[er].value: ", respData.form_errors[er].key, respData.form_errors[er].value)
+          this.setError(respData.form_errors[er].key, respData.form_errors[er].value)
+        }
+        this.onServerResponse()
+      }
+    })
+    .catch(err => {
+      console.log("UploadError inner: "+JSON.stringify(err))
+      this.onServerResponse()
+    })
+  }
+
+  onPaymentMessage = (message) => {
+    console.log("onStripeMessage", message)
+    const msg = message.message
+    const paymentSuccessfull = message.payment_successfull
+    if(paymentSuccessfull) {
+      alert("Payment successfull. Your product has been updated with the purchased package.")
+      window.location.href = productLink(this.state.title, this.state.product_id)
+    } else {
+      alert(msg)
+    }
+    this.hidePaymentForm()
+  }
+  showPaymentForm = () => {
+    this.setState({payment_form_visible: true})
+    this.onServerRequest()
+  }
+  hidePaymentForm = () => {
+    this.setState({payment_form_visible: false})
+    this.onServerResponse()
+  }
+  sponsorAd = (title, productId) => {
+    this.state.product_id = productId
+    if(parseInt(this.state.paid_package) > 0) {
+      var paymentSubData
+      switch(parseInt(this.state.paid_package)) {
+        case 1:
+          paymentSubData = this.state.seven_days_advert
+          break
+        case 2:
+          paymentSubData = this.state.thirty_days_advert
+      }
+      this.state.payment_data.id = productId
+      this.state.payment_data.amount = paymentSubData.amount
+      this.state.payment_data.description = paymentSubData.description
+      this.showPaymentForm()
+    } else {
+      window.location.href = productLink(title, productId)
+    }
+  }
+
+  keyValue = (key, value) => {
+    return key + ":" + value
+  }
+
+  handleSingleCheckbox = e => {
+    console.log("SingleChecked", e.target.checked)
+    var value = e.target.checked? e.target.value : e.target.getAttribute("empty-value")
+    if(e.target.getAttribute("data-type") == "number") value = parseInt(value)
+    this.state[e.target.name] = value
+    this.setState({[e.target.name]: value})
+    console.log("SingleCheck", e.target.name, this.state[e.target.name], this.state.hide_phone_number)
+  }
+
+  handleAttrCheckbox = e => {
+    const keyValuePair = this.keyValue(e.target.name, e.target.value)
+    const attrs = this.state.attrs
+    //Since this is a checkbox, then
+    //if the attributes already contains the key-value pair of this checkbox,
+    // we remove the key-value pair from the attributes list, else we add it
+    if(attrs.includes(keyValuePair)) {
+      removeObject(keyValuePair, attrs)
+
+    } else {
+      attrs.push(keyValuePair)
+    }
+    this.setState({attrs: attrs})
+  }
+
+  getAttrKeyValues = (key) => {
+    const keyPair = this.keyValue(key, "")
+    const attrsString = this.state.attrs.join()
+    if(!attrsString.includes(keyPair)) return []
+    const regex = RegExp(keyPair + "([^,\\:]+)")
+    const values = attrsString.match(regex)
+    const valuesOnly = []
+    for(var i = 0; i < values.length; i++) {
+      if(!values[i].includes(":")) {
+        valuesOnly.push(values[i])
       }
     }
-    if(values.length > 0) {
-      values = values.substring(0, values.length - 1)
-      this.state[key] = values;
-      this.setState({[key]: values})
-      console.log("handleCheckboxChange", "values", this.state[key])
+    console.log("getAttrKeyValues", values, regex, valuesOnly)
+    return valuesOnly
+  }
+
+  removeAttrIfExists = key => {
+    const attrs = this.state.attrs
+    const prevKeyValues = this.getAttrKeyValues(key)
+    if(prevKeyValues) {
+      for(var i = 0; i < prevKeyValues.length; i++) {
+        removeObject(this.keyValue(key, prevKeyValues[i]), attrs)
+      }
+      this.setState({attrs: attrs})
+    }
+  }
+
+  isValidAttr = (key, value) => {
+    return value && value.length > 0 && !value.toLowerCase().includes("select")
+  }
+
+
+  handleAttrSelect = e => {
+    const keyValuePair = this.keyValue(e.target.name, e.target.value)
+    this.removeAttrIfExists(e.target.name)
+    const attrs = this.state.attrs
+    if(this.isValidAttr(e.target.name, e.target.value)) {
+      attrs.push(keyValuePair)
+      this.setState({attrs: attrs})
+    }
+  }
+
+  handleAttrInput = e => {
+    const keyValuePair = this.keyValue(e.target.name, e.target.value)
+    this.removeAttrIfExists(e.target.name)
+    const attrs = this.state.attrs
+    attrs.push(keyValuePair)
+    this.setState({attrs: attrs})
+  }
+
+  handleIntChange = e => {
+    const value = parseInt(e.target.value)
+    this.state[e.target.name] = value
+    this.setState({[e.target.name]: value})
+    console.log("handleIntChange", e.target.name, e.target.value, value)
+
+    switch(e.target.name) {
+      case "cat":
+        this.onCatChanged()
+        break
+      case "sub_cat":
+        this.onSubCatChanged()
+        break
+      case "country":
+        this.onCountryChanged()
+        break
+      case "state":
+        this.onStateChanged()
+        break
     }
   }
   handleChange = (e) => {
+    console.log(e.target.name +": "+e.target.value)
     if(!e.target.getAttribute("data-limit") || e.target.value.length <= parseInt(e.target.getAttribute("data-limit"))) {
       if(e.target.getAttribute("data-type") && e.target.getAttribute("data-type") == "number") {
         var number = commaNum(e.target.value)
@@ -399,22 +747,6 @@ class Sell extends Component {
       } else {
         this.state[e.target.name] = e.target.value
         this.setState({[e.target.name]: e.target.value})
-      }
-
-      console.log(e.target.name +": "+e.target.value)
-      switch(e.target.name) {
-        case "cat":
-          this.onCatChanged()
-          break
-        case "sub_cat":
-          this.onSubCatChanged()
-          break
-        case "country":
-          this.onCountryChanged()
-          break
-        case "state":
-          this.onStateChanged()
-          break
       }
 
     } else {
@@ -438,6 +770,11 @@ class Sell extends Component {
     photos.splice(index, 1)
     this.state.photos = photos
     this.setState({photos: photos})
+    const delPhotos = this.state.del_photos
+    if(!isFile(photo) && !delPhotos.includes(photo)) {
+      delPhotos.push(photo)
+      this.setState({del_photos: delPhotos})
+    }
   }
 
   onPhotoChangedHandler = e => {
@@ -484,13 +821,17 @@ class Sell extends Component {
 
   onCountryChanged() {
     const eid = this.state.country
+    this.state.state = -1
+    this.setState({state: -1})
+    this.state.city = -1
+    this.setState({city: -1})
     console.log("id = "+eid)
     const section = id("state-section")
     const section2 = id("city-section")
     section.classList.add(["disabled-section"], ["loading-section"])
     section2.classList.add(["disabled-section"])
     this.setState({states: []})
-    this.setState({city: []})
+    this.setState({cities: []})
     browser.axios.get(API_ROOT + "states?cid="+eid)
     .then(response => {
       this.setState({states: response.data.states})
@@ -500,10 +841,12 @@ class Sell extends Component {
 
   onStateChanged() {
     const eid = this.state.state
+    this.state.city = -1
+    this.setState({city: -1})
     console.log("id = "+eid)
     const section = id("city-section")
     section.classList.add(["disabled-section"], ["loading-section"])
-    this.setState({city: []})
+    this.setState({cities: []})
     browser.axios.get(API_ROOT + "cities?sid="+eid)
     .then(response => {
       this.setState({cities: response.data.cities})
@@ -513,6 +856,8 @@ class Sell extends Component {
 
   onCatChanged () {
     const eid = this.state.cat
+    this.state.sub_cat = -1
+    this.setState({subs_cat: -1})
     console.log("id = "+eid)
     const section = id("sub_cat-section")
     section.classList.add(["disabled-section"], ["loading-section"])
@@ -528,6 +873,8 @@ class Sell extends Component {
   onSubCatChanged () {
     const eid = this.state.sub_cat
     console.log("scid = "+eid)
+    this.state.attrs = []
+    this.setState({attrs: []})
     this.resetCustomInputs()
     const section = id("custom-section")
     section.classList.add(["disabled-section"], ["loading-section"])
@@ -567,6 +914,10 @@ class Sell extends Component {
       }
       section.classList.remove(["disabled-section"], ["loading-section"])
     })
+  }
+
+  photoUrl = photo => {
+    return isFile(photo)?URL.createObjectURL(photo) : photo
   }
 
   render() {
@@ -635,7 +986,7 @@ class Sell extends Component {
      </h1>
     </div>
     <div className="h-flex-center h-mv-20 hide" id="spiner">
-     <img height="50" src="/public/res/jiji/spin.svg" width="50"/>
+     <img height="50" src="/public/res/images/static/spin.svg" width="50"/>
     </div>
     <form id="ad-form" className="ad-form" noValidate onSubmit={this.handleSubmit}>
      {/*<input name="csrf_token" type="hidden" value="1572972604##53410168c7cbd8ec896909dc9c93feaa3f3b8af6"/>*/}
@@ -659,8 +1010,8 @@ class Sell extends Component {
            Category
           </label>
           <div className="form-group">
-            <select className="form-control" name="cat" value={this.state.cat} onChange={this.handleChange}>
-              <option value="-1">--- Choose category ---</option>
+            <select className="form-control" name="cat" value={this.state.cat} onChange={this.handleIntChange}>
+              <option value={-1}>--- Choose category ---</option>
               {this.state.cats.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
@@ -678,8 +1029,8 @@ class Sell extends Component {
            Sub Category
           </label>
           <div className="form-group">
-            <select className="form-control" name="sub_cat" value={this.state.sub_cat} onChange={this.handleChange}>
-              <option value="-1">--- Choose subcategory ---</option>
+            <select className="form-control" name="sub_cat" value={this.state.sub_cat} onChange={this.handleIntChange}>
+              <option value={-1}>--- Choose subcategory ---</option>
               {this.state.sub_cats.map(scat => (
                 <option key={scat.id} value={scat.id}>{scat.name}</option>
               ))}
@@ -699,7 +1050,11 @@ class Sell extends Component {
                 {attr.key}
               </label>
               <div className="form-group">
-                <input data-attr={"input"+(!attr.allow_null?"_must":"")} type="text" className="form-control" name={attr.key} onChange={this.handleChange} />
+                <input value={
+                  this.getAttrKeyValues(attr.key).length > 0?
+                  this.getAttrKeyValues(attr.key)[0]
+                  :""
+                  } data-attr={"input"+(!attr.allow_null?"_must":"")} type="text" className="form-control" name={attr.key} onChange={this.handleAttrInput} />
                 <span id={attr.key+"-error"} className="fw-field__error qa-fw-field__error hide">
                   this field is required.
                 </span>
@@ -713,10 +1068,14 @@ class Sell extends Component {
                 {attr.key}
               </label>
               <div className="form-group">
-                <select data-attr={"select"+(!attr.allow_null?"_must":"")} className="form-control" name={attr.key} onChange={this.handleChange}>
+                <select data-attr={"select"+(!attr.allow_null?"_must":"")} className="form-control" name={attr.key} onChange={this.handleAttrSelect}>
                   <option>--- Select {attr.key} ---</option>
                   {attr.values.map(value => (
-                    <option key={"custom-"+attr.key+value}>{value}</option>
+                    
+                    this.state.attrs.includes(this.keyValue(attr.key, value))?
+                      <option key={"custom-"+attr.key+value} selected>{value}</option>
+                      :
+                      <option key={"custom-"+attr.key+value}>{value}</option>
                   ))}
                 </select>
                 <span id={attr.key+"-error"} className="fw-field__error qa-fw-field__error hide">
@@ -733,9 +1092,18 @@ class Sell extends Component {
               </label>
               <div classname="b-form-section__elem-wrapp">
                 {attr.values.map(value => (
+                  this.state.attrs.includes(this.keyValue(attr.key, value))?
                   <div key={"custom-"+attr.key+value} className="b-form-section__row">
                     <div className="qa-checkbox b-form-section h-mb-0">
-                      <input onChange={this.handleCheckboxChange} name={attr.key} value={value} id={"custom-"+attr.key+"-"+value} type="checkbox" className="b-form-section__checkbox"/> 
+                      <input onChange={this.handleAttrCheckbox} name={attr.key} value={value} id={"custom-"+attr.key+"-"+value} type="checkbox" className="b-form-section__checkbox" 
+                      checked/> 
+                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{value}</label>
+                    </div>
+                  </div>
+                  :
+                  <div key={"custom-"+attr.key+value} className="b-form-section__row">
+                    <div className="qa-checkbox b-form-section h-mb-0">
+                      <input onChange={this.handleAttrCheckbox} name={attr.key} value={value} id={"custom-"+attr.key+"-"+value} type="checkbox" className="b-form-section__checkbox" /> 
                       <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{value}</label>
                     </div>
                   </div>
@@ -831,7 +1199,7 @@ class Sell extends Component {
                     </div>
                     :
                     <div data-v-6ea5e880="" className="preview">
-                    <div data-v-6ea5e880="" className="preview__img" style={{backgroundImage: "url("+ URL.createObjectURL(photo)+")", transform: "rotate(0deg)"}}></div> 
+                    <div data-v-6ea5e880="" className="preview__img" style={{backgroundImage: "url("+ this.photoUrl(photo)+")", transform: "rotate(0deg)"}}></div> 
                     <div data-v-6ea5e880="" className="preview__bar">
                       <div data-v-6ea5e880="" className="preview__bar-button" style={{display: "none"}}>
                         <i data-v-6ea5e880="" className="glyphicon glyphicon-repeat icon icon-rotate">
@@ -914,9 +1282,10 @@ class Sell extends Component {
           </label>
           <div className="input-group">
             <span className="input-group-addon">
-              <select name="price_currency_symbol" onChange={this.handleChange}>
+              <select name="price_currency_symbol" value={this.state.price_currency_symbol} onChange={this.handleChange}>
+                <option value="">--select currency--</option>
                 {this.state.currency_symbols.map(symbol => (
-                  <option selected={symbol == "&#36;"?true:false} key={symbol} value={symbol} dangerouslySetInnerHTML={{__html: symbol}}></option>
+                  <option key={symbol} value={symbol} dangerouslySetInnerHTML={{__html: symbol}}></option>
                 ))}
               </select>
             </span>
@@ -960,11 +1329,23 @@ class Sell extends Component {
         </b>
        </p>
        <p data-v-50679713="">
-        Phone:&nbsp;
-        <b className="user-data" data-v-50679713="">
-         {this.state.number}
-        </b>
-       </p>
+          Phone:&nbsp;
+          <b className="user-data" data-v-50679713="">
+          {this.state.number}
+          </b>
+        </p>
+        <div className="b-form-section__row">
+            <div className="qa-checkbox b-form-section h-mb-0">
+              {
+                this.state.hide_phone_number == 1?
+                <input data-type="number" onChange={this.handleSingleCheckbox} name="hide_phone_number" id="hide_phone_number" value={1} empty-value={0} type="checkbox" className="b-form-section__checkbox" 
+                      checked/>
+                :
+                <input data-type="number" onChange={this.handleSingleCheckbox} name="hide_phone_number" id="hide_phone_number" value={1} empty-value={0} type="checkbox" className="b-form-section__checkbox" />
+              }
+              <label for="hide_phone_number" className="qa-description-label">Hide phone number</label>
+            </div>
+        </div>
       </div>
       
       <div id="location-section" className="h-max-width-300 h-phone-max-width-100p" data-v-2f9b1610="">
@@ -975,8 +1356,8 @@ class Sell extends Component {
            Country
           </label>
           <div className="form-group">
-            <select className="form-control" name="country" value={this.state.country} onChange={this.handleChange}>
-              <option value="-1">--- Select country ---</option>
+            <select className="form-control" name="country" value={this.state.country} onChange={this.handleIntChange}>
+              <option value={-1}>--- Select country ---</option>
               {this.state.countries.map(country => (
                 <option key={country.id} value={country.id}>{country.name}</option>
               ))}
@@ -994,8 +1375,8 @@ class Sell extends Component {
            State
           </label>
           <div className="form-group">
-            <select className="form-control" name="state" value={this.state.state} onChange={this.handleChange}>
-              <option value="-1">--- Select state ---</option>
+            <select className="form-control" name="state" value={this.state.state} onChange={this.handleIntChange}>
+              <option value={-1}>--- Select state ---</option>
               {this.state.states.map(state => (
                 <option key={state.id} value={state.id}>{state.name}</option>
               ))}
@@ -1013,8 +1394,8 @@ class Sell extends Component {
            City
           </label>
           <div className="form-group">
-            <select className="form-control" name="city" value={this.state.city} onChange={this.handleChange}>
-              <option value="-1">--- Select city ---</option>
+            <select className="form-control" name="city" value={this.state.city} onChange={this.handleIntChange}>
+              <option value={-1}>--- Select city ---</option>
               {this.state.cities.map(city => (
                 <option key={city.id} value={city.id}>{city.name}</option>
               ))}
@@ -1032,51 +1413,49 @@ class Sell extends Component {
      <div className="qa-premium-section block b-content-area b-content-area--shadow h-p-15" data-v-0d6ab1a8="">
  <h4 className="title" data-v-0d6ab1a8="">
   <b data-v-0d6ab1a8="">
-   Promote your ad
+   Boost your ad
   </b>
  </h4>
  <p className="h-mb-20" data-v-0d6ab1a8="">
-  Please, choose one of the following options to post your ad.
+  Please, choose one of the following packages to publish your ad.
  </p>
  <div className="b-form-section h-mb-0" data-v-0d6ab1a8="">
   <div className="b-form-section__row" data-v-0d6ab1a8="">
-   <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="0-free_post" name="paid_package" type="radio"/>
+   <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="0-free_post" name="paid_package" value="0" type="radio" onChange={this.handleChange}/>
    <label className="h-font-normal h-mb-0" data-v-0d6ab1a8="" for="0-free_post">
     <span className="package-label package-label--free" data-v-0d6ab1a8="">
-     Standard ad
+      No-Boost Package
     </span>
+    <div data-v-0d6ab1a8="" style={{display: "inline-block", padding: "3px 0px"}}>
+      No <b>top placement(Selecting this package does not cancel your previously purchased boosted packages)</b>.
+    </div>
    </label>
   </div>
   <div className="b-form-section__row h-mt-15" data-v-0d6ab1a8="">
-   <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="1-page_top_1" name="paid_package" type="radio"/>
+   <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="1-page_top_1" name="paid_package" value="1" type="radio" onChange={this.handleChange}/>
    <label className="h-font-normal h-mb-0" data-v-0d6ab1a8="" for="1-page_top_1">
     <span className="package-label package-label--top" data-v-0d6ab1a8="">
-     1 TOP: Others
+     7-DAYS-BOOST package
     </span>
     <div data-v-0d6ab1a8="" style={{display: "inline-block", padding: "3px 0px"}}>
-     One advert promotion for
-     <b>
-      7 days
-     </b>
-     .
+     One advert promotion for <b>7 days(your ad will be frequently placed on top of other ads to get more people to see your ad for 7 days. If this ad already has a boosted package, the boost duration will be extended by 7 days)</b>.
     </div>
    </label>
   </div>
   <div className="b-form-section__row h-mt-15" data-v-0d6ab1a8="">
-   <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="2-page_top_1_30" name="paid_package" type="radio"/>
+   <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="2-page_top_1_30" name="paid_package" value="2" type="radio" onChange={this.handleChange}/>
    <label className="h-font-normal h-mb-0" data-v-0d6ab1a8="" for="2-page_top_1_30">
     <span className="package-label package-label--top" data-v-0d6ab1a8="">
-     1 TOP 30d: Others
+     30-DAYS-BOOST package
     </span>
     <div data-v-0d6ab1a8="" style={{display: "inline-block", padding: "3px 0px"}}>
-     One advert promotion for
-     <b>
-      30 days
-     </b>
-     .
+     One advert promotion for <b>30 days(your ad will be frequently placed on top of other ads to get more people to see your ad for 30 days. If this ad already has a boosted package, the boost duration will be extended by 30 days)</b>.
     </div>
    </label>
   </div>
+  <span id="paid_package-error" className="fw-field__error qa-fw-field__error hide">
+    this field is required.
+  </span>
  </div>
 </div>
      <div className="h-text-center h-mb-50">
@@ -1105,14 +1484,42 @@ class Sell extends Component {
     </form>
     
    </div>
+   <div style={{display: "flex", justifyContent: "space-around"}} className={this.state.payment_form_visible?"fw-fixed-background":"fw-fixed-background hide"}>
+     <div style={
+       { 
+         borderRadius: "4px",
+         backgroundColor: "#f2f2f2",
+         width: "400px", 
+         maxWidth: "90%",
+         minHeight: "10px",
+         maxHeight: "70%",
+         display: "flex", 
+         justifyContent: "space-between",
+         padding: "10px",
+         flexDirection: "column",
+         margin: "auto 0"
+        }
+      }>
+        <TextView 
+          click={this.hidePaymentForm} 
+          padding="10px"
+          align_parent_end={true}
+          color="red"
+          text_size="18px"
+          cursor="pointer"
+          text="X" />
+        {
+          this.state.payment_form_visible?
+          <StripeView on_message={this.onPaymentMessage} payment_data={this.state.payment_data}/> : ""
+        }
+     </div>
+   </div>
   </div>
  </div>
  
- <div className="js-footer">
- </div>
 </div>
     )
   }
 }
 
-export default Sell
+export default SellEdit

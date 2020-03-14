@@ -110,6 +110,22 @@ module.exports = db.sequelize.define(
 
         is_draft: {
             type: Sequelize.BOOLEAN,
+        },
+
+        sponsored_end_time: {
+            type: Sequelize.BIGINT
+        },
+
+        last_sponsored_view_time: {
+            type: Sequelize.BIGINT
+        },
+
+        sponsored_views: {
+            type: Sequelize.INTEGER
+        },
+
+        hide_phone_number: {
+            type: Sequelize.INTEGER
         }
     }, 
     {

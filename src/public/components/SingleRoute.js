@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Route } from 'react-router-dom'
-import Sell from './Sell'
+import Sell from './SellEdit'
 
 const SingleRoute = (props) => (
   <div className="App">

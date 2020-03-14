@@ -3,7 +3,7 @@ export const LOGO_ADDR = "dist/public/logo.png"
 
 export const PORT = 8080
 export const PORT_SSL = 4433
-export const SERVER_HOST = "http://192.168.43.58"
+export const SERVER_HOST = "http://dev.domain.com"//"http://192.168.43.58"
 export const SERVER_ADDR = SERVER_HOST + ":" + PORT
 
 export const EMAIL_SUPPORT = "support@goodytray.com"
@@ -43,3 +43,16 @@ export const SSL_CA = process.env.SSL_CA
 export const SSL_SQL_KEY = process.env.SSL_SQL_KEY
 export const SSL_SQL_CHAIN = process.env.SSL_SQL_CHAIN
 export const SSL_SQL_CA = process.env.SSL_SQL_CA
+
+export const STRIPE_PUBLIC_KEY = "pk_live_pMDGxRWGiQisC9BxQsGTH96M00k5YMUiN4"
+
+export const AD_PACKAGES = {
+    paid_package_b: {
+        key: "paid_package_b",
+        amount: 6.84
+    },
+    paid_package_c: {
+        key: "paid_package_c",
+        amount: 24.62
+    }
+}

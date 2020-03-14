@@ -15,8 +15,8 @@ const fileUploader = require("../utils/FileUploader")
 //const Jimp = require("jimp")
 
 import {checkUserAuth} from "../components/UserFunctions"
-import {truncText, jsonEmpty, randNum} from "../utils/Funcs"
-import { ERROR_DB_OP, MAX_PRODUCT_PHOTOS_SIZE, PRODUCTS_PER_PAGE, PRODUCTS_PHOTOS_CLIENT_DIR, SERVER_ADDR, PRODUCTS_PHOTOS_SERVER_DIR } from "../../../Constants"
+import {truncText, jsonEmpty, randNum, okResponse} from "../utils/Funcs"
+import { ERROR_DB_OP, MAX_PRODUCT_PHOTOS_SIZE, PRODUCTS_PER_PAGE, PRODUCTS_PHOTOS_CLIENT_DIR, SERVER_ADDR, PRODUCTS_PHOTOS_SERVER_DIR, API_ROOT } from "../../../Constants"
 const db = require("../database/db")
 const Sequelize = require("sequelize")
 const Op = Sequelize.Op
@@ -24,6 +24,7 @@ const Op = Sequelize.Op
 import fs from "fs"
 import { nameToId, userDetails, EXCHANGE_RATE } from "../utils/ExpressFunc"
 import { subCatLink } from "../utils/LinkBuilder"
+import { sequelize } from "../database/db"
 
 const andQuery = function(query, filter) {
     return query.includes("WHERE")? query + " AND " + filter : query + " WHERE " + filter
@@ -34,6 +35,108 @@ const orQuery = function(query, filter) {
 const orderQuery = function(query, filter) {
     return query.includes("ORDER BY")? query + ", " + filter : query + " ORDER BY " + filter
 }
+products.get(["/user/boosted/:id", "/user/non_boosted/:id"], (req, res) => {
+    var currentTime = (new Date()).getTime()
+    var userId = req.params.id
+    var page = req.query.page
+    var q
+    if(req.originalUrl.startsWith(API_ROOT + "products/user/boosted/")) {
+        q = "SELECT " + (req.query.count_only?"COUNT(id) AS id ": "* ") + "FROM products WHERE user_id = ? AND sponsored_end_time > ? ORDER BY id DESC"
+
+    } else {
+        q = "SELECT " + (req.query.count_only?"COUNT(id) AS id ": "* ") + "FROM products WHERE user_id = ? AND sponsored_end_time <= ? ORDER BY id DESC"
+    }
+    var reps = [userId, currentTime]
+    if(!req.query.count_only) {
+        if(req.query.page && parseInt(req.query.page) > 0) {
+            q += " LIMIT ?, ?"
+            var offset = (parseInt(req.query.page) - 1) * PRODUCTS_PER_PAGE
+            reps.push(offset, PRODUCTS_PER_PAGE + 1)//one is added to notify the user if there is more
+
+        } else {
+            q += " LIMIT ?"
+            reps.push(PRODUCTS_PER_PAGE + 1)//one is added to notify the user if there is more
+        }
+    }
+    db.sequelize.query(q, {
+        replacements: reps,
+        raw: false, 
+        type: Sequelize.QueryTypes.SELECT,
+        model: Product,
+        mapToModel: true
+    })
+    .then(prods => {
+        if(!prods || prods.length == 0) {
+            res.json({status: 1, message: "No result", list: null, counts: 0})
+
+        } else {
+            if(req.query.count_only) {
+                okResponse(res, {status: 1, message: "ok", list: null, counts: prods[0].id})
+
+            } else {
+                okResponse(res, {
+                    status: 1, 
+                    message: "ok", 
+                    list: prods,
+                    has_prev: req.query.page > 1,
+                    has_next: prods.length > PRODUCTS_PER_PAGE
+                })
+            }
+            
+        }
+    })
+    .catch(e => {
+        res.json({status: 0, message: ERROR_DB_OP+e, list: null, counts: 0})
+    })
+})
+products.get("/sponsored", (req, res) => {
+    var currentTime = (new Date()).getTime()
+    var q = "SELECT * FROM products WHERE sponsored_end_time > ? ORDER BY last_sponsored_view_time ASC LIMIT ?"
+    db.sequelize.query(q, {
+        replacements: [currentTime, 4],
+        raw: false, 
+        type: Sequelize.QueryTypes.SELECT,
+        model: Product,
+        mapToModel: true
+    })
+    .then(prods => {
+        if(!prods || prods.length == 0) {
+            res.json({status: 1, message: "No result", list: null})
+
+        } else {
+            //update the results last_sponsored_view_time and sponsored_views
+            q = "UPDATE products SET last_sponsored_view_time=? WHERE id=?"
+            var updates = []
+            var update = {
+                last_sponsored_view_time: currentTime
+            }
+            for(var i = 0; i < prods.length; i++) {
+                updates.push(new Promise(resolve => {
+                    update.sponsored_views = prods[i].sponsored_views + 1
+                    Product.update(update, {
+                        where: {
+                            id: prods[i].id
+                        }
+                    })
+                    .then(updateResult => {
+                        resolve({success: true})
+                    })
+                    .catch(e => {
+                        resolve({success: false, error: e})
+                    })
+
+                }))
+            }
+            Promise.all(updates)
+            .then(updatesResults => {
+                res.json({status: 1, message: "Success", list: prods, updates_results: updatesResults})
+            })
+        }
+    })
+    .catch(e => {
+        res.json({status: 0, message: ERROR_DB_OP+e, list: null})
+    })
+})
 //get products
 products.get("/", async function(req, res) {
     const today = new Date()
@@ -496,7 +599,7 @@ products.post("/upload/photos", checkUserAuth, (req, res) => {
 
 
 //upload products
-products.post("/upload", checkUserAuth,  (req, res) => {
+products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
     if(!res.locals.token_user) {
         res.json({status: 5, message: "Login required", auth_required: true})
 
@@ -505,6 +608,11 @@ products.post("/upload", checkUserAuth,  (req, res) => {
         const today = new Date()
         const form_errors = []
         const productData = {}
+        if(product.id) {
+            productData.id = product.id
+        }
+        productData.hide_phone_number = product.hide_phone_number == 1?1:0
+
         productData.user_id = res.locals.token_user.id
         if(!product.cat || isNaN(parseInt(product.cat)) || parseInt(product.cat) < 0) {
             form_errors.push({key: "cat", value: "Please select a category"})
@@ -523,7 +631,7 @@ products.post("/upload", checkUserAuth,  (req, res) => {
 
         if(product.attrs && product.attrs.length > 0) {
             var attrs = "_"
-            for(var a = 0; a < product.attrs.length; a++) {console.log("PPPP")
+            for(var a = 0; a < product.attrs.length; a++) {
                 console.log(product.attrs[a])
                 attrs += truncText(product.attrs[a], 70, null) + ","
             }
@@ -602,6 +710,20 @@ products.post("/upload", checkUserAuth,  (req, res) => {
             res.json({status: 0, message: null, form_errors: form_errors})
 
         } else {
+            //delete photos deleted on client on server
+            console.log("DelPhotoZ", product.del_photos)
+            if(product.del_photos && product.del_photos.length > 0) {
+                var i = 0
+                while(i < product.del_photos.length) {
+                    try {
+                        fs.unlinkSync("dist" + product.del_photos[i])
+                        console.log("DelPhotoz", "ok", product.del_photos[i])
+                    } catch(e) {
+                        console.log("DelPhotoZ", "notOk", product.del_photos[i])
+                    }
+                    i++
+                }
+            }
             productData.created = today
             productData.last_update = today
             var photos = ""
@@ -614,47 +736,155 @@ products.post("/upload", checkUserAuth,  (req, res) => {
                 photos = photos.substring(0, photos.length - 1)
             }
             productData.photos = photos
-            Product.create(productData)
-            .then(prod => {
-                Cat.findOne({
+            if(req.originalUrl.includes("upload")) {
+                console.log("c-a-t", 77)
+                Product.create(productData)
+                .then(prod => {
+                    Cat.findOne({
+                        where: {
+                            id: prod.cat_id
+                        }
+                    })
+                    .then(cat => {
+                        if(cat) {
+                            const newCat = {total_products: cat.total_products + 1};
+                            cat.update(newCat)
+                            SubCat.findOne({
+                                where: {
+                                    id: productData.sub_cat_id
+                                }
+                            })
+                            .then(sub_cat => {
+                                if(sub_cat) {
+                                    const newSubCat = {total_products: sub_cat.total_products + 1};
+                                    sub_cat.update(newSubCat)
+                                    return res.status(200).json({status: 1, message: "1 Ad posted successfully"+JSON.stringify(prod), product_id: prod.id})
+                    
+                                } else {
+                                    return res.status(200).json({status: -1, message: ERROR_DB_OP})
+                                }
+                            })
+                            .catch(err => {
+                                return res.status(200).json({status: -1, message: ERROR_DB_OP+err})
+                            })
+            
+                        } else {
+                            return res.status(200).json({status: -1, message: ERROR_DB_OP})
+                        }
+                    })
+                    .catch(err => {
+                        return res.status(200).json({status: -1, message: ERROR_DB_OP+err})
+                    })
+                })
+                .catch(e => {
+                    return res.status(200).json({status: -1, message: ERROR_DB_OP+e, c: productData.currency_symbol})
+                })
+
+            } else {
+                console.log("c-a-t= cat", 1)
+                Product.update(productData, {
                     where: {
-                        id: productData.cat_id
+                        id: productData.id
                     }
                 })
-                .then(cat => {
-                    if(cat) {
-                        const newCat = {total_products: cat.total_products + 1};
-                        cat.update(newCat)
-                        SubCat.findOne({
-                            where: {
-                                id: productData.sub_cat_id
-                            }
-                        })
-                        .then(sub_cat => {
-                            if(sub_cat) {
-                                const newSubCat = {total_products: sub_cat.total_products + 1};
-                                sub_cat.update(newSubCat)
-                                return res.status(200).json({status: 1, message: "Ad posted successfully"+JSON.stringify(prod), product_id: prod.id})
-                
-                            } else {
-                                return res.status(200).json({status: -1, message: ERROR_DB_OP})
-                            }
-                        })
-                        .catch(err => {
-                            return res.status(200).json({status: -1, message: ERROR_DB_OP+err})
-                        })
-        
+                .then(prod => {
+                    const cats_and_sub_cats_updates = []
+                    console.log("c-a-t= cat")
+                    console.log("cats_and_sub_cats_updatesData", {
+                        cat_id: productData.cat_id,
+                        prev_cat: product.prev_cat,
+                        sub_cat_id: productData.sub_cat_id,
+                        prev_sub_cat: product.prev_sub_cat
+                    })
+                    //if the category was changed
+                    if(productData.cat_id != product.prev_cat) {
+                        //then we reduce the product count under the previous
+                        // category, and increase it under the category changed to.
+                        cats_and_sub_cats_updates.push(
+                            new Promise(resolve => {
+                                Cat.findOne({
+                                    where: {
+                                        id: product.prev_cat
+                                    }
+                                })
+                                .then(cat => {
+                                    var newCat = {total_products: cat.total_products - 1}
+                                    cat.update(newCat)
+                                    Cat.findOne({
+                                        where: {
+                                            id: productData.cat_id
+                                        }
+                                    })
+                                    .then(cat2 => {
+                                        var newCat2 = {total_products: cat2.total_products + 1}
+                                        cat2.update(newCat2)
+                                        resolve({cats: "Success 1 2"})
+                                    })
+                                    .catch(e => {
+                                        resolve({cats: "Success 1 Failed 2", e: e})
+                                    })
+                                })
+                                .catch(e => {
+                                    resolve({cats: "Failed 1", e: e})
+                                })
+                            })
+                        )
+                    }
+                    //if the sub category was changed
+                    if(productData.sub_cat_id != product.prev_sub_cat) {
+                        //then we reduce the product count under the previous
+                        // sub category, and increase it under the sub category changed to.
+                        cats_and_sub_cats_updates.push(
+                            new Promise(resolve => {
+                                SubCat.findOne({
+                                    where: {
+                                        id: product.prev_sub_cat
+                                    }
+                                })
+                                .then(cat => {
+                                    var newCat = {total_products: cat.total_products - 1}
+                                    cat.update(newCat)
+                                    SubCat.findOne({
+                                        where: {
+                                            id: productData.sub_cat_id
+                                        }
+                                    })
+                                    .then(cat2 => {
+                                        var newCat2 = {total_products: cat2.total_products + 1}
+                                        cat2.update(newCat2)
+                                        resolve({sub_cats: "Success 1 2"})
+                                    })
+                                    .catch(e => {
+                                        resolve({sub_cats: "Success 1 Failed 2", e: e})
+                                    })
+                                })
+                                .catch(e => {
+                                    resolve({sub_cats: "Failed 1", e: e})
+                                })
+                            })
+                        )
+                    }
+
+                    //if the category and sub category wasn't changed
+                    if(cats_and_sub_cats_updates.length == 0) {
+                        console.log("c-a-t", 99)
+                        return res.status(200).json({status: 1, message: "2 Ad posted successfully"+JSON.stringify(prod), product_id: productData.id})
+
                     } else {
-                        return res.status(200).json({status: -1, message: ERROR_DB_OP})
+                        console.log("c-a-t", 88)
+                        Promise.all(cats_and_sub_cats_updates)
+                        .then(results => {
+                            console.log("cats_and_sub_cats_updatesResult", results)
+                            return res.status(200).json({status: 1, message: "3 Ad posted successfully"+JSON.stringify(prod), product_id: productData.id})
+                        })
                     }
+                    
                 })
-                .catch(err => {
-                    return res.status(200).json({status: -1, message: ERROR_DB_OP+err})
+                .catch(e => {
+                    return res.status(200).json({status: -1, message: ERROR_DB_OP+e, c: productData.currency_symbol})
                 })
-            })
-            .catch(e => {
-                return res.status(200).json({status: -1, message: ERROR_DB_OP+e, c: productData.currency_symbol})
-            })
+            }
+            
         }
     }
 })

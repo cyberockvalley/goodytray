@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS } from "../../../Constants"
 import { commaNum, truncText, cls } from "../utils/Funcs"
 const browser = require("../utils/Browser")
-var dateFormat = require('dateformat');
+var dateFormat = require('dateformat')
 import TimeAgo from 'javascript-time-ago'
 import Navbar from './Navbar'
 import Footer from "./Footer"
@@ -603,7 +603,7 @@ class ProductPage extends Component {
                    </div>
                    <div className="b-advert-card-aside">
                     {
-                        this.state.poster?
+                        this.state.poster && this.state.product.hide_phone_number != 1?
                         <div className="b-show-contact-outer">
                         <a className="qa-show-contact cy-show-contact js-show-contact b-show-contact" href={"tel: "+this.state.poster.number} rel="nofollow">
                          <span className="b-show-contact-title">
@@ -749,11 +749,14 @@ class ProductPage extends Component {
                        </div>
                       </div>
                       <div className="b-seller-info-interaction">
-                       <a className="qa-show-contact cy-show-contact js-show-contact b-show-contact h-mb-20" href={"tel: "+this.state.poster.number} rel="nofollow">
-                        <span className="b-button b-button--primary b-button--biggest-size">
-                         {this.state.poster.number}
-                        </span>
-                       </a>
+                         {
+                             this.state.product.hide_phone_number != 1?
+                             <a hide-pn={"hh" + this.state.product.hide_phone_number} className="qa-show-contact cy-show-contact js-show-contact b-show-contact h-mb-20" href={"tel: "+this.state.poster.number} rel="nofollow">
+                                <span className="b-button b-button--primary b-button--biggest-size">
+                                    {this.state.poster.number}
+                                </span>
+                             </a>:""
+                         }
                        <div className="h-flex h-width-100p h-mb-20">
                         <div className="" style={this.state.sending_message?{display:"block"}:{display: "none"}}>
                          <div className="b-bouncing-loader" style={{bottom: "0px"}}>

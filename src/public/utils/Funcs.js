@@ -1,5 +1,10 @@
 import { SITE_DOT_COM, NO_PROFILE_PHOTO_IMAGE } from "../../../Constants"
 const uuidv4 = require('uuid/v4')
+const qs = require("querystring")
+
+export const queries = (props) => {
+    return qs.parse(props.location.search.substring(1))
+}
 
 export const okResponse = (res, data) => {
     res.status(200).json(data)
@@ -18,6 +23,17 @@ export const overflows = (el) => {
        el.style.overflow = curOverflow;
        console.log("el.style.overflow", el.style.overflow, isOverflowing)
        return true;//isOverflowing;
+}
+export const uniqueArray = (listValues) => {
+    return listValues.filter(function(value, index, self) {
+        return self.indexOf(value) === index
+    })
+}
+export const removeObject = (object, array) => {
+    array.splice(array.indexOf(object), 1)
+}
+export const isFile = data => {
+    return data instanceof File
 }
 export const getExtFromMime = function(mime) {
     if(mime == "image/jpeg" || mime == "image/jpg") {
@@ -186,6 +202,10 @@ export const isValidEmail = function(email) {
 
 export const isClientSide = function() {
     return (typeof window !== 'undefined')
+}
+
+export const getObjectValue = (object) => {
+    return JSON.parse(JSON.stringify(object))
 }
 
 export const getCopy = function() {

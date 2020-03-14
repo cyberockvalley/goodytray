@@ -4,6 +4,9 @@ const path = require('path')
 //const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const devMode = process.env.NODE_ENV !== 'production'?'development':'production';
 
+const styleLoader = require("style-loader")
+const cssLoader = require("css-loader")
+const sassLoader = require("sass-loader")
 
 const js = {
   test: /\.js$/,
@@ -16,28 +19,28 @@ const js = {
     }
   }
 }
-/*
-const css = {
-  test: /\.css$/,
-  exclude: /node_modules/,
-  use: [
-    {
-      loader: MiniCssExtractPlugin.loader,
-      options: {
-        // you can specify a publicPath here
-        // by default it uses publicPath in webpackOptions.output
-        publicPath: 'dist/public',
-        hmr: process.env.NODE_ENV === 'development',
-      },
-    },
-    'css-loader'
-  ]
-}
-*/
+
 const fonts = {
   test: /\.(woff|ttf|eot|svg|gif)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
   exclude: [/node_modules/],
   use: ['file-loader']
+}
+
+const css = {
+  test: /\.css$/,
+  use: [
+     // style-loader
+     { loader: 'style-loader' },
+     // css-loader
+     {
+       loader: 'css-loader',
+       options: {
+         modules: true
+       }
+     },
+     // sass-loader
+     { loader: 'sass-loader' }
+  ]
 }
 
 const serverConfig = {
@@ -51,7 +54,7 @@ const serverConfig = {
     'index.js': path.resolve(__dirname, 'src/index.js')
   },
   module: {
-    rules: [js, fonts]
+    rules: [js, fonts, css]
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -66,7 +69,7 @@ const clientConfig = {
     'multipleRoutes.js': path.resolve(__dirname, 'src/public/multipleRoutes.js')
   },
   module: {
-    rules: [js, fonts]
+    rules: [js, fonts, css]
   },
   optimization: {
     splitChunks: {
