@@ -1,7 +1,8 @@
 const express = require("express")
 const attrs = express.Router()
 const cors = require("cors")
-
+import { logger } from "../utils/Funcs"
+logger.disableLogger()
 const Attr = require("../models/Attr")
 attrs.use(cors())
 const Sequelize = require("sequelize")

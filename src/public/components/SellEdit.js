@@ -250,7 +250,6 @@ class SellEdit extends Component {
 
   componentDidMount() {
     this.setState({queries: queries(this.props)})
-    console.log("Mounted YYY", this.props.location, this.state.queries)
     const id = this.state.queries.id
     console.log("productId", id)
     if(id > -1) {
@@ -260,8 +259,10 @@ class SellEdit extends Component {
         .then(response => {
             if(response.data.details) {
                 const product = response.data.details
-                console.log("Product", product)
-
+                if(!this.props.initialData.user || this.props.initialData.user.id != product.user_id) {
+                  alert("You don't have permission to edit this ad")
+                  window.location.href = productLink(product.title, id)
+                }
                 //set attributes
                 var attrs = response.data.details.attrs
                 if(attrs) {
@@ -561,6 +562,7 @@ class SellEdit extends Component {
   uploadProduct = (product, isEdit) => {
     if(isEdit) {
       product.id = this.state.product.id
+      product.user_id = this.state.product.user_id
       product.del_photos = this.state.del_photos
       product.prev_cat = this.state.product.cat_id || this.state.product.cat
       product.prev_sub_cat = this.state.product.sub_cat_id || this.state.product.sub_cat
@@ -582,11 +584,22 @@ class SellEdit extends Component {
         this.setState({product: product})
         this.sponsorAd(this.state.title, productId)
       } else {
-        for(var er = 0; er < respData.form_errors.length; er++) {
-          //console.log("respData.form_errors[er].key, respData.form_errors[er].value: ", respData.form_errors[er].key, respData.form_errors[er].value)
-          this.setError(respData.form_errors[er].key, respData.form_errors[er].value)
+        if(respData.form_errors && respData.form_errors.length > 0) {console.log("ERR", 2)
+          for(var er = 0; er < respData.form_errors.length; er++) {
+            //console.log("respData.form_errors[er].key, respData.form_errors[er].value: ", respData.form_errors[er].key, respData.form_errors[er].value)
+            this.setError(respData.form_errors[er].key, respData.form_errors[er].value)
+          }
+          this.onServerResponse()
+
+        } else if(respData.error || respData.message) {
+          this.onServerResponse()
+          alert(respData.error || respData.message)
+
+        } else {
+          this.onServerResponse()
+          alert("An unexpected error occurred")
         }
-        this.onServerResponse()
+        
       }
     })
     .catch(err => {

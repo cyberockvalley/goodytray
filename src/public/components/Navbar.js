@@ -149,7 +149,7 @@ class Navbar extends Component {
               Logout
             </a>
           </li>
-          <li className="nav-item md-hide-down">
+          <li className="nav-item">
             <div className="h-width-120">
               <a href="/sell" className="h-width-100p fw-button qa-fw-button fw-button--type-warning fw-button--size-medium">
                 <span className="fw-button__content">

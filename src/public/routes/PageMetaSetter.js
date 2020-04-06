@@ -138,7 +138,7 @@ const getProductPageMeta = async (id) => {
         pageMeta.description = details.description
         pageMeta.keywords = details.cat_name+" "+details.title.toLowerCase()
         pageMeta.url = "https://goodytray.com" + productLink(details.title, details.id)
-        var image = details.photos.split(',')[0];
+        var image = "https://goodytray.com" +  details.photos.split(',')[0];
         pageMeta.image_type = mimeFromFilename(image);
         pageMeta.image = image
         return pageMeta

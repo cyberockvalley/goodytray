@@ -56,7 +56,10 @@ export default ({ body, initialData }) => {
   
       <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
       <title>${initialData.pageMeta.title}</title>
-      <script>window.__initialData__ = ${JSON.stringify(initialData)}</script>
+      <script>
+        //console.log = function() {}
+        window.__initialData__ = ${JSON.stringify(initialData)}
+      </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

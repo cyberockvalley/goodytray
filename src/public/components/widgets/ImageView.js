@@ -1,4 +1,4 @@
-import React from "React"
+import React from "react"
 import { buildStyle } from "./utils/Functions"
 import View from "./View"
 import { VIEWS } from "./utils/Constants"

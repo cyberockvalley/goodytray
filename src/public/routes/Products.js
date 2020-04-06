@@ -4,6 +4,9 @@ const cors = require("cors")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 
+import { logger } from "../utils/Funcs"
+logger.disableLogger()
+
 const Product = require("../models/Product")
 const TopAd = require("../models/TopAd")
 const Cat = require("../models/Cat")
@@ -408,7 +411,10 @@ products.get("/cats_and_sub_cats", (req, res) => {
 //get products details
 products.get("/details", function(req, res) {
     const id = req.query.id
-    const viewsSize = randNum(4, 8)
+    var viewsSize = randNum(1, 10)
+    if(viewsSize > 1) {
+        viewsSize = 0;
+    }
     if(!id) {
         res.json({details: null, message: "No identifier provided"})
 
@@ -446,7 +452,6 @@ products.get("/details", function(req, res) {
                     product.country_name = productEXT[0].country_name
                     product.state_name = productEXT[0].state_name
                     product.city_name = productEXT[0].city_name
-                        
 
                     //get reviews count
                     db.sequelize.query("SELECT COUNT(id) as reviews FROM reviews WHERE product_id = ?", {
@@ -600,11 +605,14 @@ products.post("/upload/photos", checkUserAuth, (req, res) => {
 
 //upload products
 products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
+    const product = req.body.product
     if(!res.locals.token_user) {
         res.json({status: 5, message: "Login required", auth_required: true})
 
+    } else if(req.originalUrl.includes("edit") && res.locals.token_user.id != product.user_id) {
+        res.json({status: 4, message: "Permission required"})
+
     } else {
-        const product = req.body.product
         const today = new Date()
         const form_errors = []
         const productData = {}

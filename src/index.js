@@ -1,8 +1,12 @@
 const dotenv = require('dotenv')
 const result = dotenv.config({ path: 'env/.env' })
+
+import { truncText, sleep, randNum, genFilename, logger } from './public/utils/Funcs'
+logger.disableLogger()
 if (result.error) {
   throw result.error
 }
+
 //require('https').globalAgent.options.ca = require('ssl-root-cas/latest').create();
 console.log("PROCESS_ENV_DATA", result.parsed)
 console.log("DB_PASS", process.env.DB_PASS)
@@ -36,8 +40,6 @@ import {checkUserAuth, logOut} from "./public/components/UserFunctions"
 import {API_ROOT, PORT, PORT_SSL} from "../Constants"
 import {error400, error500} from "../src/public/utils/Errors"
 import { SELL_PATHS, APP_PATHS, LOGIN_PATHS } from './public/utils/RoutePaths'
-
-import { truncText, sleep, randNum, genFilename } from './public/utils/Funcs'
 
 import { EXCHANGE_RATE, urlToFileStream } from './public/utils/ExpressFunc'
 import { THIRD_PARTY_AUTH_PATH } from './public/routes/ThirdPartyAuth'

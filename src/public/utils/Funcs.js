@@ -2,6 +2,30 @@ import { SITE_DOT_COM, NO_PROFILE_PHOTO_IMAGE } from "../../../Constants"
 const uuidv4 = require('uuid/v4')
 const qs = require("querystring")
 
+//console.log switch(logger.enableLogger(), logger.disableLogger())
+//console.log = function() {} also disables console.log
+export const logger = function()
+{
+    var oldConsoleLog = null;
+    var pub = {};
+
+    pub.enableLogger =  function enableLogger() 
+                        {
+                            if(oldConsoleLog == null)
+                                return;
+
+                                console.log = oldConsoleLog;
+                        };
+
+    pub.disableLogger = function disableLogger()
+                        {
+                            oldConsoleLog = console.log;
+                            console.log = function() {};
+                        };
+
+    return pub;
+}()
+
 export const queries = (props) => {
     return qs.parse(props.location.search.substring(1))
 }
