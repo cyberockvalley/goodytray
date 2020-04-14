@@ -27,7 +27,19 @@ messages.get("/threads", (req, res) => {
     } else {
         const user = res.locals.token_user
         const offset = (page - 1) * rowsPerPage
-        db.sequelize.query("SELECT messages.*, products.photos as product_photos, products.price as product_price, products.currency_symbol as product_currency_symbol, products.title as product_title, users.number as user_number, users.profile_photo as user_photo, users.fullname as user_fullname FROM messages, products, users WHERE messages.from_id = ? AND products.id = messages.product_id AND users.id = messages.to_id OR messages.to_id = ? AND users.id = messages.from_id AND products.id = messages.product_id GROUP BY messages.thread_id ORDER BY messages.id DESC LIMIT ?, ?", {
+        db.sequelize.query(`
+        SELECT messages.*, products.photos as product_photos, 
+        products.price as product_price, 
+        products.currency_symbol as product_currency_symbol, 
+        products.title as product_title, 
+        users.number as user_number, 
+        users.profile_photo as user_photo, 
+        users.fullname as user_fullname 
+        FROM messages, products, users 
+        WHERE messages.from_id = ? AND products.id = messages.product_id 
+        AND users.id = messages.to_id OR messages.to_id = ? 
+        AND users.id = messages.from_id AND products.id = messages.product_id 
+        GROUP BY messages.thread_id ORDER BY messages.id DESC LIMIT ?, ?`, {
             replacements: [user.id, user.id, offset, rowsPerPage],
             raw: false,
             type: Sequelize.QueryTypes.SELECT,

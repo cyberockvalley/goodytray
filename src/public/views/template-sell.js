@@ -20,6 +20,7 @@ export default ({ body, initialData }) => {
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta name="theme-color" content="#70b93f" />
       <link rel="apple-touch-icon" href="/public/logo.png" />
+      <link rel="stylesheet" href="/public/res/font-awesome/css/font-awesome.min.css">
       <meta name="application-name" content="${SITE_NAME}">
       ${
         initialData.pageMeta == null || initialData.pageMeta.description == null?

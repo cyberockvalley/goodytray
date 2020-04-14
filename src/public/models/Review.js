@@ -2,7 +2,7 @@ const Sequelize = require("sequelize")
 const db = require("../database/db")
 
 module.exports = db.sequelize.define(
-    "message", 
+    "review", 
     {
         id: {
             type: Sequelize.INTEGER,
@@ -15,6 +15,10 @@ module.exports = db.sequelize.define(
         }, 
 
         product_id: {
+            type: Sequelize.INTEGER
+        },
+
+        experience_id: {
             type: Sequelize.INTEGER
         },
 

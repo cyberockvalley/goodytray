@@ -5,90 +5,111 @@ const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 
 const Review = require("../models/Review")
+const Product = require("../models/Product")
 const User = require("../models/User")
 
 reviews.use(cors())
 
 import {checkUserAuth} from "../components/UserFunctions"
-import { DISTINCNT_MESSAGES_PER_HOUR, ERROR_DB_OP, REVIEWS_PER_PAGE } from "../../../Constants"
+import { REVIEWS_PER_HOUR, ERROR_DB_OP, REVIEWS_PER_PAGE } from "../../../Constants"
 import { userDetails } from "../utils/ExpressFunc"
+import { intOrMin, buildError, okResponse, userFromRes, returnServerError } from "../utils/Funcs"
+import DatabaseCursor from "../objects/DatabaseCursor"
+import { rootResponse } from "../utils/ResponseTemplates"
 const db = require("../database/db")
 const Sequelize = require("sequelize")
 
-reviews.get("/", checkUserAuth, (req, res) => {
-    const page = req.query.page && !isNaN(parseInt(req.query.page))? parseInt(req.query.page) : 1
-    var hasNext = false, hasPrev = page > 1
-    if(!req.query.product_id || isNaN(parseInt(req.query.product_id))) {
-        res.json({status: -1, message: "No product id provided", reviews: null, has_prev: hasPrev, has_next: hasNext})
-
-    } else {
-        //get total reviews
-        db.sequelize.query("SELECT COUNT(id) AS user_id FROM reviews WHERE product_id = ?", {
-            replacements: [req.query.product_id],
-            raw: false, 
-            type: Sequelize.QueryTypes.SELECT,
-            model: Review,
-            mapToModel: true
-        })
-        .then(review => {
-            var totalRows = review[0].user_id
-            hasNext = page < Math.ceil(totalRows / REVIEWS_PER_PAGE)
-            if(totalRows == 0) {
-                res.json({status: 0, message: "No match found", reviews: null, has_prev: hasPrev, has_next: hasNext})
-
-            } else {
-                const offset = (page - 1) * REVIEWS_PER_PAGE
-
-                //get the reviews
-                db.sequelize.query("SELECT reviews.*, users.username AS writer_username, users.fullname AS writer_fullname, users.profile_photo AS writer_profile_photo FROM reviews, users WHERE reviews.product_id = ? AND users.id = reviews.user_id ORDER BY reviews.created DESC LIMIT ?, ?", {
-                    replacements: [req.query.product_id, offset, REVIEWS_PER_PAGE],
-                    raw: false, 
-                    type: Sequelize.QueryTypes.SELECT,
-                    model: Review,
-                    mapToModel: true
-                })
-                .then(reviews => {
-                    res.json({status: 1, message: "Success", reviews: reviews, has_prev: hasPrev, has_next: hasNext})
-    
-                    
-                })
-                .catch(e => {
-                    res.json({status: -1, message: ERROR_DB_OP+e, reviews: null, has_prev: hasPrev, has_next: hasNext})
-                })
-            
-            }
-        })
-        .catch(e => {
-            res.json({status: -1, message: ERROR_DB_OP, reviews: null, has_prev: hasPrev, has_next: hasNext})
-        })
+reviews.get("/:id", (req, res) => {
+    var result = rootResponse();
+    var productId = intOrMin(req.params.id, -1)
+    if(productId < 0) {
+        result.error = "Invalid product"
+        okResponse(res, result)
     }
-})
-
-reviews.post("/post", checkUserAuth, (req, res) => {
-    if(!res.locals.token_user) {
-        res.redirect("/login")
+    var count_only = intOrMin(req.query.count_only, 0)
+    var query = (
+        count_only > 0? 
+        `SELECT COUNT(reviews.id) total` : 
+        `SELECT reviews.*, users.fullname as fullname, users.profile_photo as profile_photo`
+        ) 
+    var reps = []
+    if(count_only > 0) {
+        query += ` FROM reviews WHERE product_id = ?`
+        reps.push(productId)
 
     } else {
-        const user = res.locals.token_user
-        var error = ""
-        const review = {}
-        if(!req.text || req.text.length == 0) {
-            error = "Please enter your review body"
+        query += ` FROM reviews, users WHERE product_id = ? 
+        AND users.id = reviews.user_id`
+        reps.push(productId)
+    }
+
+    var page = intOrMin(req.query.page, 1)
+    var cursor = new DatabaseCursor(page, REVIEWS_PER_PAGE)
+
+    var reviewType = intOrMin(req.query.type, -2)
+    const allowed_review_type = [-1, 0, 1, 2]
+    if(!allowed_review_type.includes(reviewType)) {
+        query += " ORDER BY reviews.id DESC LIMIT ?, ?"
+        reps.push(cursor.offset, cursor.limit)
+
+    } else {
+        query += " AND weight = ? ORDER BY reviews.id DESC LIMIT ?, ?"
+        reps.push(reviewType, cursor.offset, cursor.limit)
+    }
+
+    db.sequelize.query(query, {
+        replacements: reps
+    })
+    .then(results => {
+        if(count_only > 0) {
+            result.total = results[0][0].total
+            okResponse(res, result)
 
         } else {
-            review.body = req.text
+            result = cursor.getResult(results[0])
+            okResponse(res, result)
         }
+    })
+    .catch(e => {
+        var result = rootResponse()
+        result.error = buildError("/"+productId, e, ERROR_DB_OP)
+        returnServerError(res, result)
+    })
 
-        if(!req.to_id || req.to_id < 0) {
-            error = "No recipient provided"
+})
+reviews.post("/create", checkUserAuth, (req, res) => {
+    const user = userFromRes(res)
+    const result = rootResponse()
+    if(!user) {
+        result.auth_required = true
+        okResponse(res, result)
+
+    } else {
+        const weights = [1, 0, -1]
+        const experiences = [0, 1, 2, 3, 4]
+        const payload = {created: new Date(), user_id: user.id}
+        payload.product_id = intOrMin(req.body.product_id, -1)
+        payload.weight = intOrMin(req.body.weight, -2)
+        payload.experience_id = intOrMin(req.body.experience_id, -1)
+        payload.body = req.body.body
+        
+
+        if(
+            payload.product_id < 0 || 
+            !weights.includes(payload.weight) ||
+            !experiences.includes(payload.experience_id) || 
+            !payload.body || payload.body.length < 5
+            ) {
+            result.error = "Input error!"
+            okResponse(res, result)
 
         } else {
             //check if the user is spamming by checking the number of reviews 
-            // sent to different users within an hour
+            // made within an hour
             const dateAgo = new Date()
             dateAgo.setHours(dateAgo.getHours() - 1)
             
-            db.sequelize.query("SELECT COUNT(DISTINCT to_id) AS product_id from reviews WHERE from_id = ? AND created >= ?", {
+            db.sequelize.query("SELECT COUNT(id) total_reviews FROM reviews WHERE user_id = ? AND created >= ?", {
                 replacements: [user.id, dateAgo],
                 raw: false, 
                 type: Sequelize.QueryTypes.SELECT,
@@ -96,32 +117,40 @@ reviews.post("/post", checkUserAuth, (req, res) => {
                 mapToModel: true
             })
             .then(review => {
-                if(!review.product_id > DISTINCNT_MESSAGES_PER_HOUR) {
-                    res.json({status: 0, review: "You are sending reviews too fast. Please try again later"})
+                if(!review.total_reviews > REVIEWS_PER_HOUR) {
+                    res.json({status: 0, error: "You are sending reviews too fast. Please try again later"})
 
                 } else {
-                    //check if recipent exists
-                    var recipent = userDetails(req.to_id);
-                    if(!recipent.user) {
-                        res.json({status: 0, review: "The recipient does not exist"})
+                    //get the product details
+                    Product.findOne({
+                        id: payload.product_id
+                    })
+                    .then(product => {
+                        if(!product) {
+                            result.error = "The product does not exist"
+                            okResponse(res, result)
 
-                    } else {
-                        res.json({status: 0, review: recipent.user})
-                        if(req.product_id && !isNaN(parseInt(req.product_id)) && parseInt(req.product_id) > -1) {
-                            body.product_id = req.product_id
+                        } else if(product.user_id == user.id) {
+                            result.error = "You can't write a review on your product"
+                            okResponse(res, result)
 
                         } else {
-                            body.product_id = -1
+                            Review.create(payload)
+                            .then(review => {
+                                result.success = true
+                                //result.review = review
+                                okResponse(res, result)
+                            })
+                            .catch(e => {
+                                result.error = buildError("/create", e, ERROR_DB_OP)
+                                returnServerError(res, result)
+                            })
                         }
-                        body.created = new Date()
-                        Review.create(body)
-                        .then(review => {
-                            res.json({status: 1, review: "Review sent"})
-                        })
-                        .catch(e => {
-                            res.json({status: 0, review: ERROR_DB_OP})
-                        })
-                    }
+                    })
+                    .catch(e => {
+                        result.error = buildError("/create", e, ERROR_DB_OP)
+                        returnServerError(res, result)
+                    })
                 }
             })
         }

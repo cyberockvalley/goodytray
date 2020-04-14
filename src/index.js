@@ -2,7 +2,7 @@ const dotenv = require('dotenv')
 const result = dotenv.config({ path: 'env/.env' })
 
 import { truncText, sleep, randNum, genFilename, logger } from './public/utils/Funcs'
-logger.disableLogger()
+//logger.disableLogger()
 if (result.error) {
   throw result.error
 }

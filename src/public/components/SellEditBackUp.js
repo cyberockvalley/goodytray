@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { SITE_NAME, API_ROOT, SITE_DOT_COM, AD_PACKAGES, SERVER_ADDR, MAX_PRODUCT_PHOTO_WIDTH } from '../../../Constants'
+import { SITE_NAME, API_ROOT, SITE_DOT_COM, AD_PACKAGES, SERVER_ADDR } from '../../../Constants'
 const browser = require('../utils/Browser')
-import {id, cls, commaNum, remove, removeObject, currencyLogo, getObjectValue, queries, uniqueArray, isFile, jsonEmpty, resizeImageFile, blobToFile} from '../utils/Funcs'
+import {id, cls, commaNum, remove, removeObject, currencyLogo, getObjectValue, queries, uniqueArray, isFile, jsonEmpty} from '../utils/Funcs'
 import {MAX_PRODUCT_PHOTOS_SIZE} from "../../../Constants"
 import { productLink } from '../utils/LinkBuilder'
 const StripeView = require("../components/third_party/stripe/StripeView")
@@ -46,9 +46,6 @@ class SellEdit extends Component {
     this.handleAttrSelect = this.handleAttrSelect.bind(this)
     this.handleAttrInput = this.handleAttrInput.bind(this)
     this.onPhotoChangedHandler = this.onPhotoChangedHandler.bind(this)
-    this.allowDrop = this.allowDrop.bind(this)
-    this.dragLeft = this.dragLeft.bind(this)
-    this.drop = this.drop.bind(this)
     this.removePhoto = this.removePhoto.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
@@ -196,10 +193,9 @@ class SellEdit extends Component {
       console.log("EditProduct", product)
       i = 0
       const files = product.photos? product.photos.split(",") : []
-      this.setState({next_photo_index: files.length -1})
       const maxUpload = 20 - files.length
       while(i < maxUpload) {
-        //files.push(null)
+        files.push(null)
         i++
       }
       this.setState({photos: files})
@@ -243,9 +239,8 @@ class SellEdit extends Component {
       //set photos
       i = 0
       const files = []
-      this.setState({next_photo_index: 0})
       while(i < 20) {
-        //files.push(null)
+        files.push(null)
         i++
       }
       this.setState({photos: files})
@@ -784,9 +779,7 @@ class SellEdit extends Component {
     const index = parseInt(e.target.getAttribute("photo-index"))
     console.log("photoIndex", index)
     const photo = photos[index]
-    if(isFile(photo)) {
-      this.state.photo_size -= photo.size
-    }
+    this.state.photo_size -= photo.size
     photos.splice(index, 1)
     this.state.photos = photos
     this.setState({photos: photos})
@@ -798,50 +791,38 @@ class SellEdit extends Component {
   }
 
   onPhotoChangedHandler = e => {
-    this.addPhotos(e.target.files)
-  }
-  
-  allowDrop = e => {
-    e.preventDefault()
-    console.log("AllowDrop")
-    this.setState({drag_over: true})
-  }
-
-  dragLeft = e => {
-    e.preventDefault()
-    console.log("DragLeft")
-    this.setState({drag_over: false})
-  }
-  
-  drop = e => {
-    e.preventDefault()
-    this.setState({drag_over: false})
-    addPhotos(e.dataTransfer.files)
-  }
-
-  addPhotos = async files => {
     this.setState({loaded: 0})
+    const files = e.target.files
+    var nextPhotoIndex = parseInt(e.target.getAttribute("photo-index"))
+    console.log("e.target.getAttribute: "+e.target.getAttribute("photo-index"))
+    
     const photos = this.state.photos
     for(var i = 0; i < files.length; i++) {
+      console.log("id: "+i)
       console.log("photos.length: "+photos.length)
+      console.log("nextPhotoIndex: "+nextPhotoIndex)
+      if(nextPhotoIndex >= photos.length) {
+        nextPhotoIndex = 0
+      }
+      while(photos[nextPhotoIndex] != null || photos[nextPhotoIndex] == "") {
+        nextPhotoIndex++
+        if(nextPhotoIndex >= photos.length) nextPhotoIndex = 0
+      }
       if(this.state.photo_size + files[i].size > MAX_PRODUCT_PHOTOS_SIZE) {
         console.log("max reached")
         this.setError("photo", "You've exceded the total maximum file size allowed")
 
       } else {
-        var file = blobToFile(files[i].name, await resizeImageFile({
-          file: files[i],
-          maxSize: MAX_PRODUCT_PHOTO_WIDTH
-        }))
-        photos.push(file)
-        this.state.photo_size += file.size
-        
-      console.log("photo-size-new:", file.size, "totalSize:", this.state.photo_size)
+        photos[nextPhotoIndex] = files[i]
+        this.state.photo_size += files[i].size
       }
+      console.log("asadasdsd")
       console.log("photo-size:", files[i].size, "totalSize:", this.state.photo_size, "maxSize:", MAX_PRODUCT_PHOTOS_SIZE)
+      nextPhotoIndex++
     }
     this.setState({photos: photos})
-    console.log("photos", this.state.photos)
+    console.log("photos")
+    console.log(this.state.photos)
   }
 
   resetCustomInputs() {
@@ -1161,28 +1142,10 @@ class SellEdit extends Component {
         <b data-v-b364e386="">
          Ads with photo get 5x more clients.
         </b>
-        Accepted formats are .jpg, .gif and .png. <span className="hide">Max allowed size for uploaded files is 5 MB.</span>
+        Accepted formats are .jpg, .gif and .png. Max allowed size for uploaded files is 5 MB.
         <br data-v-b364e386=""/>
         Add at least 1 photo for this category.
        </p>
-
-       <div className="form-group mt-3" ondragenter={this.allowDrop} ondragleave={this.dragLeft}>
-        <div className="file-upload-wrapper">
-          <div className="card card-body view file-upload">
-          <div className="card-text file-upload-message">
-            <p>
-            Click to add images 
-              <span className="xs-hide sm-hide-down">
-                or drag and drop images
-              </span>
-            </p>
-            <i ariaHidden="true" className={this.state.drag_over? "fa fa-cloud-upload fa-5x" : "fa fa-cloud-upload fa-3x"}>
-            </i>
-          </div>
-          <input onChange={this.onPhotoChangedHandler} ondrop={this.drop} accept="image/*" className="file_uploads" data-form="upload" data-type="array" id="file" multiple={true} name="product_photos" type="file"/>
-          </div>
-        </div>
-      </div>
 
        <div data-v-61d25a85="" data-v-b364e386="">
         <div className="scrollWrap qa-photos start h-mb-10" data-v-61d25a85="">

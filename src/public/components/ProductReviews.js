@@ -5,49 +5,165 @@ const browser = require("../utils/Browser")
 var dateFormat = require('dateformat');
 import Navbar from './Navbar'
 import Footer from "./Footer"
+import { intOrMin, queries } from "../utils/Funcs";
+import { get } from "https";
 
+const reviewsType = [1, 0, -1]
 class ProductReviews extends Component {
     constructor() {
         super()
         this.state = {
           product: {},
-          reviews_data: {reviews: []}
+          selected_type: 1,
+          positive_reviews: [],
+          neutral_reviews: [],
+          negative_reviews: [],
+          positive_count: 0,
+          neutral_count: 0,
+          negative_count: 0,
+          positive_page: 1,
+          neutral_page: 1,
+          negative_page: 1
         }
 
         this.handleClick = this.handleClick.bind(this)
+    }
+
+    showPositive = () => {
+      this.setState({selected_type: 1})
+      this.state.selected_type = 1
+      if(this.state.positive_count > 0 && this.state.positive_reviews.length == 0) {
+        this.getReviews()
+      }
+    }
+    showNeutral = () => {
+      this.setState({selected_type: 0})
+      this.state.selected_type = 0
+      if(this.state.neutral_count > 0 && this.state.neutral_reviews.length == 0) {
+        this.getReviews()
+      }
+    }
+    showNegative = () => {
+      this.setState({selected_type: -1})
+      this.state.selected_type = -1
+      if(this.state.negative_count > 0 && this.state.negative_reviews.length == 0) {
+        this.getReviews()
+      }
     }
 
     componentDidMount() {
       var pathname = this.props.location.pathname
       pathname = pathname.endsWith("/")? pathname.substring(0, pathname.length - 1) : pathname
       const paths = pathname.split("/")
-      const id = parseInt(paths[paths.length - 1])
+      const id = intOrMin(paths[paths.length - 1], -1)
       console.log("productId", id)
+      if(id < 0) {
+        this.props.history.push("/errors/404")
 
-      //get the product
-      browser.axios.get(API_ROOT + "products/details?id="+id)
-      .then(response => {
-        if(response.data.details) {
-          this.setState({product: response.data.details})
-
-        } else {
-          this.props.history.push('/')
-        }
-        //get the reviews
-        browser.axios.get(API_ROOT + "reviews?product_id="+id)
+      } else {
+        this.state.product.id = id
+        var positive_loaded = false;
+        var negative_loaded = false;
+        var neutral_loaded = false;
+        //get total number of positive, negative, and neutral reviews
+        //get positive total number
+        this.setState({loading: true})
+        browser.axios.get(API_ROOT + "reviews/" + id + "?type=1&count_only=1")
         .then(response => {
-          if(response.data.reviews) {
-            this.setState({reviews_data: response.data})
-
+          this.setState({positive_count: response.data.total})
+          positive_loaded = true
+          if(positive_loaded && negative_loaded && neutral_loaded) {
+            this.setDefaultReview()
+            this.getReviews()
           }
         })
-        .catch(e => {
-          console.log("No reviews from response:", response.data, API_ROOT + "reviews")
+        //get neutral total number
+        browser.axios.get(API_ROOT + "reviews/" + id + "?type=0&count_only=1")
+        .then(response => {
+          this.setState({neutral_count: response.data.total})
+          neutral_loaded = true
+          if(positive_loaded && negative_loaded && neutral_loaded) {
+            this.setDefaultReview()
+            this.getReviews()
+          }
         })
-      })
-      .catch(e => {
-        console.log("No reviews from response:", response.data, API_ROOT + "reviews")
-      })
+        //get negative total number
+        browser.axios.get(API_ROOT + "reviews/" + id + "?type=-1&count_only=1")
+        .then(response => {
+          this.setState({negative_count: response.data.total})
+          negative_loaded = true
+          if(positive_loaded && negative_loaded && neutral_loaded) {
+            this.setDefaultReview()
+            this.getReviews()
+          }
+        })
+      }
+    }
+
+    setDefaultReview = () => {
+      const defaultWeight = intOrMin(queries(this.props).weight, -10)
+      if(reviewsType.includes(defaultWeight)) {
+        this.setState({selected_type: defaultWeight})
+
+      } else {
+        if(this.state.positive_count > 0) {
+          this.setState({selected_type: 1})
+  
+        } else if(this.state.neutral_count > 0) {
+          this.setState({selected_type: 0})
+  
+        } else if(this.state.negative_count > 0) {
+          this.setState({selected_type: -1})
+          
+        } else {
+          this.setState({selected_type: -10})
+        }
+      }
+    }
+    getReviews = () => {
+      if(reviewsType.includes(this.state.selected_type)) {
+        this.setState({loading: true})
+        var page = 1;
+        switch (this.state.selected_type) {
+          case 1:
+            page = this.state.positive_page
+            break;
+          case 0:
+            page = this.state.neutral_page
+            break;
+          case -1:
+            page = this.state.negative_page
+        }
+        var reviewsAddr = API_ROOT 
+        + "reviews/" 
+        + this.state.product.id 
+        + "?type=" + this.state.selected_type
+        + "&page=" + page
+        browser.axios.get(reviewsAddr)
+        .then(response => {
+          switch (this.state.selected_type) {
+            case 1:
+              var reviews = this.state.positive_reviews.
+              concat(response.data.list)
+              this.setState({positive_reviews: reviews})
+              this.setState({positive_page: this.state.positive_page + 1})
+              break;
+            case 0:
+              var reviews = this.state.neutral_reviews.
+              concat(response.data.list)
+              this.setState({neutral_reviews: reviews})
+              this.setState({neutral_page: this.state.neutral_page + 1})
+              break;
+            case -1:
+              var reviews = this.state.negative_reviews.
+              concat(response.data.list)
+              this.setState({negative_reviews: reviews})
+              this.setState({negative_page: this.state.negative_page + 1})
+          }
+          this.setState({loading: false})
+        })
+      }
+      
     }
 
     handleClick = e => {
@@ -66,19 +182,19 @@ class ProductReviews extends Component {
             <Navbar user={this.props.user} />
             <div className="h-bg-grey h-pb-15">
             <div>
-             <div className="container">
+              <div className="b-bouncing-loader-wrapper" data-v-67bc6bc4="" style={!this.state.loading?{display: "none"}:{display: "block"}}>
+                <div className="b-bouncing-loader spinner-absolute h-pt-20" style={{bottom: "0px"}}>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+              </div>
+             <div className={"container"+(this.state.loading?" hide":"")}>
               <div className="row center-xs h-pt-30">
                <div className="bc-opinions-left-container">
                 <div className="b-opinions-card">
                  <div className="b-opinions-card__title">
                   Feedbacks&nbsp;
-                  <div className="b-bouncing-loader-wrapper" data-v-67bc6bc4="" style={this.state.product.id?{display: "none"}:{display: "block"}}>
-                    <div className="b-bouncing-loader spinner-absolute h-pt-20" style={{bottom: "0px"}}>
-                      <div></div>
-                      <div></div>
-                      <div></div>
-                    </div>
-                  </div>
                   {
                     this.state.product.id?
                     <Link to={"/seller/"+this.state.product.user_id}>
@@ -93,35 +209,38 @@ class ProductReviews extends Component {
                    this.state.product && this.state.product.id?
                    <div>
                        <div className="b-tab-feedback__summary b-tab-feedback__summary--white">
-                       <div className="b-tab-feedback__summary--reactions hide">
-                        <div className="b-tab-feedback__summary--reactions-item b-tab-feedback__summary--reactions-item-positive">
+                       <div className="b-tab-feedback__summary--reactions">
+                        <div onClick={this.showPositive} className={"b-tab-feedback__summary--reactions-item b-tab-feedback__summary--reactions-item-positive" 
+                        + (this.state.selected_type == 1? " feedback-tab-positive-active":"")}>
                          <svg className="positive" strokeWidth="0" style={{width: "34px", height: "34px", maxWidth: "34px", maxHeight: "34px", fill: "rgb(112, 185, 63)", stroke: "inherit"}}>
                           <use xlinkHref="#positive">
                           </use>
                          </svg>
                          <br/>
                           <span>
-                           Positive (1)
+                           Positive ({this.state.positive_count})
                           </span>
                         </div>
-                        <div className="b-tab-feedback__summary--reactions-item b-tab-feedback__summary--reactions-item-neutral">
+                        <div onClick={this.showNeutral} className={"b-tab-feedback__summary--reactions-item b-tab-feedback__summary--reactions-item-neutral" 
+                        + (this.state.selected_type == 0? " feedback-tab-neutral-active":"")}>
                          <svg className="neutral" strokeWidth="0" style={{width: "34px", height: "34px", maxWidth: "34px", maxHeight: "34px", fill: "rgb(241, 173, 78)", stroke: "inherit"}}>
                           <use xlinkHref="#neutral">
                           </use>
                          </svg>
                          <br/>
                           <span>
-                           Neutral (0)
+                           Neutral ({this.state.neutral_count})
                           </span>
                         </div>
-                        <div className="b-tab-feedback__summary--reactions-item b-tab-feedback__summary--reactions-item-negative">
+                        <div onClick={this.showNegative} className={"b-tab-feedback__summary--reactions-item b-tab-feedback__summary--reactions-item-negative" 
+                        + (this.state.selected_type == -1? " feedback-tab-negative-active":"")}>
                          <svg className="negative" strokeWidth="0" style={{width: "34px", height: "34px", maxWidth: "34px", maxHeight: "34px", fill: "rgb(255, 100, 78)", stroke: "inherit"}}>
                           <use xlinkHref="#negative">
                           </use>
                          </svg>
                          <br/>
                           <span>
-                           Negative (1)
+                           Negative ({this.state.negative_count})
                           </span>
                         </div>
                        </div>
@@ -135,18 +254,19 @@ class ProductReviews extends Component {
                         </button>
                        </div>
                       </div>
+                      <div className={this.state.selected_type != 1? "hide" : ""}>
                       {
-                        this.state.reviews_data.reviews.map((review, index) => (
+                        this.state.positive_reviews.map((review, index) => (
                          <div className="b-feedback-item" key={review.id}>
                          <div className="b-feedback-item--user">
-                          <div className="b-feedback-item--logo" style={review.writer_profile_photo.length == 0?{backgroundImage: 'url('+NO_PROFILE_PHOTO_IMAGE+')'}:{backgroundImage: 'url('+review.writer_profile_photo+')'}}>
-                          </div>
+                          <Link to={"/seller/"+review.user_id} className="b-feedback-item--logo" style={review.profile_photo.length == 0?{backgroundImage: 'url('+NO_PROFILE_PHOTO_IMAGE+')'}:{backgroundImage: 'url('+review.profile_photo+')'}}>
+                          </Link>
                           <div className="b-feedback-item--profile-info">
-                           <span className="b-feedback-item--profile-info-name">
-                            {review.writer_fullname}
-                           </span>
+                           <Link to={"/seller/"+review.user_id} className="b-feedback-item--profile-info-name">
+                            {review.fullname}
+                           </Link>
                            <span className="b-feedback-item--profile-info-status b-feedback-item--profile-info-status--negative">
-                            {review.weight < 0? "Negative" : review.weight > 0? "Positive" : "Neutral"}
+                            Positive
                            </span>
                           </div>
                          </div>
@@ -162,6 +282,101 @@ class ProductReviews extends Component {
                         </div>
                         ))
                       }
+                        <button onClick={this.getReviews} data-type="create-review" type="button" 
+                        className={
+                          (this.state.positive_count > 
+                            this.state.positive_reviews.length?"":"hide ") +
+                          "h-width-100p h-bold fw-button qa-fw-button fw-button--type-success fw-button--size-medium"
+                        }>
+                         <span className="fw-button__content" data-type="create-review">
+                          <span className="fw-button__slot-wrapper" data-type="create-review">
+                          Load more >>
+                          </span>
+                         </span>
+                        </button>
+                      </div>
+                      <div className={this.state.selected_type != 0? "hide" : ""}>
+                      {
+                        this.state.neutral_reviews.map((review, index) => (
+                         <div className="b-feedback-item" key={review.id}>
+                         <div className="b-feedback-item--user">
+                          <Link to={"/seller/"+review.user_id} className="b-feedback-item--logo" style={review.profile_photo.length == 0?{backgroundImage: 'url('+NO_PROFILE_PHOTO_IMAGE+')'}:{backgroundImage: 'url('+review.profile_photo+')'}}>
+                          </Link>
+                          <div className="b-feedback-item--profile-info">
+                           <Link to={"/seller/"+review.user_id} className="b-feedback-item--profile-info-name">
+                            {review.fullname}
+                           </Link>
+                           <span className="b-feedback-item--profile-info-status b-feedback-item--profile-info-status--negative">
+                            Neutral
+                           </span>
+                          </div>
+                         </div>
+                         <div className="b-feedback-item--comment-container">
+                          <div className="b-feedback-item--comment">
+                           {review.body}
+                           <br/>
+                          </div>
+                         </div>
+                         <div className="b-feedback-item--date">
+                          {dateFormat(new Date(review.created), "mm-yyyy")}
+                         </div>
+                        </div>
+                        ))
+                      }
+                      <button onClick={this.getReviews} data-type="create-review" type="button" 
+                      className={
+                        (this.state.neutral_count > 
+                          this.state.neutral_reviews.length?"":"hide ") +
+                        "h-width-100p h-bold fw-button qa-fw-button fw-button--type-success fw-button--size-medium"
+                      }>
+                       <span className="fw-button__content" data-type="create-review">
+                        <span className="fw-button__slot-wrapper" data-type="create-review">
+                        Load more >>
+                        </span>
+                       </span>
+                      </button>
+                      </div>
+                      <div className={this.state.selected_type != -1? "hide" : ""}>
+                      {
+                        this.state.negative_reviews.map((review, index) => (
+                         <div className="b-feedback-item" key={review.id}>
+                         <div className="b-feedback-item--user">
+                          <Link to={"/seller/"+review.user_id} className="b-feedback-item--logo" style={review.profile_photo.length == 0?{backgroundImage: 'url('+NO_PROFILE_PHOTO_IMAGE+')'}:{backgroundImage: 'url('+review.profile_photo+')'}}>
+                          </Link>
+                          <div className="b-feedback-item--profile-info">
+                           <Link to={"/seller/"+review.user_id} className="b-feedback-item--profile-info-name">
+                            {review.fullname}
+                           </Link>
+                           <span className="b-feedback-item--profile-info-status b-feedback-item--profile-info-status--negative">
+                            Negative
+                           </span>
+                          </div>
+                         </div>
+                         <div className="b-feedback-item--comment-container">
+                          <div className="b-feedback-item--comment">
+                           {review.body}
+                           <br/>
+                          </div>
+                         </div>
+                         <div className="b-feedback-item--date">
+                          {dateFormat(new Date(review.created), "mm-yyyy")}
+                         </div>
+                        </div>
+                        ))
+                      }
+                      <button onClick={this.getReviews} data-type="create-review" type="button" 
+                      className={
+                        (this.state.negative_count > 
+                          this.state.negative_reviews.length?"":"hide ") +
+                        "h-width-100p h-bold fw-button qa-fw-button fw-button--type-success fw-button--size-medium"
+                      }>
+                       <span className="fw-button__content" data-type="create-review">
+                        <span className="fw-button__slot-wrapper" data-type="create-review">
+                        Load more >>
+                        </span>
+                       </span>
+                      </button>
+                      </div>
                    </div>
                    :
                    ""

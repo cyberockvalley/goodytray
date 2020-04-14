@@ -53,8 +53,21 @@ class ProductPage extends Component {
         this.changePhoto = this.changePhoto.bind(this)
     }
 
+    albumController = () => {
+        const carousel = $(".carousel")
+        console.log("CAROUSEL", carousel)
+        $('.carousel').carousel({ })
+        .on('slid.bs.carousel', function () {
+            var curSlide = $('div.item.active');
+            this.setState({carousel_index: curSlide.index()});
+            console.log("CAROUSEL_ACTIVE", curSlide.index()+1)
+            //this.setState({ myIndex: myIndexValue })
+        }.bind(this));
+    }
+
     componentDidMount() {
-        window.location.replace("#")
+        this.albumController();
+        //window.location.replace("#")
         var pathname = this.props.location.pathname
         pathname = pathname.endsWith("/")? pathname.substring(0, pathname.length - 1) : pathname
         const paths = pathname.split("/")
@@ -458,7 +471,7 @@ class ProductPage extends Component {
                          </div>
                         </div>
                         <div onClick={this.cancelExpansion} style={{position: "absolute", right: "20px", bottom: "20px"}}>
-                            <svg className="h-block full-screen-exit" style={{width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
+                            <svg className="h-block full-screen-exit" style={{cursor: "pointer", width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
                                 <use xlinkHref="#full-screen-exit">
                                 </use>
                             </svg>

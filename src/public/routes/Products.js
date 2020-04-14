@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 
 import { logger } from "../utils/Funcs"
-logger.disableLogger()
+//logger.disableLogger()
 
 const Product = require("../models/Product")
 const TopAd = require("../models/TopAd")
@@ -476,8 +476,9 @@ products.get("/details", function(req, res) {
                             if(productEXT[0]) {
                                 product.sponsored = productEXT[0].end_date > new Date()
                             }
+                            
                             //increase the views if the vi query string is 1
-                            if(req.query.vi && parseInt(req.query.vi) == 1) {
+                            if(viewsSize > 0 && req.query.vi && parseInt(req.query.vi) == 1) {
                                 var v = product.views + viewsSize
                                 db.sequelize.query("UPDATE products SET views = ? WHERE id = ?", {
                                     replacements: [v, product.id],

@@ -42,6 +42,7 @@
     "form-data": "^3.0.0",
     "googleapis": "^47.0.0",
     "helmet": "^3.21.2",
+    "hermite-resize": "git+https://github.com/viliusle/Hermite-resize.git",
     "https": "^1.0.0",
     "javascript-time-ago": "^2.0.4",
     "jimp": "^0.9.3",
