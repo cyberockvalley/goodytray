@@ -7,10 +7,10 @@ const ROOT_RESPONSE = {
 }
 
 const LISTS_RESPONSE = {
-    list: [],
+    page: 0,
     has_prev: false,
     has_next: false,
-    page: 0
+    list: []
 }
 
 export const rootResponse = () => {

@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, createRef } from 'react'
 import { Link } from "react-router-dom"
 import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIENT_DIR, SITE_NAME, PRODUCTS_PHOTOS_CLIENT_DIR } from '../../../Constants'
 import { commaNum, truncText, profilePhoto, modalAlert, dataCall, id } from '../utils/Funcs'
@@ -6,6 +6,7 @@ const browser = require("../utils/Browser")
 import $ from 'jquery';
 import Navbar from './Navbar'
 import Footer from "./Footer"
+import { productLink } from '../utils/LinkBuilder'
 
 class Messages extends Component {
     constructor(props) {
@@ -14,127 +15,248 @@ class Messages extends Component {
             user: props.user,
             page: 0,
             messages: [],
-            selected: null
+            selected: null,
+            loading_threads: false,
+            loading_messages: false,
+            selected_messages: []
         }
         this.handleMessageView = this.handleMessageView.bind(this)
         this.handleChange = this.handleChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
         this.handleBackPressed = this.handleBackPressed.bind(this)
         this.dataCall = dataCall.bind(this)
+        this.addToBucket = this.addToBucket.bind(this)
+        this.removeFromBucket = this.removeFromBucket.bind(this)
+    }
+
+    handleResize() {
+        console.log("handleResize", window.innerWidth,  window.innerHeight)
+        try {
+            this.scrollToBottom()
+
+        } catch(e) {}
     }
 
     componentDidMount() {
-        console.log("Messages", "Mounted", Math.random() * 10)
-        const id = this.props.match.params.id
-        if(id) {
-            this.state.recipient_id = id
-            this.loadMessages()
-            this.loadMessage(id)
-
-        } else {
-            this.loadMessages()
-        }
+        window.addEventListener('resize', this.handleResize.bind(this))
+        this.loadThreads()
     }
 
-    loadMessages = () => {
+    loadThreads = () => {
         var page = this.state.page + 1
-        this.setState({loading: true})
+        this.setState({loading_threads: true})
         browser.axios.get(API_ROOT + "messages/threads?page="+page)
         .then(res => {
-            console.log('DATA', res.data.success)
-            var messages= []
+            console.log('DATA', res.data.success, JSON.stringify(res.data))
+            
             if(res.data.success) {
-                this.setState({messages: this.state.messages.concat(res.data.list)})
+                this.setState({messages: res.data.list})
                 this.setState({page: page})
-                for(var i = 0; i < this.state.messages.length; i++) {
-                    if(this.state.messages[i].from_id == this.state.recipient_id || this.state.messages[i].to_id == this.state.recipient_id) {
-                        const message = this.state.messages[i]
-                        var recipient = {
-                            id: this.state.recipient_id,
-                            fullname: message.user_fullname,
-                            profile_photo: message.user_photo,
-                            message: message
-                        }
-                        this.setState({recipient: recipient})
-                        console.log('DATA', 'REC', this.state.recipient)
-                    }
-                }
                 console.log('DATA', 'SUX', this.state.messages)
-                //this.setState({loading: false})
 
             } else {
                 console.log('DATA', 'FA', this.state.messages)
             }
-            this.setState({loading: false})
+            this.setState({loading_threads: false})
         })
         .catch(e => {
-            this.setState({loading: false})
+            this.setState({loading_threads: false})
         })
     }
 
     handleMessageView = (e) => {
         const index = e.target.getAttribute("data-index")
-        console.log("handleMessageView", "index = "+index, "message = "+this.state.messages[index])
-        var recipientId = this.state.messages[index].from_id != this.state.user.id?this.state.messages[index].from_id:this.state.messages[index].to_id
-        this.props.history.push("/messages/"+recipientId)
-        this.loadMessage(recipientId)
+        this.setState({loading_messages: true})
+        this.state.selected = this.state.messages[index]
+        this.setState({selected: this.state.messages[index]})
+        this.setState({nav_class_suffix: "sm-hide-down"})
+        console.log("handleMessageView", index, this.state.selected, this.state.messages)
+        this.loadMessages()
     }
 
-    loadMessage = (id) => {
-        console.log("LoadMessage", id)
-        this.setState({selected: "loading"})
-        
-        
-        browser.axios.get(API_ROOT + "messages/threads/"+id)
+    loadMessages = () => {
+        console.log("loadMessages", this.state.selected.thread_id)
+        browser.axios.get(API_ROOT + "messages/threads/"+this.state.selected.thread_id)
         .then(res => {
             console.log('DATA2', res.data.success)
-            var selected = {user_id: id}
-            selected.threads = []
+            var selected = this.state.selected
+            selected.messages = []
             if(res.data.success) {
-                selected.threads = res.data.list
+                selected.messages = res.data.list
                 this.setState({selected: selected})
+                this.setState({loading_messages: false})
+                this.scrollToBottom()
                 console.log('DATA2', 'SUX', this.state.selected)
-
             } else {
                 console.log('DATA2', 'FA', this.state.messages)
                 this.setState({selected: null})
+                this.setState({loading_messages: false})
             }
-            console.log("MMM", this.state.recipient.message)
+            console.log("MMM", this.state.selected.body)
         })
         .catch(e => {
             this.setState({selected: null})
+            this.setState({loading_messages: false})
         })
     }
 
     dateNovComma2Year(time) {
-        return "November, 2 2019"
+        return ""//"November, 2 2019"
     }
 
     date16R45(time) {
-        return "16:45"
+        return ""//"16:45"
     }
 
     handleBackPressed = (e) => {
-        this.props.history.goBack()
+        this.state.selected = null
+        this.setState({selected: null, loading_messages: false})
+        this.setState({nav_class_suffix: null})
     }
 
     handleChange = (e) => {
         this.setState({[e.target.name]: e.target.value})
     }
 
+    scrollbarHeight = () => {
+        return this.msgScrollPane.offsetHeight / this.msgScrollPane.scrollHeight
+    }
+    scrollToBottom = () => {
+        console.log('Scroll', this.scrollbarHeight(), this.msgScrollPane.scrollTop, this.msgScrollPane.offsetHeight, this.msgScrollPane.scrollHeight)
+        this.msgScrollPane.scrollTop = this.msgScrollPane.scrollHeight
+        if(window.innerWidth <= 768) {
+            try {
+                document.body.scrollTop = document.body.scrollHeight
+            }catch(e){}
+        }
+        console.log('Scroll2', this.msgScrollPane.scrollTop)
+    }
+
+    cancelSelected = () => {
+        this.setState({selected_messages: []})
+    }
+
+    deleteSelected = () => {
+        var messages = this.state.selected.messages
+        var l = this.state.selected_messages.length;
+        var messages_ids = []
+        for (var x = 0; x < l; x++) {
+            messages.splice(messages.indexOf(this.state.selected_messages[x]), 1)
+            messages_ids.push(this.state.selected_messages[x].id)
+        }
+        console.log('DEL', 'ids', messages_ids)
+        console.log('DEL', 'messages', messages)
+        var selected = this.state.selected
+        selected.messages = messages
+        this.setState({selected: selected})
+        this.setState({selected_messages: []})
+        this.scrollToBottom()
+        browser.axios.post(API_ROOT + "messages/delete", {
+            messages_ids: messages_ids
+        })
+        .then(res => {
+            if(res.data.success) {
+                console.log('DEL', 'SUCCESS')
+            } else {
+                console.log('DEL', 'FAILED')
+            }
+        })
+        .catch(e => {
+            console.log('DEL', 'CATCH', e)
+        })
+    }
+
+    copySelected = () => {
+        var texts = this.getSelectedTexts()
+        console.log("copySelected", texts)
+        if (!navigator.clipboard) {
+            try {
+                const el = document.createElement('textarea');
+                el.value = texts;
+                document.body.appendChild(el)
+                el.select()
+                var successful = document.execCommand('copy')
+                document.body.removeChild(el)
+                var msg = successful ? 'successful' : 'unsuccessful';
+                console.log("copySelected", 'Fallback: Copying text command was ' + msg)
+            } catch (err) {
+                console.error("copySelected", 'Fallback: Oops, unable to copy', err)
+            }
+            this.setState({selected_messages: []})
+            return
+        }
+        navigator.clipboard.writeText(texts)
+        .then(() => {
+            console.log("copySelected", 'Async: Copying to clipboard was successful!')
+            this.setState({selected_messages: []})
+        })
+        .catch( err => {
+            console.error("copySelected", 'Async: Could not copy text: ', err)
+            this.setState({selected_messages: []})
+        })
+    }
+
+    getSelectedTexts = () => {
+        var texts = ""
+        console.log("getSelectedTexts A", this.state.selected_messages)
+        var l = this.state.selected_messages.length;
+        for (var x = 0; x < l; x++) {
+            console.log("getSelectedTexts B", this.state.selected_messages[x])
+            var msg = this.state.selected_messages[x]
+            texts += "\n" + (msg.from_id == this.state.user.id? "Me: " : "Other: ") + msg.body
+        }
+        return texts.substring(1)
+    }
+
+    addToBucket = (e) => {
+        e.preventDefault()
+        var msg = this.state.selected.messages[parseInt(e.target.getAttribute("data-msg-index"))]
+        if(!this.addedToBucket(msg)) {
+            var messages = this.state.selected_messages
+            messages.push(msg)
+            this.setState({selected_messages: messages})
+            console.log("addToBucket", msg, this.state.selected_messages)
+            console.log("addToBucket B", e.target.getAttribute("data-msg-index"), this.state.selected.messages, e.target)
+
+        } else {
+            this.removeFromBucketWithIndex(parseInt(e.target.getAttribute("data-msg-index")))
+        }
+    }
+
+    removeFromBucket = (e) => {
+        e.preventDefault()
+        this.removeFromBucketWithIndex(parseInt(e.target.getAttribute("data-msg-index")))
+    }
+
+    removeFromBucketWithIndex = (index) => {
+        var msg = this.state.selected.messages[index]
+        var msgIndex = $.inArray(msg, this.state.selected_messages)
+        var messages = this.state.selected_messages
+        messages.splice(msgIndex, 1)
+        this.setState({selected_messages: messages})
+        console.log("removeFromBucketWithIndex", msgIndex, this.state.selected_messages)
+        console.log("removeFromBucketWithIndex B", index)
+    }
+
+    addedToBucket = (msg) => {
+        var inArray = $.inArray(msg, this.state.selected_messages)
+        console.log("addedToBucket", inArray > -1, msg, this.state.selected_messages)
+        return inArray > -1
+    }
+
     handleSubmit = (e) => {
         e.preventDefault()
         if(this.state.msg && this.state.msg.length > 0) {
-            const thread = {created: 78, body: this.state.msg, seen: -1}
+            const thread = {from_id: this.state.user.id, created: new Date(), body: this.state.msg, seen: -1}
             var selected = this.state.selected
-            selected.threads.push(thread)
+            selected.messages.push(thread)
             this.setState({selected: selected})
+            this.scrollToBottom()
             this.setState({msg: ""})
-            //id("msgScrollPane").scrollTo(id("msgScrollPane").scrollHeight)
             browser.axios.post(API_ROOT + "messages/send", {
                 text: thread.body,
-                to_id: this.state.recipient.id,
-                product_id: this.state.recipient.message.product_id
+                to_id: this.state.selected.user_id,
+                product_id: this.state.selected.product_id
             })
             .then(res => {
                 const data = res.data
@@ -146,7 +268,7 @@ class Messages extends Component {
 
                 } else if(data.status == 1 || data.success) {
                     var selected = this.state.selected
-                    selected.threads[selected.threads.length - 1].seen = 0
+                    selected.messages[selected.messages.length - 1].seen = 0
                     this.setState({selected: selected})
                     console.log("SELECTED", this.state.selected)
                 }
@@ -160,10 +282,10 @@ class Messages extends Component {
     render() {
         return (
 <div>
-            <Navbar user={this.props.user} />
+            <Navbar user={this.props.user} class_suffix={this.state.nav_class_suffix}/>
 <div style={{minHeight: "200px"}}>
     {
-    this.state.loading?
+    this.state.loading_threads?
     <div className="container" style={{height: "80vh"}}>
     <div className="b-bouncing-loader-wrapper" style={{display: "block"}}>
         <div className="b-bouncing-loader spinner-absolute h-pt-20">
@@ -195,7 +317,7 @@ class Messages extends Component {
          </div>
          :
          this.state.messages.map((message, index) => (
-            <div onClick={this.handleMessageView} data-index={index} key={message.id} className={"qa-room-label-link b-room-label-wrapper"+(this.state.selected && this.state.selected.user_id && (this.state.selected.user_id == message.from_id || this.state.selected.user_id == message.to_id)?" b-room-label-wrapper--active":"")}>
+            <div onClick={this.handleMessageView} data-index={index} key={message.id} className={"qa-room-label-link b-room-label-wrapper"+((this.state.selected && this.state.selected.id == message.id)?" b-room-label-wrapper--active":"")}>
             <div className="b-user-avatar-icon h-flex-center h-flex-center" style={{flex: "0 0 48px", height: "48px", width: "48px", backgroundImage: "url("+profilePhoto(message.user_photo)+")"}}>
             </div>
             <div data-index={index} className="b-room-label">
@@ -207,6 +329,21 @@ class Messages extends Component {
               </div>
               <div data-index={index} className="hide b-room-label-date">
                Nov 2
+               <div style={
+                   {
+                       color: "#fff", 
+                       backgroundColor: "#70b93f", 
+                       fontSize: "11px", 
+                       borderRadius: "8px", 
+                       width: "15px", 
+                       height: "15px",
+                       display: "flex"
+                    }
+                }>
+                    <div style={{textAlign: "center", justifyContent: "center", alignItems: "center"}}>
+                        {message.total_new}
+                    </div>
+                </div>
               </div>
              </header>
              <div data-index={index} className="b-room-label-ad-title h-text-one-line">
@@ -231,7 +368,7 @@ class Messages extends Component {
    <div className={"b-messenger-main-frame"+(!this.state.selected?" sm-hide-down":"")}>
     <div className="qa-messenger-room-wrapper b-messenger-room-wrapper">
     {
-       this.state.selected == "loading"?
+       this.state.loading_messages?
         <div className={"b-filters__loader active"}>
             <div style={{display: "block"}}>
                 <div className="b-bouncing-loader" style={{bottom: "0px"}}>
@@ -242,21 +379,21 @@ class Messages extends Component {
             </div>
         </div>
        :
-       this.state.selected?
+       this.state.selected && !this.state.loading_messages?
        <div className="b-messenger-room-transition-wrapper">
       <div className="b-messenger-room-header-fixed-wrapper js-messenger-room-header-fixed-wrapper">
-       <header className="b-messenger-room-header-wrapper">
+       <header className={"b-messenger-room-header-wrapper" + (this.state.selected_messages.length > 0? " hide" : "")}>
         <div className="b-messenger-room-header-part b-messenger-room-header-part--left">
          <div onClick={this.handleBackPressed} style={{color: "#fff"}} className="md-hide-up b-messenger-room-header-icon-wrapper fa fa-arrow-left">
          </div>
          <Link className="qa-messenger-room-avatar" to={"/"}>
-          <div className="b-user-avatar-icon h-flex-center" style={{flex: "0 0 40px", height: "40px", width: "40px", backgroundImage: "url("+this.state.recipient.profile_photo+")", transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
+          <div className="b-user-avatar-icon h-flex-center" style={{flex: "0 0 40px", height: "40px", width: "40px", backgroundImage: "url("+this.state.selected.user_photo+")", transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
           </div>
          </Link>
         </div>
         <div className="b-messenger-room-header-part b-messenger-room-header-part--middle">
-         <Link className="qa-messenger-room-user-name b-messenger-room-header-user-name h-text-one-line" to={"/seller/"+this.state.recipient.id} style={{transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
-          {this.state.recipient.fullname}
+         <Link className="qa-messenger-room-user-name b-messenger-room-header-user-name h-text-one-line" to={"/seller/"+this.state.selected.user_id} style={{transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
+          {this.state.selected.user_fullname}
          </Link>
         </div>
         <div className="b-messenger-room-header-part b-messenger-room-header-part--right">
@@ -288,20 +425,22 @@ class Messages extends Component {
          </div>
         </div>
        </header>
-       <div className="b-messenger-room-advert-info">
-        <a className="b-messenger-room-advert-info-link" href="/lekki-phase-1/cars/maserati-5000-2017-gray-7vUC5hG9eKtiC04hxF99T0vc.html">
+       {
+        this.state.selected.product_id > -1 && this.state.selected.product_title?
+       <div className={"b-messenger-room-advert-info" + (this.state.selected_messages.length > 0? " hide" : "")}>
+           <Link className="b-messenger-room-advert-info-link" to={productLink(this.state.selected.product_title, this.state.selected.product_id)}>
          <div className="b-messenger-room-advert-info-image-wrapper h-a-without-underline" style={{transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
-          <div className="b-messenger-room-advert-info-image" style={{backgroundImage: "url("+this.state.recipient.message.product_photos.split(",")[0]+")"}}>
+          <div className="b-messenger-room-advert-info-image" style={{backgroundImage: "url("+this.state.selected.product_photos.split(",")[0]+")"}}>
           </div>
          </div>
          <div className="b-messenger-room-advert-info-title">
           <div className="b-messenger-room-advert-info-title-link" style={{transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
-           {this.state.recipient.message.product_title}
+           {this.state.selected.product_title}
           </div>
-          <div dangerouslySetInnerHTML={{__html: this.state.recipient.message.product_currency_symbol+" "+commaNum(this.state.recipient.message.product_price)}} className="b-messenger-room-advert-info-price h-text-one-line" style={{transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
+          <div dangerouslySetInnerHTML={{__html: this.state.selected.product_currency_symbol+" "+commaNum(this.state.selected.product_price)}} className="b-messenger-room-advert-info-price h-text-one-line" style={{transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
           </div>
          </div>
-        </a>
+        </Link>
         <div className="b-messenger-room-advert-info-extra">
          <a className="qa-show-contact cy-show-contact js-show-contact b-show-contact" rel="nofollow">
           <span className="b-show-contact-content">
@@ -318,37 +457,43 @@ class Messages extends Component {
          </a>
         </div>
        </div>
+        :
+        <div></div>
+        }
+        {
+            this.state.selected_messages.length > 0?
+            <div className="b-messenger-room-advert-info" style={{flexDirection: "row", justifyContent: "space-around", alignItems: "center"}}>
+                <i onClick={this.cancelSelected} className="fa fa-2x fa-times text-link"></i>
+                <span style={{fontSize: "18px"}}>{this.state.selected_messages.length}</span>
+                <i onClick={this.deleteSelected} className="fa fa-2x fa-trash text-link"></i>
+                <i onClick={this.copySelected} className="fa fa-2x fa-copy text-link"></i>
+            </div>
+            :<div></div>
+        }
       </div>
-      <div id="msgScrollPane" className="b-messenger-room-output">
+      <div ref={e => this.msgScrollPane = e} className="b-messenger-room-output">
        <div className="b-messenger-room-output-inner" style={{maxHeight: "100%"}}>
         {
-            this.state.selected.threads.map((thread, index) =>(
-                <div key={index} className="b-messenger-room-list-inner" id="messenger-top-message">
-         {
-             index == 0 || this.dateNovComma2Year(thread.created) != this.dateNovComma2Year(this.state.selected.threads[index-1])?
-             <div className="qa-group-message-date b-messenger-room-message-block-date">
-                {this.dateNovComma2Year(thread.created)}
-            </div>:""
-
-         }
-         <div className="b-messenger-room-message-wrapper b-messenger-room-message-owner">
-          <div className="qa-message-wrapper b-messenger-room-message-outer">
-           <div className="b-messenger-room-message-inner">
-            <div className="b-messenger-room-message">
-             <div className="qa-message-text b-messenger-room-message-text">
+        this.state.selected.messages.map((thread, index) =>(
+        <div key={index} className="b-messenger-room-list-inner" id="messenger-top-message">
+         <div className={"b-messenger-room-message-wrapper" + (thread.from_id == this.state.user.id? "  b-messenger-room-message-owner" : "")}>
+          <div onContextMenu={this.addToBucket} data-msg-index={index} className="qa-message-wrapper b-messenger-room-message-outer">
+           <div className="b-messenger-room-message-inner" data-msg-index={index}>
+            <div className="b-messenger-room-message" data-msg-index={index}>
+             <div className="qa-message-text b-messenger-room-message-text" data-msg-index={index}>
               {thread.body}
              </div>
-             <div className="b-messenger-room-message-date">
-              <span className="qa-message-date b-messenger-room-message-date-text">
+             <div className="b-messenger-room-message-date" data-msg-index={index}>
+              <span className="qa-message-date b-messenger-room-message-date-text" data-msg-index={index}>
                {this.date16R45(thread.created)}
               </span>
-              <div className="b-messenger-room-message-icon-wrapper">
+              <div data-msg-index={index} className={thread.from_id == this.state.user.id? "b-messenger-room-message-icon-wrapper" : "hide"}>
                   {
                       thread.seen < 0?
-                      <span style={{fontWeight: "bold", fontStyle: "italic", color: "#000"}}>....</span>
+                      <span data-msg-index={index} style={{fontWeight: "bold", fontStyle: "italic", color: "#000"}}>....</span>
                       :
-                      <svg className="check" strokeWidth="0" style={{width: "16px", height: "9px", maxWidth: "16px", maxHeight: "9px", fill: "rgb(130, 180, 87)", stroke: "inherit"}}>
-                        <use xlinkHref={thread.seen == 0?"#check":"#doublecheck"}>
+                      <svg data-msg-index={index} className="check" strokeWidth="0" style={{width: "16px", height: "9px", maxWidth: "16px", maxHeight: "9px", fill: "rgb(130, 180, 87)", stroke: "inherit"}}>
+                        <use data-msg-index={index} xlinkHref={thread.seen == 0?"#check":"#doublecheck"}>
                         </use>
                       </svg>
                   }
@@ -358,6 +503,10 @@ class Messages extends Component {
            </div>
           </div>
          </div>
+          {
+              this.addedToBucket(thread)?
+              <div className="chat-select-highlight" onContextMenu={this.removeFromBucket} data-msg-index={index}></div> : <div></div>
+          }
         </div>
             ))
         }
@@ -377,7 +526,7 @@ class Messages extends Component {
         <div className="b-messenger-input__wrapper">
             <input value={this.state.msg} onChange={this.handleChange} name="msg" type="text" placeholder="Write your message here" className="qa-messenger-send-message-textarea b-messenger-input"/>
         </div>
-        <div className="b-messenger-input-icon-wrapper">
+        <button type="submit" className="b-messenger-input-icon-wrapper">
          <label className="hide b-app-image-reader">
           <svg className="b-messenger-input-icon add-file" strokeWidth="0" style={{width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(196, 196, 196)", stroke: "inherit"}}>
            <use xlinkHref="#add-file">
@@ -388,7 +537,7 @@ class Messages extends Component {
          <svg className="qa-messenger-send-message b-messenger-input-icon h-ml-15 send" strokeWidth="0" style={{width: "24px", height: "19px", maxWidth: "24px", maxHeight: "19px", fill: "rgb(196, 196, 196)", stroke: "inherit"}}>
             <use xlinkHref="#send"></use>
          </svg>
-        </div>
+        </button>
        </div>
       </form>
      </div>

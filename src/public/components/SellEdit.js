@@ -6,6 +6,7 @@ import {MAX_PRODUCT_PHOTOS_SIZE} from "../../../Constants"
 import { productLink } from '../utils/LinkBuilder'
 const StripeView = require("../components/third_party/stripe/StripeView")
 import TextView from "./widgets/TextView"
+import { relative } from 'path'
 
 class SellEdit extends Component {
   constructor(props) {
@@ -37,9 +38,10 @@ class SellEdit extends Component {
     this.state.cats = props.initialData.cats
     this.state.countries = props.initialData.countries
     this.state.currency_symbols = props.initialData.currency_symbols
-    this.state.price_currency_symbol = this.state.currency_symbols[0]
+    this.state.price_currency_symbol = props.initialData.currency_symbols[0]
     
     this.handleChange = this.handleChange.bind(this)
+
     this.handleIntChange = this.handleIntChange.bind(this)
     this.handleSingleCheckbox = this.handleSingleCheckbox.bind(this)
     this.handleAttrCheckbox = this.handleAttrCheckbox.bind(this)
@@ -51,6 +53,8 @@ class SellEdit extends Component {
     this.drop = this.drop.bind(this)
     this.removePhoto = this.removePhoto.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.startMovingPhoto = this.startMovingPhoto.bind(this)
+    this.stopMovingPhoto = this.stopMovingPhoto.bind(this)
   }
 
   state () {
@@ -197,11 +201,12 @@ class SellEdit extends Component {
       i = 0
       const files = product.photos? product.photos.split(",") : []
       this.setState({next_photo_index: files.length -1})
+      /*
       const maxUpload = 20 - files.length
       while(i < maxUpload) {
         //files.push(null)
         i++
-      }
+      }*/
       this.setState({photos: files})
 
     } else {
@@ -244,10 +249,10 @@ class SellEdit extends Component {
       i = 0
       const files = []
       this.setState({next_photo_index: 0})
-      while(i < 20) {
+      /*while(i < 20) {
         //files.push(null)
         i++
-      }
+      }*/
       this.setState({photos: files})
     }
     
@@ -255,6 +260,11 @@ class SellEdit extends Component {
 
   componentDidMount() {
     this.setState({queries: queries(this.props)})
+    document.body.addEventListener("drop", this.drop, false)
+    window.addEventListener("dragover", function(e){
+      e = e || event;
+      e.preventDefault();
+    }, false)
     const id = this.state.queries.id
     console.log("productId", id)
     if(id > -1) {
@@ -778,24 +788,7 @@ class SellEdit extends Component {
     console.log("clearAllFields")
     this.resetState()
   }
-  removePhoto = e => {
-    const photos = this.state.photos
-    console.log("removeTarget", e.target)
-    const index = parseInt(e.target.getAttribute("photo-index"))
-    console.log("photoIndex", index)
-    const photo = photos[index]
-    if(isFile(photo)) {
-      this.state.photo_size -= photo.size
-    }
-    photos.splice(index, 1)
-    this.state.photos = photos
-    this.setState({photos: photos})
-    const delPhotos = this.state.del_photos
-    if(!isFile(photo) && !delPhotos.includes(photo)) {
-      delPhotos.push(photo)
-      this.setState({del_photos: delPhotos})
-    }
-  }
+  
 
   onPhotoChangedHandler = e => {
     this.addPhotos(e.target.files)
@@ -816,7 +809,8 @@ class SellEdit extends Component {
   drop = e => {
     e.preventDefault()
     this.setState({drag_over: false})
-    addPhotos(e.dataTransfer.files)
+    console.log("this.drop 2", e.dataTransfer.files)
+    this.addPhotos(e.dataTransfer.files)
   }
 
   addPhotos = async files => {
@@ -843,6 +837,87 @@ class SellEdit extends Component {
     this.setState({photos: photos})
     console.log("photos", this.state.photos)
   }
+
+  removePhoto = e => {
+    const photos = this.state.photos
+    console.log("removeTarget", e.target)
+    const index = parseInt(e.target.getAttribute("data-photo-index"))
+    console.log("photoIndex", index)
+    const photo = photos[index]
+    if(isFile(photo)) {
+      this.state.photo_size -= photo.size
+    }
+    photos.splice(index, 1)
+    this.state.photos = photos
+    this.setState({photos: photos})
+    const delPhotos = this.state.del_photos
+    if(!isFile(photo) && !delPhotos.includes(photo)) {
+      delPhotos.push(photo)
+      this.setState({del_photos: delPhotos})
+    }
+  }
+
+  arrangePhotos = (oldPosition, newPosition) => {
+    console.log("arrangePhotos", oldPosition, newPosition)
+    const photos = this.state.photos
+    if(newPosition < 0) newPosition = 0
+    if(newPosition >= photos.length) newPosition = photos.length - 1
+    console.log("arrangePhotosAdjust", oldPosition, newPosition)
+    console.log("arrangePhotos", 2, photos)
+    photos.splice(newPosition, 0, photos.splice(oldPosition, 1)[0])
+    //this.state.photos = photos
+    this.setState({photos: photos})
+    console.log("arrangePhotos", 3, this.state.photos)
+  }
+
+  move = (a, xpos, ypos) => {
+    console.log("move", "xpos", xpos, "ypos", ypos)
+    console.log("move", "a.style.left", a.style.left, "a.style.top", a.style.top)
+    a.style.position = "absolute"
+    a.style.zIndex = "1000px"
+    a.style.left = xpos + 'px';
+    //a.style.top = ypos + 'px';
+  }
+  startMovingPhoto = e => {
+    console.log("startMovingPhoto", 0, e.target)
+    // get the mouse cursor position at startup:
+    var posX = e.clientX,
+        posY = e.clientY
+    var a = document.getElementById("product_photo_" + e.target.getAttribute("data-photo-index"))
+    this.setState({product_photos_z_index: a.style.zIndex})
+    console.log("startMovingPhoto", 1 , a)
+    var divTop = a.offsetLeft,
+    divLeft = a.offsetLeft
+
+    var diffX = posX - divLeft,
+        diffY = posY - divTop;
+      
+    console.log("startMovingPhoto", "posX", posX, "divLeft", divLeft, "diffX", diffX)
+    document.onmousemove = e => {
+      e = e || window.event
+      var posX = e.clientX,
+          posY = e.clientY,
+          aX = posX - diffX,
+          aY = posY - diffY;
+      var boun = document.getElementById("draggable").offsetWidth - a.offsetWidth
+      console.log("startMovingPhoto", 3, aX)
+      this.move(a, aX, aY)
+    }
+    
+  }
+  stopMovingPhoto = e => {
+    console.log("stopMovingPhoto", e)
+    console.log("stopMovingPhoto", "B", e.target)
+    var a = document.getElementById("product_photo_" + e.target.getAttribute("data-photo-index"))
+    var position = Math.round(a.style.left.replace("px", "") / 151)
+    a.style.zIndex = this.state.product_photos_z_index
+    a.style.position = "relative"
+    a.style.left = "0px"
+    console.log("stopMovingPhoto", "C", position, a)
+    this.arrangePhotos(parseInt(e.target.getAttribute("data-photo-index")), position)
+    document.onmousemove = () => {}
+  }
+  
 
   resetCustomInputs() {
     this.setState({input_attrs: []})
@@ -1171,7 +1246,7 @@ class SellEdit extends Component {
           <div className="card card-body view file-upload">
           <div className="card-text file-upload-message">
             <p>
-            Click to add images 
+            <span>Click to add images </span> 
               <span className="xs-hide sm-hide-down">
                 or drag and drop images
               </span>
@@ -1186,12 +1261,12 @@ class SellEdit extends Component {
 
        <div data-v-61d25a85="" data-v-b364e386="">
         <div className="scrollWrap qa-photos start h-mb-10" data-v-61d25a85="">
-         <div className="draggable" data-v-61d25a85="">
+         <div id="draggable" className="draggable" data-v-61d25a85="">
            
           {
             this.state.photos.map((photo, index) => (
               photo != null?
-              <div className="item" data-v-61d25a85="" key={"photo-"+index}>
+              <div id={"product_photo_" + index} data-photo-index={index} onMouseDown={this.startMovingPhoto} onMouseUp={this.stopMovingPhoto} className="item" data-v-61d25a85="" key={"photo-"+index}>
               <div className="qa-add-photo photo-block" data-v-61d25a85="" data-v-6ea5e880="" style={{height: "136px", width: "136px"}}>
                 {
                   photo == ""?
@@ -1248,17 +1323,17 @@ class SellEdit extends Component {
                       </svg>
                     </div>
                     :
-                    <div data-v-6ea5e880="" className="preview">
-                    <div data-v-6ea5e880="" className="preview__img" style={{backgroundImage: "url("+ this.photoUrl(photo)+")", transform: "rotate(0deg)"}}></div> 
-                    <div data-v-6ea5e880="" className="preview__bar">
+                    <div data-photo-index={index} data-v-6ea5e880="" className="preview">
+                    <div data-photo-index={index} data-v-6ea5e880="" className="preview__img" style={{backgroundImage: "url("+ this.photoUrl(photo)+")", transform: "rotate(0deg)"}}></div> 
+                    <div data-photo-index={index} data-v-6ea5e880="" className="preview__bar">
                       <div data-v-6ea5e880="" className="preview__bar-button" style={{display: "none"}}>
                         <i data-v-6ea5e880="" className="glyphicon glyphicon-repeat icon icon-rotate">
                           <div data-v-6ea5e880="" className="preview__bar-button-content"></div>
                         </i>
                       </div> 
-                      <div photo-index={index} onClick={this.removePhoto} data-v-6ea5e880="" className="preview__bar-button">
-                        <i photo-index={index} data-v-6ea5e880="" className="glyphicon glyphicon-remove icon icon-remove">
-                          <div photo-index={index} data-v-6ea5e880="" className="preview__bar-button-content"></div>
+                      <div data-photo-index={index} onClick={this.removePhoto} data-v-6ea5e880="" className="preview__bar-button">
+                        <i data-photo-index={index} data-v-6ea5e880="" className="glyphicon glyphicon-remove icon icon-remove">
+                          <div data-photo-index={index} data-v-6ea5e880="" className="preview__bar-button-content"></div>
                         </i>
                       </div>
                     </div>
@@ -1274,7 +1349,7 @@ class SellEdit extends Component {
                 <img data-v-6ea5e880="" src="/public/res/images/static/no-photo.svg" width="95.19999999999999px"/>
                 <label className="input-label" data-v-6ea5e880="" for={"fileUpload-"+index}>
                 </label>
-                <input photo-index={index} onChange={this.onPhotoChangedHandler} accept="image/*" className="input" data-v-6ea5e880="" id={"fileUpload-"+index} multiple={true} name={"photo-"+index} style={{height: "136px", width: "136px"}} type="file"/>
+                <input data-photo-index={index} onChange={this.onPhotoChangedHandler} accept="image/*" className="input" data-v-6ea5e880="" id={"fileUpload-"+index} multiple={true} name={"photo-"+index} style={{height: "136px", width: "136px"}} type="file"/>
                </div>
               </div>
              </div>
@@ -1332,12 +1407,7 @@ class SellEdit extends Component {
           </label>
           <div className="input-group">
             <span className="input-group-addon">
-              <select name="price_currency_symbol" value={this.state.price_currency_symbol} onChange={this.handleChange}>
-                <option value="">--select currency--</option>
-                {this.state.currency_symbols.map(symbol => (
-                  <option key={symbol} value={symbol} dangerouslySetInnerHTML={{__html: symbol}}></option>
-                ))}
-              </select>
+              <span dangerouslySetInnerHTML={{__html: this.state.price_currency_symbol}}></span>
             </span>
             <input data-type="number" name="price" value={this.state.price} type="text" className="form-control" onChange={this.handleChange}/>
           </div>

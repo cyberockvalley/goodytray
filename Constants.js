@@ -3,7 +3,7 @@ export const LOGO_ADDR = "dist/public/logo.png"
 
 export const PORT = 8080
 export const PORT_SSL = 4433
-export const SERVER_HOST = "http://dev.domain.com"//"http://192.168.43.58"
+export const SERVER_HOST = "http://dev.domain.com"//"http://192.168.43.58"//
 export const SERVER_ADDR = SERVER_HOST + ":" + PORT
 
 export const EMAIL_SUPPORT = "support@goodytray.com"

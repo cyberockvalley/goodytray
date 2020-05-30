@@ -17,6 +17,27 @@ const Sequelize = require("sequelize")
 
 messages.use(checkUserAuth)
 
+messages.get("/new/count", (req, res) => {
+    if(!res.locals.token_user) {
+        res.json({success: false, auth_required: true, total: 0})
+
+    } else {
+        const user = res.locals.token_user
+        Message.count({
+            where: {
+                to_id: user.id,
+                seen: 0
+            }
+        })
+        .then(total => {
+            res.status(200).json({success: true, total: total})
+        })
+        .catch( e=> {
+            res.status(503).json({success: false, error: ERROR_DB_OP, total: 0})
+        })
+    }
+})
+
 messages.get("/threads", (req, res) => {
     const page = req.query.page && !isNaN(parseInt(req.query.page))? req.query.page : 1
     const rowsPerPage = 20
@@ -28,18 +49,15 @@ messages.get("/threads", (req, res) => {
         const user = res.locals.token_user
         const offset = (page - 1) * rowsPerPage
         db.sequelize.query(`
-        SELECT messages.*, products.photos as product_photos, 
-        products.price as product_price, 
-        products.currency_symbol as product_currency_symbol, 
-        products.title as product_title, 
-        users.number as user_number, 
-        users.profile_photo as user_photo, 
-        users.fullname as user_fullname 
-        FROM messages, products, users 
-        WHERE messages.from_id = ? AND products.id = messages.product_id 
-        AND users.id = messages.to_id OR messages.to_id = ? 
-        AND users.id = messages.from_id AND products.id = messages.product_id 
-        GROUP BY messages.thread_id ORDER BY messages.id DESC LIMIT ?, ?`, {
+        SELECT m.*, products.title as product_title, products.price as product_price, products.currency_symbol as product_currency_symbol, products.photos product_photos FROM (SELECT messages.*,  
+            users.id as user_id,
+            users.number as user_number, 
+            users.profile_photo as user_photo, 
+            users.fullname as user_fullname 
+            FROM messages, users 
+            WHERE messages.from_id = ? AND users.id = messages.to_id OR messages.to_id = ? 
+            AND users.id = messages.from_id 
+            ORDER BY messages.id DESC LIMIT 0, 1000000000) m LEFT JOIN products ON products.id = m.product_id GROUP BY m.thread_id ORDER BY m.id DESC LIMIT ?, ?`, {
             replacements: [user.id, user.id, offset, rowsPerPage],
             raw: false,
             type: Sequelize.QueryTypes.SELECT,
@@ -55,22 +73,26 @@ messages.get("/threads", (req, res) => {
             }
         })
         .catch(e => {
-            res.status(503).json({success: true, list: [], error: ERROR_DB_OP+e})
+            res.status(503).json({success: false, list: [], error: ERROR_DB_OP})
         })
     }
 
 })
 
-messages.get("/threads/:user_id", (req, res) => {
-    var userId = req.params.user_id
+messages.get("/threads/:thread_id", (req, res) => {
+    var threadId = req.params.thread_id && !isNaN(parseInt(req.params.thread_id))? req.params.thread_id : -1
+    if(threadId < 0) {
+        res.json({success: false, error: "No chat specified"})
+        return
+    }
     if(!res.locals.token_user) {
         res.json({success: false, auth_required: true})
 
     } else {
         const user = res.locals.token_user
-        const limit = 20
-        db.sequelize.query("SELECT messages.*, products.photos as product_photos, products.title as product_title FROM messages, products WHERE products.id = messages.product_id AND messages.from_id = ? AND messages.to_id = ? OR products.id = messages.product_id AND messages.from_id = ? AND messages.to_id = ? ORDER BY id DESC LIMIT ?", {
-            replacements: [user.id, userId, user.id, userId, limit],
+        const limit = 50
+        db.sequelize.query("SELECT * FROM messages WHERE thread_id = ? AND to_id = ? OR thread_id = ? AND from_id = ? ORDER by id DESC LIMIT ?", {
+            replacements: [threadId, user.id, threadId, user.id, limit],
             raw: false,
             type: Sequelize.QueryTypes.SELECT,
             model: Message,
@@ -81,11 +103,17 @@ messages.get("/threads/:user_id", (req, res) => {
                 res.status(200).json({success: false, list: []})
 
             } else {
+                Message.update({seen: 1}, {
+                    where: {
+                        thread_id: threadId,
+                        to_id: user.id
+                    }
+                })
                 res.status(200).json({success: true, list: data.reverse()})
             }
         })
         .catch(e => {
-            res.status(503).json({success: true, list: [], error: ERROR_DB_OP})
+            res.status(503).json({success: false, list: [], error: ERROR_DB_OP})
         })
     }
 
@@ -97,20 +125,48 @@ messages.post("/delete", (req, res) => {
         res.json({success: false, auth_required: true})
 
     } else {
-        const messageId = req.query.message_id && !isNaN(parseInt(req.query.message_id))? req.query.message_id : -1
-        if(messageId < 0) {
+        const messagesIds = req.body.messages_ids
+        if(messagesIds.length < 0) {
             res.json({success: false, error: "No message specified"})
 
         } else {
             const user = res.locals.token_user
-            db.sequelize.query("DELETE FROM messages WHERE from_id = ? AND id = ?", {
-                replacements: [user.id, messageId]
+            Message.findAll({
+                where: {
+                    id: messagesIds
+                }
             })
-            .then(message => {
-                res.json({success: true})
+            .then(msgs => {
+                var sanitised_ids = []
+                if(msgs && msgs.length > 0) {
+                    var l = msgs.length
+                    for(var i = 0; i < msgs.length; i++) {
+                        if(msgs[i].from_id == user.id || msgs[i].to_id == user.id) {
+                            sanitised_ids.push(msgs[i].id)
+                        }
+                    }
+
+                }
+                if(sanitised_ids.length == 0) {
+                    res.json({success: false, error: "Cool"})
+
+                } else {
+                    Message.destroy({
+                        where: {
+                            id: sanitised_ids
+                        }
+                    })
+                    .then(result => {
+                        res.json({success: true, error: JSON.stringify(result)})
+                    })
+                    .catch(e => {
+                        res.status(503).json({success: false, error: 1 + ERROR_DB_OP})
+
+                    })
+                }
             })
             .catch(e => {
-                res.json({success: false, data: e})
+                res.status(503).json({success: false, error: ERROR_DB_OP})
             })
         }
     }
@@ -179,17 +235,17 @@ messages.post("/send", (req, res) => {
                                 res.json({status: 1, message: "Your message has been successfully sent!"})
                             })
                             .catch(err => {
-                                res.json({status: 0, message: ERROR_DB_OP+"ZZ"+err})
+                                res.json({status: 0, message: ERROR_DB_OP+"ZZ"})
                             })
                         }
                     })
                     .catch(e => {
-                        res.json({status: 0, message: ERROR_DB_OP+"AA"+e})
+                        res.json({status: 0, message: ERROR_DB_OP+"AA"})
                     })
                 }
             })
             .catch(e => {
-                res.json({status: 0, message: ERROR_DB_OP+"BB"+e})
+                res.json({status: 0, message: ERROR_DB_OP+"BB"})
             })
         }
     }

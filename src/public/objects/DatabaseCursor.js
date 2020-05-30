@@ -31,13 +31,15 @@ class DatabaseCursor {
     }
 
     getResult = (results) => {
+        var length = results.length
         if(results.length > this.rowsPerPage) results.pop()
         return Object.assign(listResponse(), {
             error: results.length == 0? "Not found!" : null,
-            list: results, 
             has_prev: this.page > 1, 
-            has_next: results.length > this.rowsPerPage, 
-            page: this.page
+            has_next: length > this.rowsPerPage, 
+            page: this.page,
+            list: results,
+            success: true
         })
     }
 }

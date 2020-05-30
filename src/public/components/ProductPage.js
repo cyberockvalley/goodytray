@@ -615,7 +615,7 @@ class ProductPage extends Component {
                    <div className="js-apply_cv_result">
                    </div>
                    <div className="b-advert-card-aside">
-                    {
+                    {/*
                         this.state.poster && this.state.product.hide_phone_number != 1?
                         <div className="b-show-contact-outer">
                         <a className="qa-show-contact cy-show-contact js-show-contact b-show-contact" href={"tel: "+this.state.poster.number} rel="nofollow">
@@ -625,7 +625,7 @@ class ProductPage extends Component {
                         </a>
                        </div>
                        :
-                       ""
+                       ""*/
                     }
                     <div className="b-advert-social-wrapper">
                      <div className="b-advert-social-inner">
@@ -764,8 +764,8 @@ class ProductPage extends Component {
                       <div className="b-seller-info-interaction">
                          {
                              this.state.product.hide_phone_number != 1?
-                             <a hide-pn={"hh" + this.state.product.hide_phone_number} className="qa-show-contact cy-show-contact js-show-contact b-show-contact h-mb-20" href={"tel: "+this.state.poster.number} rel="nofollow">
-                                <span className="b-button b-button--primary b-button--biggest-size">
+                             <a hide-pn={"hh" + this.state.product.hide_phone_number} className="text-center qa-show-contact cy-show-contact js-show-contact b-show-contact h-mb-20" href={"tel: "+this.state.poster.number} rel="nofollow">
+                                <span className={"b-show-contact-title"/*"b-button b-button--primary b-button--biggest-size"*/}>
                                     {this.state.poster.number}
                                 </span>
                              </a>:""

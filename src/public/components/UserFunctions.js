@@ -7,7 +7,7 @@ const browser = require("../utils/Browser");
 import { productLink } from "../utils/LinkBuilder";
 
 export const register = function(newUser) {
-    return axios.post("api/v1/users/register", {
+    return browser.axios.post( API_ROOT + "users/register", {
         username: newUser.username,
         email: newUser.email,
         number: newUser.number,
@@ -23,7 +23,7 @@ export const register = function(newUser) {
 }
 
 export const login = function(user) {
-    return axios.post("api/v1/users/login", {
+    return browser.axios.post(API_ROOT + "users/login", {
         email: user.email,
         password: user.password
     })
@@ -54,7 +54,7 @@ export const uploadProduct = function(product) {
         return {status_code: 7, message: "Please login first"}
 
     } else {
-        return axios.post("products/upload", {
+        return browser.axios.post(API_ROOT + "products/upload", {
             category: product.category,
             sub_category: product.sub_category,
         })

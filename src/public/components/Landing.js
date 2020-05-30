@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME } from "../../../Constants"
 import { productLink, catLink, catIconName, countryLink, subCatLink } from "../utils/LinkBuilder"
-import { commaNum, id, overflows, truncText} from "../utils/Funcs"
+import { commaNum, id, overflows, truncText, elementOverFlows, elementOverFlowsY} from "../utils/Funcs"
 import { Link } from "react-router-dom"
 import Navbar from './Navbar'
 import Footer from "./Footer"
@@ -161,11 +161,13 @@ class Landing extends Component {
         this.setState({carousel_id: id})
     }
     
+
     componentDidMount() {
-        console.log("AYAM READY", 2)
+        window.addEventListener('resize', this.handleResize.bind(this))
         $(document).ready(function(){
             console.log("AYAM READY", 3)
             $(".b-fixed-element-static").stick_in_parent();
+            //console.log("side_bar_scroll", document.getElementById("side_bar_scroll").clientHeight, document.getElementById("side_bar_scroll").scrollHeight)
         });
         //window.location.replace("#")
         document.title = SITE_TITLE
@@ -175,7 +177,6 @@ class Landing extends Component {
 
         }catch(e){}
         
-        
         this.setState({loading_products: true})
 
         //get cats & sub cats
@@ -183,6 +184,7 @@ class Landing extends Component {
         .then(resp => {
             if(resp && resp.data) {
                 this.setState({cats: resp.data})
+                
             }
         })
         //get products
@@ -226,8 +228,20 @@ class Landing extends Component {
         $("#categories").show();
     }
     showMobileCatsTab = () => {
-        $("#mobile-cats-tab").show();
         $("#categories").hide();
+        $("#mobile-cats-tab").show();
+    }
+
+    handleResize() {
+        console.log("handleResize", window.innerWidth,  window.innerHeight)
+        if(window.innerWidth > 767) {
+            $("#categories").removeClass("active in")
+            $("#categories").attr('style', (i, style) => {
+                return style && style.replace(/display[^;]+;?/g, '');
+            })
+            $("#goods").addClass("active in")
+
+        }
     }
 
     render() {
@@ -349,32 +363,33 @@ class Landing extends Component {
                                 </div>
                         </div>
                         {
-                                this.state.cats && this.state.cats.length > 0?
-                                <div id="mobile-cats-tab" className={"mobile-cats-tab md-hide-up" + (this.state.cats && this.state.cats.length > 0?"": " hide")}>
-                                    <a onClick={this.hideMobileCatsTab} className="mobile-cats-tab-link mobile-cats-tab-link" id="categories-tab" data-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="false">
-                                        <span className="fa fa-2x fa-list" style={{color: "#3db83a", padding: "2px", width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px"}}></span>
-                                        <span>
-                                            Browse All
-                                        </span>
-                                    </a>
-                                    {
-                                        this.state.cats.slice(0, 3).map((cat, index) => (
-                                            <Link className="mobile-cats-tab-link" key={index} to={catLink(cat.name)}>
-                                                <svg className={"cat-"+catIconName(cat.name)} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
-                                                    <use xlinkHref={"#cat-"+catIconName(cat.name)} data-index={index} data-id={cat.id}></use>
-                                                </svg>
-                                                <span className="">
-                                                    {truncText(cat.name, 10)}
-                                                </span>
-                                            </Link>
-                                        ))
-                                    }
-                                </div>
-                                :""
+                            this.state.cats && this.state.cats.length > 0?
+                            <div className={"mobile-cats-tab md-hide-up" + (this.state.cats && this.state.cats.length > 0?"": " hide")}>
+                                <a onClick={this.hideMobileCatsTab} className="mobile-cats-tab-link mobile-cats-tab-link" id="categories-tab" data-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="false">
+                                    <span className="fa fa-2x fa-list" style={{color: "#3db83a", padding: "2px", width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px"}}></span>
+                                    <span>
+                                        Browse All
+                                    </span>
+                                </a>
+                                {
+                                    this.state.cats.slice(0, 3).map((cat, index) => (
+                                        <Link className="mobile-cats-tab-link" key={index} to={catLink(cat.name)}>
+                                            <svg className={"cat-"+catIconName(cat.name)} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
+                                                <use xlinkHref={"#cat-"+catIconName(cat.name)} data-index={index} data-id={cat.id}></use>
+                                            </svg>
+                                            <span className="">
+                                                {truncText(cat.name, 10)}
+                                            </span>
+                                        </Link>
+                                    ))
+                                }
+                            </div>
+                            :
+                            <div className="hide"></div>
                             }
                         <div className="container-fluid sm-no-padding-down">
                             <div className="bar">
-                                <div id="categories" className="side fade md-block-up tab-pane">
+                                <div id="categories" className="side fade md-block-up tab-pane h-bg-grey">
                                     <div id="mobile-cats-header" style={{height: "50px"}} className="mobile-cats-header md-hide-up">
                                         <div style={{cursor: "pointer"}} onClick={this.showMobileCatsTab} id="goods-tab" data-toggle="tab" href="#goods" role="tab" aria-controls="goods" aria-selected="true">
                                                 <i className="fa fa-chevron-left"></i>
@@ -392,7 +407,7 @@ class Landing extends Component {
                                                                                     <use data-source="up" xlinkHref="#up"></use>
                                                                                 </svg>
                                                                             </div>
-                                                                            <div>
+                                                                            <div className="categories-innermost-wrapper">
 
                                                                                 {
                                                                                     this.state.cats.map((cat, index) => (

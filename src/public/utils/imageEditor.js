@@ -22,9 +22,9 @@ module.exports = {
                 Jimp.read(file, (imageErr, image) => {
                     console.log("TheFileX", "IMAGE_ERROR", imageErr)
                     console.log("TheFileX", "IMAGE", image)
-                    const nSize = resize(logoHolder.bitmap.width, logoHolder.bitmap.height, Math.ceil(image.bitmap.width / 3))
+                    const nSize = resize(logoHolder.bitmap.width, logoHolder.bitmap.height, Math.ceil(image.bitmap.width / 7))
                     logoHolder.resize(nSize[0], nSize[1])
-                    image.composite(logoHolder, getRandomInt(Math.ceil((5 * image.bitmap.width)/100), Math.ceil((95 * (image.bitmap.width - logo.bitmap.width))/100)), getRandomInt(Math.ceil((5 * image.bitmap.height)/100), Math.ceil((95 * (image.bitmap.height - logo.bitmap.height))/100)), [Jimp.BLEND_DESTINATION_OVER, 0.2, 0.2])
+                    image.composite(logoHolder, image.bitmap.width - logo.bitmap.width - 5, image.bitmap.height - logo.bitmap.height - 5, [Jimp.BLEND_DESTINATION_OVER, 0.2, 0.2])
                     .write(file);
                 })
             });

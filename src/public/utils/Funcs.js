@@ -10,17 +10,17 @@ export const logger = function()
     var pub = {};
 
     pub.enableLogger =  function enableLogger() 
-                        {
+                        {/*
                             if(oldConsoleLog == null)
                                 return;
 
-                                console.log = oldConsoleLog;
+                                console.log = oldConsoleLog;*/
                         };
 
     pub.disableLogger = function disableLogger()
-                        {
+                        {/*
                             oldConsoleLog = console.log;
-                            console.log = function() {};
+                            console.log = function() {};*/
                         };
 
     return pub;
@@ -305,13 +305,35 @@ const formatPhoneNumber = (num) => {
 export const isValidNumber = function(number) {
     return (number != null && number.length > 0)
 }
-
 export const isValidEmail = function(email) {
     return (email != null && email.length > 0)
 }
 
 export const isClientSide = function() {
     return (typeof window !== 'undefined')
+}
+
+export const sqlTimeStampToJsDate = (timeStamp) => {
+    return Date.parse(timeStamp)
+    /*-
+    //timeStamp in SQL DATETIME format ("yyyy-mm-dd hh:mm:ss.ms")
+    var timeStampArr1 = timeStamp.split("-");
+    //format of timeStampArr1[] = ['yyyy','mm','dd hh:mm:ms']
+    var sYear = timeStampArr1[0];
+    var sMonth = (Number(timeStampArr1[1]) - 1).toString();
+    var timeStampArr2 = timeStampArr1[2].split(" ");
+    //format of timeStampArr2[] = ['dd', 'hh:mm:ss.ms']
+    var sDay = timeStampArr2[0];
+    var timeStampArr3 = timeStampArr2[1].split(":");
+    //format of timeStampArr3[] = ['hh','mm','ss.ms']
+    var sHour = timeStampArr3[0];
+    var sMinute = timeStampArr3[1];
+    var timeStampArr4 = timeStampArr3[2].split(".");
+    //format of timeStampArr4[] = ['ss','ms']
+    var sSecond = timeStampArr4[0];
+    var sMillisecond = timeStampArr4[1];
+    
+    return new Date(sYear,sMonth,sDay,sHour,sMinute,sSecond,sMillisecond);*/
 }
 
 export const getObjectValue = (object) => {
@@ -370,6 +392,9 @@ String.prototype.hashCode = function() {
         hash |= 0//convert to 32 bit integer
     }
     return hash
+}
+export const elementOverFlowsY = (el) => {
+   return el.clientHeight < el.scrollHeight
 }
 export const randomString = function (length) {
     var text = "ABCDEFGHIJKLMNOPQRSTUVWXWZabcdefghijklmnopqrstuvwxyz0123456789"

@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize")
 const db = require("../database/db")
 
-module.exports = db.sequelize.define(
+var review = db.sequelize.define(
     "review", 
     {
         id: {
@@ -15,7 +15,12 @@ module.exports = db.sequelize.define(
         }, 
 
         product_id: {
-            type: Sequelize.INTEGER
+            type: Sequelize.INTEGER,
+            references: {
+                model: 'product',
+                key: 'id'
+            },
+            field: 'product_id'
         },
 
         experience_id: {
@@ -39,3 +44,12 @@ module.exports = db.sequelize.define(
         timestamps: false
     }
 )
+
+
+review.associate = models => {
+    review.belogsTo(models.product);
+    //review.hasMany(models.product, {foreignKey: 'product_id',sourceKey: 'id'});
+
+}
+
+module.exports = review

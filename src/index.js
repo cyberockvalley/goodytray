@@ -33,6 +33,7 @@ import States from "./public/routes/States"
 import Cities from "./public/routes/Cities"
 import Messages from "./public/routes/Messages"
 import Reviews from "./public/routes/Reviews"
+import Notifications from "./public/routes/Notifications"
 
 import PageMetaSetter from "./public/routes/PageMetaSetter"
 
@@ -97,6 +98,7 @@ app.use(API_ROOT + "states", States)
 app.use(API_ROOT + "cities", Cities)
 app.use(API_ROOT + "messages", Messages)
 app.use(API_ROOT + "reviews", Reviews)
+app.use(API_ROOT + "notifications", Notifications)
 const Stripe = require('./public/routes/Stripe')
 app.use(API_ROOT + "stripe", Stripe)
 
@@ -386,9 +388,9 @@ app.get(SELL_PATHS, (req, res) => {
       initialData.cats = response.data.cats
   
       browser.axios.get(API_ROOT + "countries?include_currency_symbols=1")
-      .then(counriesData => {
-        initialData.countries = counriesData.data.countries
-        initialData.currency_symbols = counriesData.data.currency_symbols
+      .then(countriesData => {
+        initialData.countries = countriesData.data.countries
+        initialData.currency_symbols = countriesData.data.currency_symbols
   
         const context = {}
         initialData.pageMeta = res.locals.pageMeta

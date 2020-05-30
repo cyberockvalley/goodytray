@@ -1,13 +1,14 @@
 const Sequelize = require("sequelize")
 const db = require("../database/db")
 
-module.exports = db.sequelize.define(
+var product = db.sequelize.define(
     "product", 
     {
         id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
-            primaryKey: true
+            primaryKey: true,
+            field: "id"
         },
 
         user_id: {
@@ -132,3 +133,9 @@ module.exports = db.sequelize.define(
         timestamps: false
     }
 )
+/*
+product.associate = model => {
+    product.belongsTo(model.review)
+}*/
+
+module.exports = product
