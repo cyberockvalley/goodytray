@@ -34,13 +34,13 @@ notifications.get("/", (req, res) => {
         var page = intOrMin(req.query.page, 1)
         var cursor = new DatabaseCursor(page, REVIEWS_PER_PAGE)
         db.sequelize.query(`
-        SELECT reviews.id, reviews.user_id from_id, users.fullname from_name, users.profile_photo from_photo, 
+        SELECT reviews.id, reviews.user_id from_id, users.fullname from_name, users.profile_photo from_photo,
         UNIX_TIMESTAMP(reviews.created) time, 0 reference_type, products.id reference_id, products.title reference_title, products.photos reference_photos,
-         reviews.body message FROM reviews 
-         JOIN products ON products.id = reviews.product_id 
-         JOIN users ON users.id = reviews.user_id WHERE reviews.seen = 0 AND products.user_id = ?
-         ORDER BY reviews.id DESC LIMIT ?, ?`, {  
-            replacements: [cursor.offset, cursor.limit, user.id],
+        reviews.body message FROM reviews
+        JOIN products ON products.id = reviews.product_id
+        JOIN users ON users.id = reviews.user_id WHERE products.user_id = ?
+        ORDER BY reviews.id DESC LIMIT ?, ?`, {  
+            replacements: [user.id, cursor.offset, cursor.limit],
             raw: false, 
             type: Sequelize.QueryTypes.SELECT
         })

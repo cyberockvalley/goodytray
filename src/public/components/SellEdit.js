@@ -39,6 +39,7 @@ class SellEdit extends Component {
     this.state.countries = props.initialData.countries
     this.state.currency_symbols = props.initialData.currency_symbols
     this.state.price_currency_symbol = props.initialData.currency_symbols[0]
+    console.log("PRICE_SYM", 1, this.state.price_currency_symbol)
     
     this.handleChange = this.handleChange.bind(this)
 
@@ -219,7 +220,7 @@ class SellEdit extends Component {
         {city: -1},
         {title: ""},
         {desc: ""},
-        {price_currency_symbol: ""},
+        {price_currency_symbol: this.state.currency_symbols[0]},
         {price: ""},
         {photos: []},
         {photo_size: 0},
