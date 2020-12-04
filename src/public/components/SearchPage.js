@@ -283,7 +283,7 @@ class SearchPage extends Component {
               apiPath += "q=" + queryValues.q
             }
         }
-        document.title = SITE_TITLE
+        //document.title = SITE_TITLE
         
         
         this.setState({loading_products: true})

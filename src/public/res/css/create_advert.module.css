@@ -3448,6 +3448,7 @@ to {
   -webkit-box-shadow: 1px 1px 4px rgba(80, 114, 125, 0.4);
           box-shadow: 1px 1px 4px rgba(80, 114, 125, 0.4);
   overflow-y: auto;
+  padding-bottom: 25px;
 }
 .b-choose-location-popup a {
     color: inherit;

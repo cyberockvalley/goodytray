@@ -22,7 +22,7 @@ export default ({ body, initialData }) => {
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta name="theme-color" content="#70b93f" />
-      <link rel="apple-touch-icon" href="/public/logo.png" />
+      <link rel="apple-touch-icon" href="${getText("LOGO_PATH")}" />
       <link rel="stylesheet" href="/public/res/font-awesome/css/font-awesome.min.css">
       <meta name="application-name" content="${SITE_NAME}">
       ${
@@ -56,7 +56,7 @@ export default ({ body, initialData }) => {
         '<!--pageMeta.url-->':'<link rel="canonical" content="'+initialData.pageMeta.url+'">'
       }
   
-      <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
+      <link rel="icon" href="${getText("FAV_ICON_PATH")}" type="image/x-icon" />
       <title>${initialData.pageMeta.title}</title>
       <script src="https://js.stripe.com/v3/"></script>
       
@@ -119,3 +119,4 @@ export default ({ body, initialData }) => {
 </html>
   `;
 };
+

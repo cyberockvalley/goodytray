@@ -1,7 +1,7 @@
 import React, { Component } from "react"
-import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME } from "../../../Constants"
-import { productLink, catLink, catIconName, countryLink, subCatLink } from "../utils/LinkBuilder"
-import { commaNum, id, overflows, truncText, elementOverFlows, elementOverFlowsY} from "../utils/Funcs"
+import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME, getText } from "../../../Constants"
+import { productLink, catLink, catIconName, countryLink, subCatLink, stateLink } from "../utils/LinkBuilder"
+import { commaNum, id, overflows, truncText} from "../utils/Funcs"
 import { Link } from "react-router-dom"
 import Navbar from './Navbar'
 import Footer from "./Footer"
@@ -12,6 +12,7 @@ class Landing extends Component {
     constructor(props) {
         super(props)
         this.state = {
+          isNotGlobal: getText("IS_NOT_GLOBAL"),
           email: '',
           email: '',
           errors: {},
@@ -170,7 +171,7 @@ class Landing extends Component {
             //console.log("side_bar_scroll", document.getElementById("side_bar_scroll").clientHeight, document.getElementById("side_bar_scroll").scrollHeight)
         });
         //window.location.replace("#")
-        document.title = SITE_TITLE
+        //document.title = SITE_TITLE}
         this.changeCarousel(this.state.carousel_id)
         try{
             this.sideBarScroll("")
@@ -214,11 +215,19 @@ class Landing extends Component {
             }
             
         })
-        //get countries
-        browser.axios.get(API_ROOT + "countries")
+        //get countries OR state is the site is not global
+        const countryId = getText("COUNTRY_ID")
+        browser.axios.get(API_ROOT + (this.state.isNotGlobal && countryId && countryId > 0? `states?cid=${countryId}` : "countries"))
         .then(resp => {
-            if(resp && resp.data && resp.data.countries) {
-                this.setState({countries: resp.data.countries})
+            if(this.state.isNotGlobal) {
+                if(resp && resp.data && resp.data.states) {
+                    this.setState({countries: resp.data.states})
+                }
+
+            } else {
+                if(resp && resp.data && resp.data.countries) {
+                    this.setState({countries: resp.data.countries})
+                }
             }
         })
     }
@@ -258,7 +267,7 @@ class Landing extends Component {
                                             <div className="row h-mb-30">
                                                 <div className="col-xs-12 center-xs">
                                                     <p className="b-main-page-header__text">
-                                                        Find anything in&nbsp;
+                                                        {getText("FIND_ANYTHING_IN")}&nbsp;
                                                         <button onClick={this.toggleCountries} className="fw-button qa-fw-button fw-button--type-deep-blue fw-button--size-small fw-button--has-icon" type="button">
                                                             <span className="fw-button__content">
                                                                 <svg className="geo-marker" strokeWidth="0" style={{ width: "11px", height: "11px", maxWidth: "11px", maxHeight: "11px", fill: "inherit", stroke: "inherit" }}>
@@ -266,7 +275,7 @@ class Landing extends Component {
                                                                     </use>
                                                                 </svg>
                                                                 <span className="fw-button__slot-wrapper fw-button__text--has-icon">
-                                                                    {this.state.country == null? "All countries": this.state.country}
+                                                                    {this.state.country == null? getText("ALL_COUNTRIES"): this.state.country}
                                                                 </span>
                                                             </span>
                                                         </button>
@@ -288,7 +297,7 @@ class Landing extends Component {
                                                                  </use>
                                                                 </svg>
                                                                 <p className="b-choose-location-desktop-header__heading qa-b-choose-location-desktop-header__heading">
-                                                                 {this.state.country == null? "All countries": this.state.country}
+                                                                 {this.state.country == null? getText("ALL_COUNTRIES"): this.state.country}
                                                                 </p>
                                                                </div>
                                                                <div className="b-choose-location-desktop-header__search-wrapper">
@@ -310,20 +319,20 @@ class Landing extends Component {
 
                                                                 <div className="hide b-region-item">
                                                                  <span className="b-region-item__name qa-b-region-item__name" tabindex="0">
-                                                                  {this.state.country == null? "All countries": this.state.country}
+                                                                  {this.state.country == null? getText("ALL_COUNTRIES"): this.state.country}
                                                                  </span>
-                                                                 <span className="hide b-region-item__adv-count qa-b-region-item__adv-count">
-                                                                  total
+                                                                 <span className="hide b-region-item__adv-count qa-b-region-item__adv-count low-case">
+                                                                    {getText("TOTAL")}
                                                                  </span>
                                                                 </div>
                                                                 {
                                                                     this.state.countries.map((country, index) => (
                                                                         <div key={country.id} className="b-region-item">
-                                                                        <a href={countryLink(country.name)} className="b-region-item__name qa-b-region-item__name" tabindex="0">
+                                                                        <Link to={this.state.isNotGlobal? stateLink(country.name) : countryLink(country.name)} className="b-region-item__name qa-b-region-item__name" tabindex="0">
                                                                          {country.name}
-                                                                        </a>
-                                                                        <span className="hide b-region-item__adv-count qa-b-region-item__adv-count">
-                                                                         total
+                                                                        </Link>
+                                                                        <span className="hide b-region-item__adv-count qa-b-region-item__adv-count low-case">
+                                                                            {getText("TOTAL")}
                                                                         </span>
                                                                        </div>
                                                                     ))
@@ -344,7 +353,7 @@ class Landing extends Component {
                                                             <input style={{height: "56px"}} autoComplete="off" type="text"
                                                                         className="form-control"
                                                                         name="search"
-                                                                        placeholder="Enter your search..."
+                                                                        placeholder={`${getText("ENTER_YOUR_SEARCH")}...`}
                                                                         onChange={this.handleChange}/>
                                                             <span onClick={this.handleSearch} type="submit" style={{cursor: "pointer", height: "56px", background: "#FFA010", borderColor: "#FFA010"}} className="input-group-addon">
                                                                 <div onClick={this.handleSearch} className="fw-search__icon">
@@ -367,8 +376,8 @@ class Landing extends Component {
                             <div className={"mobile-cats-tab md-hide-up" + (this.state.cats && this.state.cats.length > 0?"": " hide")}>
                                 <a onClick={this.hideMobileCatsTab} className="mobile-cats-tab-link mobile-cats-tab-link" id="categories-tab" data-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="false">
                                     <span className="fa fa-2x fa-list" style={{color: "#3db83a", padding: "2px", width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px"}}></span>
-                                    <span>
-                                        Browse All
+                                    <span className="cap-case">
+                                        {getText("BROWSE_ALL")}
                                     </span>
                                 </a>
                                 {
@@ -394,7 +403,7 @@ class Landing extends Component {
                                         <div style={{cursor: "pointer"}} onClick={this.showMobileCatsTab} id="goods-tab" data-toggle="tab" href="#goods" role="tab" aria-controls="goods" aria-selected="true">
                                                 <i className="fa fa-chevron-left"></i>
                                         </div>
-                                        <div className="mobile-cats-header-title">Categories</div>
+                                        <div className="mobile-cats-header-title">{getText("CATS")}</div>
                                     </div>
                                     <div className="side-inner">
                                     <div className="b-categories-listing-outer">
@@ -420,7 +429,7 @@ class Landing extends Component {
                                                                                                 <span className="b-categories-item--inner" data-index={index} data-id={cat.id}>
                                                                                                     <span className="qa-category-parent-name b-category-parent-name" data-index={index} data-id={cat.id}>{cat.name}</span>
                                                                                                     <span className="b-list-category-stack__item-link--found b-black" data-index={index} data-id={cat.id}>
-                                                                                    <span data-index={index} data-id={cat.id}>{commaNum(cat.total_products) + " ads"}</span>
+                                                                                                    <span data-index={index} data-id={cat.id}>{commaNum(cat.total_products) + " " + getText("ADVERTS_LOWERCASE")}</span>
                                                                                                     </span>
                                                                                                 </span>
                                                                                             </span>
@@ -463,7 +472,7 @@ class Landing extends Component {
                                                                                                             </span>
                                                                                                             <span className="b-list-category-stack__item-link--found b-black" data-index={index} data-id={this.state.cat_id}>
                                                                                                                 <span data-index={index} data-id={this.state.cat_id}>
-                                                                                                                    {commaNum(sCat.total_products) + " ads"}
+                                                                                                                    {commaNum(sCat.total_products) + " " + getText("ADVERTS_LOWERCASE")}
                                                                                                                 </span>
                                                                                                             </span>
                                                                                                         </span>
@@ -513,27 +522,27 @@ class Landing extends Component {
 
                                                         <div className="home-autopromo-texts">
                                                             <div style={{fontSize: "22px", fontWeight: "700", color: "#747474"}}>
-                                                                Fly your business with {SITE_NAME}
+                                                                {getText("BANNER_FLY_BIZ")} {SITE_NAME}
                                                             </div>
                                                             <div style={{padding: "10px", textAlign: "center", fontSize: "13px", color: "#747474", fontWeight: "lighter"}}>
-                                                                Get new customers and more sales with our business services
+                                                                {getText("BANNER_MORE_SALES")}
                                                             </div>
                                                             <div style={{display: "flex", justifyContent: "space-around"}}>
                                                                 <div className="home-autopromo-counter">
-                                                                    <div className="home-autopromo-focus">12 million</div>
-                                                                    <div>of visits per month</div>
+                                                                    <div className="home-autopromo-focus">{getText("VISITS_PER_MONTH_COUNT")}</div>
+                                                                    <div>{getText("VISITS_PER_MONTH")}</div>
                                                                 </div>
                                                                 <div className="home-autopromo-counter">
-                                                                    <div className="home-autopromo-focus">150 million</div>
-                                                                    <div>of available impressions</div>
+                                                                    <div className="home-autopromo-focus">{getText("VISITS_IMPRESSIONS_COUNT")}</div>
+                                                                    <div>{getText("VISITS_IMPRESSIONS")}</div>
                                                                 </div>
                                                                 <div className="home-autopromo-counter">
-                                                                    <div className="home-autopromo-focus">4 million</div>
-                                                                    <div>of sales per month</div>
+                                                                    <div className="home-autopromo-focus">{getText("SALES_PER_MONTH_COUNT")}</div>
+                                                                    <div>{getText("SALES_PER_MONTH")}</div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <Link to="/about" className="btn btn-lg btn-orange">Learn More</Link>
+                                                        <Link to="/about" className="btn btn-lg btn-orange cap-case">{getText("LEARN_MORE")}</Link>
                                                     </div>
                                                 </div>
                                                 <div className="col-md-3">
@@ -541,21 +550,21 @@ class Landing extends Component {
                                                         this.props.user?
                                                         <a href="/sell">
                                                             <div className="b-post-advert-banner b-main-page__post-advert-banner">
-                                                                <p className="b-post-advert-banner__heading">Got something to sell?</p>
+                                                                <p className="b-post-advert-banner__heading">{getText("GOT_SOMETHING_TO_SELL")}</p>
                                                                 <button className="b-post-advert-banner__button">
                                                                     <div className="b-post-advert-banner__button_inner"></div>
                                                                 </button>
-                                                                <p className="b-post-advert-banner__bottom-text">Post an advert for free!</p>
+                                                                <p className="b-post-advert-banner__bottom-text">{getText("POST_AN_ADVERT")}</p>
                                                             </div>
                                                         </a>
                                                         :
                                                         <Link to="/login?next=/sell">
                                                             <div className="b-post-advert-banner b-main-page__post-advert-banner">
-                                                                <p className="b-post-advert-banner__heading">Got something to sell?</p>
+                                                                <p className="b-post-advert-banner__heading">{getText("GOT_SOMETHING_TO_SELL")}</p>
                                                                 <button className="b-post-advert-banner__button">
                                                                     <div className="b-post-advert-banner__button_inner"></div>
                                                                 </button>
-                                                                <p className="b-post-advert-banner__bottom-text">Post an advert for free!</p>
+                                                                <p className="b-post-advert-banner__bottom-text">{getText("POST_AN_ADVERT")}</p>
                                                             </div>
                                                         </Link>
                                                     }
@@ -563,7 +572,7 @@ class Landing extends Component {
                                             </div>
                                             
                                             <div>
-                                                <h3 className="sm-hide-down b-listing-cards-title">Trending ads</h3>
+                                                <h3 className="sm-hide-down b-listing-cards-title">{getText("TRENDING_ADS")}</h3>
                                                 <div className="row">
                                                     {
                                                         this.state.products.map((product, index) => (

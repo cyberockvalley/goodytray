@@ -463,7 +463,8 @@ app.get('*', (req, res) =>
     )
 )
 app.listen(PORT, () => console.log('Server running on port: ' + PORT))
-if(process.env.SSL_KEY/* && process.env.SSL_CHAIN && process.env.SSL_KEY.length > 0 && process.env.SSL_CHAIN.length > 0*/) {
+/*
+if(process.env.SSL_KEY) {
   console.log("SAW", "YEAS")
   const https = require("https"),
   fs = require("fs");
@@ -477,3 +478,4 @@ if(process.env.SSL_KEY/* && process.env.SSL_CHAIN && process.env.SSL_KEY.length 
   }
   https.createServer(options, app).listen(PORT_SSL, () => console.log('Server running on ssl port: ' + PORT_SSL));
 }
+*/

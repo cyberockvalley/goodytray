@@ -1,8 +1,8 @@
 import React, { Component } from "react"
 import { Link, withRouter } from "react-router-dom"
 //import { unlink } from "fs"
-import { isClientSide, sqlTimeStampToJsDate, truncText } from "../utils/Funcs"
-import {SITE_NAME, API_ROOT} from "../../../Constants"
+import { sqlTimeStampToJsDate, truncText } from "../utils/Funcs"
+import {SITE_NAME, API_ROOT, getText} from "../../../Constants"
 import { HOME_PATHS } from "../utils/RoutePaths"
 import queryString from 'querystring'
 import { productLink } from "../utils/LinkBuilder"
@@ -21,7 +21,7 @@ class Navbar extends Component {
       collapsed: true,
       notifications: [],
       review_types: [{
-        name: "Product review"
+        name: getText("PRODUCT_REVIEW")
       }],
       total_new_messages: 0,
       total_new_notifications: 0,
@@ -171,20 +171,20 @@ class Navbar extends Component {
           <li className="nav-item">
             <Link onClick={this.closeNavbar} to="/register" className="h-flex-center">
               <span className="glyphicon glyphicon-user"></span>
-              <span> Registration</span>
+              <span> {getText("REG")}</span>
             </Link>
           </li>
           <li className="nav-item">
             <Link onClick={this.closeNavbar} to="/login" className="h-flex-center">
               <span className="glyphicon glyphicon-log-in"></span>
-              <span> Sign in</span>
+              <span> {getText("SIGN_IN")}</span>
             </Link>
           </li>
           <li className="nav-item sm-hide-down">
             <div className="h-width-120">
               <Link onClick={this.closeNavbar} to="/login?next=/sell" className="h-width-100p fw-button qa-fw-button fw-button--type-warning fw-button--size-medium">
                 <span className="fw-button__content">
-                  <span className="fw-button__slot-wrapper">SELL</span>
+                  <span className="fw-button__slot-wrapper up-case">{getText("SELL")}</span>
                 </span>
               </Link>
             </div>
@@ -198,25 +198,25 @@ class Navbar extends Component {
           <li className="nav-item" data-toggle="tooltip" title="Profile" data-placement="bottom">
             <Link onClick={this.closeNavbar} to="/profile" className="h-flex-center">
               <span className="glyphicon glyphicon-user"></span>
-              <span className="md-hide-up"> Profile</span>
+              <span className="md-hide-up"> {getText("PROFILE")}</span>
             </Link>
           </li>
           <li className="nav-item" data-toggle="tooltip" title="Messages" data-placement="bottom">
             <span className="badge badge-pill badge-primary">{this.state.total_new_messages}</span>
             <Link onClick={this.closeNavbar} to="/messages" className="h-flex-center">
               <span className="glyphicon glyphicon-envelope"></span>
-              <span className="md-hide-up"> Messages</span>
+              <span className="md-hide-up"> {getText("MESSAGES")}</span>
             </Link>
           </li>
           <li className="nav-item dropdown notification-dropdown" data-toggle="tooltip" title="Notifications" data-placement="bottom">
             <span className="badge badge-pill badge-primary">{this.state.total_new_notifications}</span>
             <a id="notification-dropdown-trigger" href="javascript:void(0)" to="/notifications" className="h-flex-center" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
               <span className="glyphicon glyphicon-bell"></span>
-              <span className="md-hide-up"> Notifications</span>
+              <span className="md-hide-up"> {getText("NOTIFICATIONS")}</span>
             </a>
             <ul className="dropdown-menu no-pad no-margin notification-dropdown-menu">
               <li className="notification-header div-head site-primary-bg">
-                <div>New (<b>{this.state.total_new_notifications}</b>)</div>
+                <div>{getText("NEW")} (<b>{this.state.total_new_notifications}</b>)</div>
                 <div></div>
               </li>
               <ul className="notification-container">
@@ -279,21 +279,21 @@ class Navbar extends Component {
                   this.state.no_notifications?
                   <li className="notification-empty">
                     <i className="fa fa-3x fa-bell-slash"></i>
-                    <span style={{alignSelf: "center"}}>You have no notification yet</span>
+                    <span style={{alignSelf: "center"}}>{getText("NO_NOTIFICATION_YET")}</span>
                   </li>
                   :
                   <li className="hide"></li>
                 }
               </ul>
               <li className="div-foot site-primary-bg">
-                <span onClick={this.loadNotifications} className={"button" + (this.state.has_next_notifications? "" : " hide")}>Load More</span>
+                <span onClick={this.loadNotifications} className={"button cap-case" + (this.state.has_next_notifications? "" : "hide")}>{getText("LOAD_MORE")}</span>
               </li>
             </ul>
           </li>
           <li className="nav-item" data-toggle="tooltip" title="Settings" data-placement="bottom">
             <Link onClick={this.closeNavbar} to="/settings" className="h-flex-center">
               <span className="glyphicon glyphicon-cog"></span>
-              <span className="md-hide-up"> Settings</span>
+              <span className="md-hide-up"> {getText("SETTINGS")}</span>
             </Link>
           </li>
           <li className="nav-item" data-toggle="tooltip" title="Logout" data-placement="bottom">
@@ -302,14 +302,14 @@ class Navbar extends Component {
             </form>
             <a href="javascript:void(0)" onClick={this.logOut} className="h-flex-center">
               <span className="glyphicon glyphicon-log-out"></span>
-              <span className="md-hide-up"> Logout</span>
+              <span className="md-hide-up"> {getText("LOGOUT")}</span>
             </a>
           </li>
           <li className="nav-item sm-hide-down">
             <div className="h-width-120">
               <a href="/sell" className="h-width-100p fw-button qa-fw-button fw-button--type-warning fw-button--size-medium">
                 <span className="fw-button__content">
-                  <span className="fw-button__slot-wrapper">SELL</span>
+                  <span className="fw-button__slot-wrapper cap-case">{getText("SELL")}</span>
                 </span>
               </a>
             </div>
@@ -330,9 +330,9 @@ class Navbar extends Component {
                 <span className="icon-bar"></span>
               </button>
               <a style={{height: "30px", width: "30px", fontSize: "1.5em"}} onClick={this.toggleNavbar} className="navbar-toggle md-hide-up fa fa-2x fa-search"></a>
-              <a style={{height: "35px"}} href="/sell" className="navbar-toggle fw-button--type-warning">Sell</a>
+              <a style={{height: "35px"}} href="/sell" className="navbar-toggle fw-button--type-warning">{getText("SELL")}</a>
               <Link onClick={this.closeNavbar} to="/" className="navbar-brand logo font-bask-normal">
-                <img src="/public/logo.png" width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
+                <img src={`${getText("LOGO_PATH")}`} width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
                 <span>{SITE_NAME}</span>
               </Link>
             </div>
@@ -341,7 +341,7 @@ class Navbar extends Component {
                 <div className="input-group input-group-lg fw-search--rounded">
                   <input autoComplete="off" onChange={this.handleChange}
                   type="text" className="form-control" value={this.state && this.state.search?this.state.search:""} name="search" 
-                  placeholder="Enter your search..." onChange={this.handleChange}/>
+                  placeholder={`${getText("ENTER_YOUR_SEARCH")}...`} onChange={this.handleChange}/>
                   <span onClick={this.handleSearch} type="submit" style={{cursor: "pointer", height: "40px", background: "#FFA010", borderColor: "#FFA010"}} className="input-group-addon">
                     <div onClick={this.handleSearch} className="fw-search__icon">
                       <svg onClick={this.handleSearch} className="loupe-2" strokeWidth="0" style={{width: "16px", height: "16px",maxWidth: "16px",maxHeight: "16px",fill: "rgb(255, 255, 255)",stroke: "inherit"}}>

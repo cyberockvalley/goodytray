@@ -1,7 +1,6 @@
 import React, {Component} from "react"
 import {Link, withRouter} from "react-router-dom"
-import { getCopy } from "../utils/Funcs"
-import { SITE_NAME, FACEBOOK_PAGE_LINK, INSTAGRAM_PAGE_LINK, TWITTER_PAGE_LINK } from "../../../Constants"
+import { SITE_NAME, FACEBOOK_PAGE_LINK, INSTAGRAM_PAGE_LINK, TWITTER_PAGE_LINK, getText } from "../../../Constants"
 //import { unlink } from "fs"
 
 class Footer extends Component {
@@ -9,16 +8,19 @@ class Footer extends Component {
         return (
         <div>
             <div className="footer">
-                <div className="footer-title">Place an ad on {SITE_NAME}</div>
+                <div className="footer-title">{getText("PLACE_AN_ADVERT_ON")} {SITE_NAME}</div>
                 <div className="footer-grids">
                     <div className="footer-grid">
-                        <img className="img-responsive" src="/public/res/images/static/easy.png" style={{margin: "auto"}}/>
+                        <img className="img-responsive" src="/public/res/images/static/easy.png" style={{objectPosition: "10% -12%"}}/>
+                        <div style={{marginRight: "10px"}}>{getText("FOOTER_EASY")}</div>
                     </div>
                     <div className="footer-grid">
-                        <img className="img-responsive" src="/public/res/images/static/fast.png" style={{margin: "auto"}}/>
+                        <img className="img-responsive" src="/public/res/images/static/fast.png"/>
+                        <div>{getText("FOOTER_FAST")}</div>
                     </div>
                     <div className="footer-grid">
-                        <img className="img-responsive" src="/public/res/images/static/secure.png" style={{margin: "auto"}}/>
+                        <img className="img-responsive" src="/public/res/images/static/secure.png"/>
+                        <div>{getText("FOOTER_SECURE")}</div>
                     </div>
                 </div>
             </div>
@@ -51,16 +53,16 @@ class Footer extends Component {
                 <div className="footer-links-internal container">
                     <div className="footer-links-internal-box">
                         <Link to="/about">
-                            About Us
+                            {getText("ABOUT_US")}
                         </Link>
                         <Link to="/contact">
-                            Contact Us
+                            {getText("CONTACT_US")}
                         </Link>
                         <Link to="/privacy">
-                            Privacy Policy
+                            {getText("PRIVACY_POLICY")}
                         </Link>
                         <Link to="/tos">
-                            Terms Of Services
+                            {getText("TOS")}
                         </Link>
                     </div>
                 </div>

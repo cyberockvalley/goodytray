@@ -12,6 +12,9 @@ a.js-handle-link-event:hover {color: #fff !important;}
 	padding-right: auto;
 	padding-bottom: 2.5rem;
 }
+.up-case {text-transform: uppercase}
+.low-case {text-transform: lowercase}
+.cap-case {text-transform: capitalize}
 /*.fw-fixed-background{z-index: 1050 !important;}*/
 *{box-sizing:border-box}
 .fw-fixed-background {
@@ -715,6 +718,23 @@ a.btn-over-orange:hover {
 	display: flex;
 	justify-content: space-between;
 }
+
+.footer-grid {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.footer-grid img {
+	width: 100%;
+    height: 100px;
+    object-fit: cover;
+    object-position: 10% 5%;
+    display: block;
+}
+.footer-grid div {
+	font-size: 26px;
+    font-weight: 600;
+}
 .home-autopromo {
 	padding: 20px;
 	background: #fff;
@@ -789,6 +809,9 @@ a.btn-over-orange:hover {
 .footer-links-internal-box {
 	display: flex;
 	justify-content: space-around;
+}
+.footer-links-internal-box * {
+	text-transform: capitalize;
 }
 .mobile-cats-tab {
 	position: fixed;

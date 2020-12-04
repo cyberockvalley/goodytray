@@ -5,6 +5,7 @@ import {id, cls, addQueryParam} from '../utils/Funcs'
 import queryString from 'querystring'
 import Navbar from './Navbar'
 import Footer from "./Footer"
+import { getText } from '../../../Constants'
 
 class Login extends Component {
   constructor(props) {
@@ -70,12 +71,12 @@ onChange(e) {
     this.state.hasErrors = false
 
     if(this.state.email.length == 0) {
-      this.setError("email", "Please enter your email")
+      this.setError("email", getText("ERROR_ENTER_EMAIL"))
       this.state.hasErrors = true
     }
 
     if(this.state.password.length == 0) {
-      this.setError("password", "Please enter your password")
+      this.setError("password", getText("ERROR_ENTER_PWD"))
       this.state.hasErrors = true
     }
     console.log("state_hasErrors: "+this.state.hasErrors)
@@ -109,7 +110,7 @@ onChange(e) {
               }
             }
           } else {
-               if(res.message == null) res.message = "Failed to get response from the server"
+               if(res.message == null) res.message = getText("ERROR_SERVER_RESPONSE")
                console.log("login_message: "+res.message)
           }
           console.log("reg_response_text: "+JSON.stringify(res))
@@ -130,7 +131,7 @@ onChange(e) {
               <div className="col-sm-10 col-xs-12"> 
                 <div className="bc-auth-notification fw-notification fw-notification--success">
                   <div className="fw-notification__content">
-                    <div className="fw-notification__title">Please sign in or register to publish your adverts ;)</div> 
+                    <div className="fw-notification__title">{getText("LOGIN_PAGE_MESSAGE")}</div> 
                     <div className="fw-notification__text"></div>
                   </div>
                 </div>
@@ -140,7 +141,7 @@ onChange(e) {
                   <svg strokeWidth="0" className="person" style={{width: "40px", height: "40px", maxWidth: "40px", maxHeight: "40px", fill: "rgb(112, 185, 63)", stroke: "inherit"}}>
                     <use xlinkHref="#person"></use>
                   </svg>
-                  Sign in
+                  {getText("SIGN_IN")}
                 </div> 
                 <div className="fw-card-content qa-fw-card-content">
                   <div className="row center-xs">
@@ -154,7 +155,7 @@ onChange(e) {
                                   <svg strokeWidth="0" className="facebook" style={{ width: "20px", height: "20px", maxWidth: "20px", maxHeight: "20px", fill: "rgb(255, 255, 255)", stroke: "inherit" }}>
                                     <use xlinkHref="#facebook"></use>
                                   </svg>
-                                  Login with Facebook
+                                  {getText("LOG_WITH_FB")}
                                 </span>
                               </span>
                             </a>
@@ -166,7 +167,7 @@ onChange(e) {
                                   <svg strokeWidth="0" className="google" style={{ width: "30px", height: "30px", maxWidth: "30px", maxHeight: "30px", fill: "rgb(255, 255, 255)", stroke: "inherit" }}>
                                     <use xlinkHref="#google"></use>
                                   </svg>
-                                  Login with Google
+                                  {getText("LOG_WITH_G")}
                                 </span>
                               </span>
                             </a>
@@ -176,7 +177,7 @@ onChange(e) {
                       <div className="bc-auth-card__form-separator hide"></div> 
                       <div className="text-left">
                         <div id="email-group" className="form-group input-group-lg">
-                          <label for="email">Email:</label>
+                          <label for="email">{getText("EMAIL")}:</label>
                           <input autoComplete="off" type="text"
                             className="form-control"
                             name="email"
@@ -184,12 +185,12 @@ onChange(e) {
                             value={this.state.email}
                             onChange={this.onChange}/>
                           <span id="email-error" className="fw-field__error qa-fw-field__error hide">
-                            this field is required.
+                            {getText("FIELD_REQUIRED_LOWERCASE")}
                           </span>
                         </div>
 
                         <div id="password-group" className="form-group input-group-lg">
-                          <label for="password">Password:</label>
+                          <label for="password">{getText("PASSWORD")}:</label>
                           <input autoComplete="off" type="password"
                             className="form-control"
                             name="password"
@@ -197,7 +198,7 @@ onChange(e) {
                             value={this.state.password}
                             onChange={this.onChange}/>
                           <span id="password-error" className="fw-field__error qa-fw-field__error hide">
-                            this field is required.
+                            {getText("FIELD_REQUIRED_LOWERCASE")}
                           </span>
                         </div>                          
                       </div>
@@ -206,20 +207,20 @@ onChange(e) {
                       <div className="bc-auth-card__remember-block row between-xs">
                         <div className="col-xs-3"></div> 
                         <div className="col-xs-9 h-text-right">
-                          <a href="/forgot-password.html" className="h-base-link">Forgot your password</a>
+                          <a href="/forgot-password.html" className="h-base-link">{getText("PWD_RECOVERY_LINK_TEXT")}</a>
                         </div>
                       </div> 
                       {
                         this.state.posting_form?
                         <button id="submit" type="submit" disabled="disabled" className="fw-button--disabled h-width-100p h-bold fw-button qa-fw-button fw-button--type-success fw-button--size-large">
                           <span className="fw-button__content"> 
-                            <span className="fw-button__slot-wrapper italic">Please wait...</span>
+                            <span className="fw-button__slot-wrapper italic">{getText("PLS_WAIT")}...</span>
                           </span>
                         </button>
                         :
                         <button id="submit" type="submit" className="h-width-100p h-bold fw-button qa-fw-button fw-button--type-success fw-button--size-large">
                           <span className="fw-button__content"> 
-                            <span className="fw-button__slot-wrapper">SIGN IN</span>
+                            <span className="fw-button__slot-wrapper up-case">{getText("SIGN_IN")}</span>
                           </span>
                         </button>
                       }
@@ -232,7 +233,7 @@ onChange(e) {
               <div className="bc-social-buttons-container col-xs">
                 <div className="h-font-12 row center-xs">
                   <div className="bc-auth-card__form-holder">
-                    Don't have an account? <Link to={"/register" +(this.state.query_values.next?"?next="+this.state.query_values.next:"")} className="h-base-link">Registration</Link>
+                    {getText("NO_ACCOUNT_QUEST")} <Link to={"/register" +(this.state.query_values.next?"?next="+this.state.query_values.next:"")} className="h-base-link">{getText("REG")}</Link>
                   </div>
                 </div>
               </div>
