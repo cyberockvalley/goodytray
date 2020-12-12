@@ -1,11 +1,9 @@
-import React, { Component, createRef } from 'react'
+import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIENT_DIR, SITE_NAME, PRODUCTS_PHOTOS_CLIENT_DIR } from '../../../Constants'
-import { commaNum, truncText, profilePhoto, modalAlert, dataCall, id } from '../utils/Funcs'
-const browser = require("../utils/Browser")
+import { API_ROOT, ERROR_NET_UNKNOWN, getText } from '../../../Constants'
+import { commaNum, truncText, profilePhoto, modalAlert, dataCall } from '../utils/Funcs'
 import $ from 'jquery';
 import Navbar from './Navbar'
-import Footer from "./Footer"
 import { productLink } from '../utils/LinkBuilder'
 
 class Messages extends Component {
@@ -203,7 +201,7 @@ class Messages extends Component {
         for (var x = 0; x < l; x++) {
             console.log("getSelectedTexts B", this.state.selected_messages[x])
             var msg = this.state.selected_messages[x]
-            texts += "\n" + (msg.from_id == this.state.user.id? "Me: " : "Other: ") + msg.body
+            texts += "\n" + (msg.from_id == this.state.user.id? getText("ME") + ": " : getText("OTHER") + ": ") + msg.body
         }
         return texts.substring(1)
     }
@@ -301,7 +299,7 @@ class Messages extends Component {
    <div className={"b-messenger-sidebar"+(this.state.selected?" sm-hide-down":"")}>
     <header className="b-messenger-header qa-messenger-rooms-header">
      <div className="b-messenger-header-title">
-      My messages
+      {getText("MY_MESSAGES")}
      </div>
      <div className="h-pos-rel">
       <div className="b-messenger-context-menu-wrapper">
@@ -313,7 +311,7 @@ class Messages extends Component {
          this.state.messages.length == 0?
          <div className="b-empty-cart__info" style={{display: "block", width: "200px", margin: "10px auto"}}>
              <i class="fa fa-envelope fa-5x"></i>
-            <p>You have no messages.</p>
+            <p>{getText("NO_MESSAGES")}</p>
          </div>
          :
          this.state.messages.map((message, index) => (
@@ -450,7 +448,7 @@ class Messages extends Component {
              </use>
             </svg>
             <button onClick={this.dataCall} data-call-class="fa fa-phone-square" data-call={this.state.recipient.message.user_number} className="b-btn b-btn--main h-ml-10 text-uppercase">
-             Call seller
+             {getText("CALL_SELLER")}
             </button>
            </div>
           </span>
@@ -520,7 +518,7 @@ class Messages extends Component {
           </use>
          </svg>
          <span className="b-messenger-input__stickers-button__new">
-          new
+          {getText("NEW_LOWERCASE")}
          </span>
         </div>
         <div className="b-messenger-input__wrapper">
@@ -548,7 +546,7 @@ class Messages extends Component {
                 <use xlinkHref="#messenger-girl"></use>
             </svg>
             <div className="h-mt-10">
-                Select a chat to view conversation
+                {getText("SELECT_A_CHAT")}
             </div>
         </div>
     </div>

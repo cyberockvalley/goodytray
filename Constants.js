@@ -1,9 +1,26 @@
 import Texts from './Texts.json'
+import en from 'javascript-time-ago/locale/en'
+import it from 'javascript-time-ago/locale/it'
 
-const os = require('os')
+const LOCALES = {
+    "en": en,
+    "it": it
+}
 
 export const PORT = 8080
 export const PORT_SSL = 4433
+
+ export const objectSize = obj => {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+}
+
+
+//console.log("EN_TEXT_SIZE", objectSize(Texts.sites[0].texts))
+//console.log("IT_TEXT_SIZE", objectSize(Texts.sites[1].texts))
 
 const isClient = () => {
     return (typeof window !== 'undefined')
@@ -11,11 +28,28 @@ const isClient = () => {
 
 export const hostName = () => {
     if(isClient()) {
-        return window.location.hostname
+        return window.REQUEST_HOST
 
     } else {
-        return os.hostname
+        return global.REQUEST_HOST
     }
+}
+
+export const timeAgoText = text => {
+    return text
+}
+
+export const translateCat = (component, text) => {
+    return text
+}
+export const translateSubCat = (component, text) => {
+    return text
+}
+export const translateAttrKey = (component, text) => {
+    return text
+}
+export const translateAttrValue = (component, text) => {
+    return text
 }
 
 const aliasOfSite = (alias, siteAliases) => {
@@ -24,6 +58,7 @@ const aliasOfSite = (alias, siteAliases) => {
 
 export const getTextSource = () => {
     var hostname = hostName()
+    //console.log("GLOBAL_HOST_GET", hostname)
     let textSource
     for(var i = 0; i < Texts.sites.length; i++) {
         var name = Texts.sites[i].name
@@ -42,6 +77,12 @@ export const getText = key => {
     const textSource = getTextSource()
     return textSource? textSource[key] : ""
 }
+
+export const getTimeLocale = () => {
+    const textSource = getTextSource()
+    return LOCALES[textSource.LOCALE]
+}
+
 
 export const SITE_TRADE_MARK = getText("SITE_TRADE_MARK")
 export const LOGO_ADDR = getText("LOGO_ADDR")

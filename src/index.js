@@ -1,6 +1,10 @@
 const dotenv = require('dotenv')
 const result = dotenv.config({ path: 'env/.env' })
 
+if(process.env.NODE_ENV == "production") {
+  console.log = () => {}
+}
+
 import { truncText, sleep, randNum, genFilename, logger } from './public/utils/Funcs'
 //logger.disableLogger()
 if (result.error) {
@@ -52,6 +56,12 @@ const app = express()
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+
+app.use("*", (req, res, next) => {
+  global.REQUEST_HOST = req.get("host")
+  res.REQUEST_HOST = req.get("host")
+  next()
+})
 
 if(process.env.SSL_KEY && process.env.SSL_CHAIN) {
   const helmet = require("helmet");
@@ -366,12 +376,11 @@ const saveProductFromJson = async (user, json, catId, subCatId, subCatLink, res,
             console.log("ProductAdded", {completed: true, product: product, error: null})
           }
 
-        }
+  }
 }
 
-
 app.use("/", PageMetaSetter);
-
+/*
 app.get(SELL_PATHS, (req, res) => {
   if(res.locals.token_user) {
     const initialData = {
@@ -402,7 +411,8 @@ app.get(SELL_PATHS, (req, res) => {
         initialData.pageMeta.title = req.url.startsWith("/edit-ad")?'Edit ad':'Add free ad';
         res.send(templateSell({
             body: component,
-            initialData: initialData
+            initialData: initialData,
+            requestHost: res.REQUEST_HOST
         }));
   
       })
@@ -420,8 +430,8 @@ app.get(SELL_PATHS, (req, res) => {
     res.redirect("/login?next="+encodeURI("/sell"))
   }
 })
-
-app.use(APP_PATHS, (req, res) => {console.log("TOKEN_USER", res.locals.token_user)
+*/
+app.use([...APP_PATHS, ...SELL_PATHS], (req, res) => {console.log("TOKEN_USER", res.locals.token_user)
   const initialData = {isSingle: false, user: res.locals.token_user, last_product_cat_id: res.locals.last_product_cat_id}
 
   var component;
@@ -448,9 +458,11 @@ app.use(APP_PATHS, (req, res) => {console.log("TOKEN_USER", res.locals.token_use
       </Router>
     )
   }
+  
   res.send(template({
     body: component,
-    initialData: initialData
+    initialData: initialData,
+    requestHost: res.REQUEST_HOST
   }));
 
 })

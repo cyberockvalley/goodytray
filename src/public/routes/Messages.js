@@ -10,7 +10,7 @@ const User = require("../models/User")
 messages.use(cors())
 
 import {checkUserAuth} from "../components/UserFunctions"
-import { DISTINCNT_MESSAGES_PER_HOUR, ERROR_DB_OP } from "../../../Constants"
+import { DISTINCNT_MESSAGES_PER_HOUR, ERROR_DB_OP, getText } from "../../../Constants"
 import { userDetails } from "../utils/ExpressFunc"
 const db = require("../database/db")
 const Sequelize = require("sequelize")
@@ -82,7 +82,7 @@ messages.get("/threads", (req, res) => {
 messages.get("/threads/:thread_id", (req, res) => {
     var threadId = req.params.thread_id && !isNaN(parseInt(req.params.thread_id))? req.params.thread_id : -1
     if(threadId < 0) {
-        res.json({success: false, error: "No chat specified"})
+        res.json({success: false, error: getText("NO_CHAT_SPECIFIED")})
         return
     }
     if(!res.locals.token_user) {
@@ -127,7 +127,7 @@ messages.post("/delete", (req, res) => {
     } else {
         const messagesIds = req.body.messages_ids
         if(messagesIds.length < 0) {
-            res.json({success: false, error: "No message specified"})
+            res.json({success: false, error: getText("NO_MESSAGE_SPECIFIED")})
 
         } else {
             const user = res.locals.token_user
@@ -179,15 +179,15 @@ messages.post("/send", (req, res) => {
     } else {
         const user = res.locals.token_user
         if(!req.body.text || req.body.text.length == 0) {
-            res.json({status: 0, message: "Please enter your message body"})
+            res.json({status: 0, message: getText("ENTER_MSG_BODY")})
 
         }
 
         if(!req.body.to_id || req.body.to_id < 0) {
-            res.json({status: 0, message: "No recipient provided"})
+            res.json({status: 0, message: getText("NO_RECEPIENT_PROVIDED")})
 
         } else if(user.id == parseInt(req.body.to_id)) {
-            res.json({status: 0, message: "You can't send a message to yourself"})
+            res.json({status: 0, message: getText("CANT_SEND_MSG_2_URSELF")})
 
         } else {
             //check if the user is spamming by checking the number of messages 
@@ -204,14 +204,14 @@ messages.post("/send", (req, res) => {
             })
             .then(message => {
                 if(!message.product_id > DISTINCNT_MESSAGES_PER_HOUR) {
-                    res.json({status: 0, message: "You are sending messages too fast. Please try again later"})
+                    res.json({status: 0, message: getText("MSG_MAX_RATE_REACHED")})
 
                 } else {
                     //check if recipent exists
                     userDetails(req.body.to_id)
                     .then(recipient => {
                         if(!recipient || !recipient.user) {
-                            res.json({status: 0, message: "The recipient does not exist"})
+                            res.json({status: 0, message: getText("RECIPIENT_DONT_EXIST")})
     
                         } else {
                             var productId = -1
@@ -232,7 +232,7 @@ messages.post("/send", (req, res) => {
                             //res.json({status: 0, message: messageData});
                             Message.create(messageData)
                             .then(msg => {
-                                res.json({status: 1, message: "Your message has been successfully sent!"})
+                                res.json({status: 1, message: getText("MSG_SENT")})
                             })
                             .catch(err => {
                                 res.json({status: 0, message: ERROR_DB_OP+"ZZ"})

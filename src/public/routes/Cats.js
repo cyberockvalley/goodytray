@@ -8,7 +8,7 @@ const Sequelize = require("sequelize")
 const Op = Sequelize.Op
 const db = require("../database/db")
 
-import {ERROR_DB_OP} from "../../../Constants"
+import {ERROR_DB_OP, getText} from "../../../Constants"
 
 //get cats
 cats.get("/", function(req, res) {
@@ -30,7 +30,7 @@ cats.get("/", function(req, res) {
 cats.get("/details", function(req, res) {
     const id = req.query.id
     if(!id) {
-        res.json({details: null, message: "No identifier provided"})
+        res.json({details: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
         Cat.findOne({
@@ -41,7 +41,7 @@ cats.get("/details", function(req, res) {
             res.json({details: product})
         })
         .catch((error) => {
-            res.json({details: null, message: "An error occurred while trying to get the list"})
+            res.json({details: null, message: etText("API_LIST_ERROR", "An error occurred while trying to get the list")})
         })
     }
 })

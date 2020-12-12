@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIENT_DIR, SITE_NAME } from '../../../Constants'
+import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIENT_DIR, SITE_NAME, getText } from '../../../Constants'
 import { commaNum } from '../utils/Funcs'
 const browser = require("../utils/Browser")
 import Navbar from './Navbar'
@@ -88,7 +88,7 @@ class Settings extends Component {
           var data = res.data
           if(data.success) {
             this.setState({user: formData})
-            modalAlert("Your profile has been updated", null)
+            modalAlert(getText("PROFILE_UPDATED"), null)
 
           } else if(data.auth_required) {
             this.props.history.push("/login")
@@ -124,7 +124,7 @@ class Settings extends Component {
         if(this.state.password_form[[key]] == null || this.state.password_form[[key]].length == 0) {
           hasErrors = true;
           var errorStart = key.replace(/([-_])/g, " ");
-          this.setError(key, errorStart+" cannot be empty");
+          this.setError(key, errorStart+" " + getText("CANNOT_BE_EMPTY_LOWERCASE"));
 
         } else {
           formData[[key]] = this.state.password_form[[key]]
@@ -138,7 +138,7 @@ class Settings extends Component {
           var data = res.data
           console.log("SubmitPassword-", "success", data.success)
           if(data.success) {
-            modalAlert("Your password has been updated", null)
+            modalAlert(getText("PASSWORD_UPDATED"), null)
 
           } else if(data.auth_required) {
             this.props.history.push("/login")
@@ -181,14 +181,14 @@ class Settings extends Component {
     
           } else if(response && response.data && response.data.message && response && response.data.message.length > 0) {
             if(response.data.status == 3) {
-              this.setState({profile_photo_error: "Your profile photo size is too high"})
+              this.setState({profile_photo_error: getText("DP_SIZE_HIGH_ERROR")})
     
             } else {
               this.setState({profile_photo_error: response.data.message})
             }
     
           } else {
-            this.setState({profile_photo_error: "An error occurred while trying to upload your profile photo"})
+            this.setState({profile_photo_error: getText("PHOTO_UPLOAD_ERROR")})
           }
           this.setState({uploading_profile_photo: false})
           $('#add_profile_photo').modal('toggle');
@@ -238,7 +238,7 @@ class Settings extends Component {
        </div>
        <div className="hide h-mt-15 h-width-100p h-ph-5">
         <Link to="/settings" className="general-button general-button--full general-button--border-radius general-button--with-shadow general-button--orange-color" href="/request-call.html">
-         Settings
+         {getText("SETTINGS")}
         </Link>
        </div>
       </div>
@@ -250,7 +250,7 @@ class Settings extends Component {
            ×
           </button>
           <h5 className="h-bold">
-           Add a profile photo
+           {getText("ADD_A_DP")}
           </h5>
          </div>
          <div className="modal-body">
@@ -260,10 +260,10 @@ class Settings extends Component {
            <div className="js-upload-preview h-hidden b-user-settings__avatarblock__avatar" style={{zIndex: "2"}}>
            </div>
            <div className="b-user-settings__avatarblock__text-1">
-            Upload your profile photo.
+            {getText("UPLOAD_UR_DP")}
            </div>
            <div className="b-user-settings__avatarblock__text-2">
-            Must be a .jpg, .gif or .png file smaller than 5MB
+            {getText("DP_RULES")}
            </div>
            <div className=" b-user-settings__avatarblock__text b-user-settings__avatarblock__text_red h-hidden h-mt-15">
            </div>
@@ -273,7 +273,7 @@ class Settings extends Component {
              <div className="b-user-settings__avatarblock__btnblock">
               <div className="b-user-settings__avatarblock__btn btn btn-lg">
                <div className="btn btn-lg btn-success btn-block" id="file-name-btn">
-                Choose a File
+               {getText("CHOOSE_A_FILE")}
                </div>
                <input onChange={this.uploadPhoto} accept="image/*" className="js-input-image" name="photo" type="file"/>
               </div>
@@ -293,7 +293,7 @@ class Settings extends Component {
        <div className="h-pr-10 h-dflex h-flex-main-center h-flex-dir-column">
         <div className="b-notification-text">
          <div>
-          Check out tips to create an effective ad
+         {getText("AD_TIP_CHECK")}
          </div>
         </div>
        </div>
@@ -302,13 +302,13 @@ class Settings extends Component {
      <div style={{background: "#fff", paddingBottom: "25px"}} className="col-sm-12 col-md-9 box-shadow">
         <ul className="nav nav-tabs">
             <li class="left active">
-                <a data-toggle="tab" href="#profile-update">
-                Update Profile
+                <a data-toggle="tab" href="#profile-update" className="cap-case">
+                {getText("UPDATE_PROFILE")}
                 </a>
             </li>
             <li class="left">
                 <a data-toggle="tab" href="#password-update">
-                Update Password
+                {getText("UPDATE_PWD")}
                 </a>
             </li>
         </ul>
@@ -317,27 +317,27 @@ class Settings extends Component {
             <form method="POST" name="change-profile" onSubmit={this.changeProfile}>
                     <div className="form-group row">
                         <label className="col-md-2" for="fullname">
-                        Fullname:
+                        {getText("FULLNAME")}:
                         </label>
                         <div className="col-md-10">
-                            <input ariaDescribedby="fullname" onChange={this.handleProfileChange} value={this.state.profile_form.fullname} name="fullname" className="form-control" data-form="change-profile" placeholder="Enter fullname" type="text"/>
+                            <input ariaDescribedby="fullname" onChange={this.handleProfileChange} value={this.state.profile_form.fullname} name="fullname" className="form-control" data-form="change-profile" placeholder={getText("ENTER_FULLNAME")} type="text"/>
                             <div className="error" data-error="" id="fullname-error"></div>
                         </div>
                     </div>
                     <div className="form-group row">
                       <label className="col-md-2" for="number">
-                      Phone Number (e.g <b>+1</b>xxx...):
+                      {getText("PHONE_NUMBER")}:
                       </label>
                       <div className="col-md-10">
                         <div className="input-group">
-                          <input ariaDescribedby="number" data-type="phone-number" onChange={this.handleProfileChange} value={this.state.profile_form.number} name="number" className="form-control" data-form="change-profile" placeholder="Enter number" type="text"/>
+                          <input ariaDescribedby="number" data-type="phone-number" onChange={this.handleProfileChange} value={this.state.profile_form.number} name="number" className="form-control" data-form="change-profile" placeholder={getText("ENTER_PHONE_NUMBER")} type="text"/>
                           <span className="input-group-addon">Tel</span>
                         </div>
                         <div className="error" data-error="" id="number-error"></div>
                       </div>
                     </div>
                     <hr/>
-                    <button className="btn btn-success" data-sending="false" data-text="Submit" data-text-sending="Please wait..." id="submit-profile" type="submit">
+                    <button className="btn btn-success" data-sending="false" data-text={getText("SUBMIT")} data-text-sending={`${getText("PLS_WAIT")}...`} id="submit-profile" type="submit">
                     </button>
                 </form>
             </div>
@@ -345,26 +345,26 @@ class Settings extends Component {
                 <form method="POST" name="change-password" onSubmit={this.changePass}>
                     <div className="form-group row">
                         <label className="col-md-2" for="password" required="required">
-                        Password:
+                        {getText("PASSWORD")}:
                         </label>
                         <div className="col-md-10">
-                            <input ariaDescribedby="password" onChange={this.handlePasswordChange} name="password" className="form-control" data-form="change-password" data-type-change-pass="text" id="password" name="password" placeholder="Enter password" type="password"/>
+                            <input ariaDescribedby="password" onChange={this.handlePasswordChange} name="password" className="form-control" data-form="change-password" data-type-change-pass="text" id="password" name="password" placeholder={getText("ENTER_PWD")} type="password"/>
                             <div className="error" data-error="" id="password-error">
                         </div>
                     </div>
                     </div>
                     <div className="form-group row">
                     <label className="col-md-2" for="new_password" required="required">
-                    New Password:
+                    {getText("NEW_PASSWORD")}:
                     </label>
                     <div className="col-md-10">
-                    <input ariaDescribedby="new_password" onChange={this.handlePasswordChange} name="new_password" className="form-control" data-form="change-password" data-type-change-pass="text" id="new_password" name="new_password" placeholder="Enter new password" type="password"/>
+                    <input ariaDescribedby="new_password" onChange={this.handlePasswordChange} name="new_password" className="form-control" data-form="change-password" data-type-change-pass="text" id="new_password" name="new_password" placeholder={getText("ENTER_NEW_PWD")} type="password"/>
                     <div className="error" data-error="" id="new_password-error">
                     </div>
                     </div>
                     </div>
                     <hr/>
-                    <button className="btn btn-success" data-sending="false" data-text="Submit" data-text-sending="Please wait..." id="submit-password" type="submit">
+                    <button className="btn btn-success" data-sending="false" data-text={getText("SUBMIT")} data-text-sending={`${getText("PLS_WAIT")}...`} id="submit-password" type="submit">
                     </button>
                 </form>
             </div>

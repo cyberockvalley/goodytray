@@ -8,7 +8,7 @@ attrs.use(cors())
 const Sequelize = require("sequelize")
 const Op = Sequelize.Op
 
-import {ERROR_DB_OP} from "../../../Constants"
+import {ERROR_DB_OP, getText} from "../../../Constants"
 
 const db = require("../database/db")
 
@@ -16,7 +16,7 @@ const db = require("../database/db")
 attrs.get("/", function(req, res) {
     const id = req.query.scid
     if(!id) {
-        res.json({attrs: null, message: "No identifier provided"})
+        res.json({attrs: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
         db.sequelize.query("SELECT DISTINCT * from attrs WHERE sub_cat_id = ? ORDER BY attr_key, attr_value ASC ", {
@@ -28,7 +28,7 @@ attrs.get("/", function(req, res) {
         })
         .then(result => {
             if(result.length == 0) {
-                res.json({attrs: null, message: "No result found"})
+                res.json({attrs: null, message: getText("NO_REZ_FOUND")})
             } else {
                 const final_result = []
                 var i = 0;
@@ -60,7 +60,7 @@ attrs.get("/", function(req, res) {
 attrs.get("/details", function(req, res) {
     const id = req.query.id
     if(!id) {
-        res.json({details: null, message: "No identifier provided"})
+        res.json({details: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
         Attr.findOne({
@@ -71,7 +71,7 @@ attrs.get("/details", function(req, res) {
             res.json({details: product})
         })
         .catch((error) => {
-            res.json({details: null, message: "An error occurred while trying to get the list"})
+            res.json({details: null, message: getText("API_LIST_ERROR")})
         })
     }
 })

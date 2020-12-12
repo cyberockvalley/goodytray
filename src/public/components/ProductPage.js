@@ -1,9 +1,11 @@
 import React, { Component } from "react"
 import { Link } from "react-router-dom"
-import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS } from "../../../Constants"
+import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS, getText, translateCat, translateSubCat, translateAttrValue, timeAgoText, translateAttrKey, getTimeLocale } from "../../../Constants"
 import { commaNum, truncText, cls } from "../utils/Funcs"
 const browser = require("../utils/Browser")
 var dateFormat = require('dateformat')
+dateFormat.i18n = getText("DATE_AND_TIME")
+
 import TimeAgo from 'javascript-time-ago'
 import Navbar from './Navbar'
 import Footer from "./Footer"
@@ -13,10 +15,10 @@ import en from 'javascript-time-ago/locale/en'
 import { productLink, subCatLink, catLink } from "../utils/LinkBuilder"
 
 // Add locale-specific relative date/time formatting rules.
-TimeAgo.addLocale(en)
+TimeAgo.addLocale(getTimeLocale())
  
 // Create relative date/time formatter.
-const timeAgo = new TimeAgo('en-US');
+const timeAgo = new TimeAgo(getText("LOCALE_DASH"));
 
 class ProductPage extends Component {
     constructor(props) {
@@ -218,7 +220,7 @@ class ProductPage extends Component {
         const message = this.state.message
         console.log("Send chat:", message)
         if(message.length < 10) {
-            this.setState({message_error: "Your message is too short"})
+            this.setState({message_error: getText("SHORT_MSG")})
 
         } else {
             this.setState({sending_message: true})
@@ -273,7 +275,7 @@ class ProductPage extends Component {
                 <li className="b-breadcrumb-inner">
                  <Link className="qa-bread-crumbs-link b-breadcrumb-link" to="/">
                   <span>
-                   All ads
+                   {getText("ALL_ADS")}
                   </span>
                  </Link>
                  <meta/>
@@ -281,7 +283,7 @@ class ProductPage extends Component {
                 <li className="b-breadcrumb-inner">
                  <Link className="qa-bread-crumbs-link b-breadcrumb-link" to={this.state.product?catLink(this.state.product.cat_name):""}>
                   <span>
-                   {this.state.product?this.state.product.cat_name:""}
+                   {this.state.product? translateCat(this, this.state.product.cat_name) : ""}
                   </span>
                  </Link>
                  <meta/>
@@ -289,7 +291,7 @@ class ProductPage extends Component {
                 <li className="b-breadcrumb-inner">
                  <Link className="qa-bread-crumbs-link b-breadcrumb-link" to={this.state.product?subCatLink(this.state.product.sub_cat_name):""}>
                   <span>
-                   {this.state.product?this.state.product.sub_cat_name:""}
+                   {this.state.product? translateSubCat(this, this.state.product.sub_cat_name) : ""}
                   </span>
                  </Link>
                  <meta/>
@@ -300,7 +302,7 @@ class ProductPage extends Component {
                         <li className="b-breadcrumb-inner">
                         <Link className="qa-bread-crumbs-link b-breadcrumb-link" to={"/search/types/"+keyPair.value}>
                          <span>
-                          {keyPair.value}
+                          {translateAttrValue(this, keyPair.value)}
                          </span>
                         </Link>
                         <meta/>
@@ -424,8 +426,8 @@ class ProductPage extends Component {
                                  </span>
                                  {this.state.product.photos.split(",").length - this.state.max_thumb_count}
                                 </div>
-                                <div className="b-carousel-thumbnail-aside">
-                                 images
+                                <div className="b-carousel-thumbnail-aside low-case">
+                                 {getText("IMAGES")}
                                 </div>
                                </div>
                               </div>
@@ -502,7 +504,7 @@ class ProductPage extends Component {
                        this.state.product.sponsored?
                        <div className="">
                         <a className="qa-premium-label b-product-plate__label h-mb-7" data-v-f90ac2bc="" rel="nofollow" style={{color: "rgb(255, 255, 255)", borderColor: "rgb(34, 152, 38)", backgroundColor: "rgb(112, 185, 63)"}}>
-                            Sponsored ad
+                        {getText("BOOSTED_AD")}
                         </a>
                        </div>
                        :
@@ -533,9 +535,9 @@ class ProductPage extends Component {
                             !timeAgo.format(this.state.product.date, 'time').toLowerCase().includes("just") 
                                 && 
                             !timeAgo.format(this.state.product.date, 'time').toLowerCase().includes("ago")?
-                            "Posted " + timeAgo.format(this.state.product.date, 'time') + " ago"
+                            getText("POSTED") + " " + timeAgoText(timeAgo.format(this.state.product.date, 'time')) + " " +getText("AGO_LOWERCASE")
                             :
-                            "Posted " + timeAgo.format(this.state.product.date, 'time')
+                            getText("POSTED") + " " + timeAgoText(timeAgo.format(this.state.product.date, 'time'))
                          }
                       </span>
                      </div>
@@ -566,19 +568,19 @@ class ProductPage extends Component {
                       </span>
                      </div>
                     </div>
-                    <div className="b-advert-info-statistics">
+                    <div className="b-advert-info-statistics low-case">
                      <svg className="h-mr-5 eye" style={{width: "15px", height: "12px", maxWidth: "15px", maxHeight: "12px", fill: "rgb(143, 143, 143)", stroke: "inherit"}}>
                       <use xlinkHref="#eye">
                       </use>
                      </svg>
-                     {this.state.product.views} views
+                     {this.state.product.views} {getText("VIEWS")}
                     </div>
                    </div>
                    <div className="b-advert-attributes-wrapper" data-v-f7230aae="">
                     {
                         this.state.attrs.length > 0?
                         <h2 className="b-advert__description-title h-mb-15" data-v-f7230aae="">
-                            Specifications
+                            {getText("SPECS")}
                         </h2>
                         :
                         ""
@@ -604,7 +606,7 @@ class ProductPage extends Component {
                    </div>
                    <div className="b-advert__description-wrapper">
                     <h2 className="b-advert__description-title">
-                     Ad details
+                     {getText("AD_DETAILS")}
                     </h2>
                     <div className="qa-advert-description b-advert__description-text">
                      {
@@ -674,14 +676,14 @@ class ProductPage extends Component {
                      </div>
                      <a className="h-width-100p h-a-without-underline" rel="nofollow">
                       <span className="qa-request-to-callback b-request-callback-button b-request-callback-button-closed hide">
-                       Request seller to call back
+                       {getText("REQ_SELLER_CALL")}
                       </span>
                      </a>
                     </div>
                    </div>
                    <div className="b-request-like-this-wrapper h-mb-20 hide">
                     <button className="b-button b-button--border-radius b-button--transparent b-request-like-this-button" disabled="disabled">
-                     You've been successfully subscribed!
+                     {getText("OK_SUB")}
                     </button>
                    </div>
                   </div>
@@ -721,10 +723,10 @@ class ProductPage extends Component {
                            <use xlinkHref="#positive">
                            </use>
                           </svg>
-                          {this.state.product.reviews} Feedback
+                          {this.state.product.reviews} {getText("FEEDBACK")}
                          </span>
-                         <span className="b-watch-all">
-                          See All
+                         <span className="b-watch-all cap-case">
+                          {getText("SEE_ALL")}
                           <svg className="arrow-right" strokeWidth="0" style={{width: "12px", height: "12px", maxWidth: "12px", maxHeight: "12px", fill: "rgb(255, 255, 255)", stroke: "inherit"}}>
                            <use xlinkHref="#arrow-right">
                            </use>
@@ -739,25 +741,25 @@ class ProductPage extends Component {
                          {dateFormat(this.state.poster.date, "d mmm yyyy")}
                         </div>
                         <div className="b-seller-online-aside">
-                         Registered
+                         {getText("REGED")}
                         </div>
                        </div>
                        <div className="b-seller-online-info-block">
-                        <div className="b-seller-online-title">
+                        <div className="b-seller-online-title low-case">
                          {
                             new Date() - this.state.poster.last_seen_date <= (MAX_ONLINE_INDICATOR_IN_MINS * 60 * 1000)?
-                            "online"
+                            getText("ONLINE")
                             :
                             !timeAgo.format(this.state.poster.last_seen_date, 'time').toLowerCase().includes("just") 
                                 && 
                             !timeAgo.format(this.state.poster.last_seen_date, 'time').toLowerCase().includes("ago")?
-                            timeAgo.format(this.state.poster.last_seen_date, 'time') + " ago"
+                            timeAgo.format(this.state.poster.last_seen_date, 'time') + " " + getText("AGO_LOWERCASE")
                             :
                             timeAgo.format(this.state.poster.last_seen_date, 'time')
                          }
                         </div>
                         <div className="b-seller-online-aside">
-                         Last seen
+                         {getText("LAST_SEEN")}
                         </div>
                        </div>
                       </div>
@@ -784,33 +786,33 @@ class ProductPage extends Component {
                         {
                             this.state.message_sent?
                             <div class="qa-send-message-success b-success-message">
-                                Your message has been successfully sent!
+                                {getText("MSG_SENT")}
                             </div>
                             :
                             !this.state.chat_started?
                             <a rel="nofollow" className={"h-a-without-underline"+(this.props.user && this.props.user.id == this.state.product.user_id?" hide":"")} onClick={this.startMessage}>
-                                <span className="qa-start-chat b-button b-button--transparent b-button--biggest-size">
-                                    Start Chat
+                                <span className="cap-case qa-start-chat b-button b-button--transparent b-button--biggest-size">
+                                    {getText("START_CHAT")}
                                 </span>
                             </a>
                             :
                             <form id="message_anchor" method="post" onSubmit={this.sendMessage}>
                               <div className={this.state.message.length == 0?"qa-textarea b-form-section b-form-section--required":this.state.message.length < 10?"qa-textarea b-form-section b-form-section--required b-form-section--error":"qa-textarea b-form-section b-form-section--required b-form-section--success"} data-v-cca4341a="">
                                <label className="b-form-section__title" data-v-cca4341a="" for="textarea-2144">
-                                Message
+                                {getText("MSG")}
                                </label>
                                <div className="b-form-section__elem-wrapp" data-v-cca4341a="">
-                                <textarea className="js-chat-form-textarea" data-v-cca4341a="" id="textarea-2144" name="message" value={this.state.message} onChange={this.handleChange} placeholder="Write here your message" rows="5"></textarea>
+                                <textarea className="js-chat-form-textarea" data-v-cca4341a="" id="textarea-2144" name="message" value={this.state.message} onChange={this.handleChange} placeholder={getText("WRITE_MSG")} rows="5"></textarea>
                                </div>
                                <div className="b-form-section__error-descr" data-v-cca4341a="">
-                                {this.state.message.length > 0 && this.state.message.length < 10 && !this.state.sending_message?"Message length must be up to 10" : this.state.message_error}
+                                {this.state.message.length > 0 && this.state.message.length < 10 && !this.state.sending_message? getText("MSG_LEN_MIN_ERROR") : this.state.message_error}
                                </div>
                               </div>
                               {
                                 this.state.message.length < 10 || this.state.sending_message?
-                                <input className="qa-send-message-submit-button b-button b-button--secondary b-button--biggest-size" disabled="disabled" type="submit" value="Send Message"/>
+                                <input className="qa-send-message-submit-button b-button b-button--secondary b-button--biggest-size" disabled="disabled" type="submit" value={getText("SEND_MSG")}/>
                                 :
-                                <input className="qa-send-message-submit-button b-button b-button--secondary b-button--biggest-size" type="submit" value="Send Message"/>
+                                <input className="qa-send-message-submit-button b-button b-button--secondary b-button--biggest-size" type="submit" value={getText("SEND_MSG")} />
                               }
                             </form>
                         }
@@ -826,31 +828,31 @@ class ProductPage extends Component {
                    <div className="b-advert-safety-block" data-v-67bc6bc4="">
                     <div data-v-67bc6bc4="">
                      <div className="b-advert-safety-block-title">
-                      Safety tips
+                      {getText("SAFETY_TIPS")}
                      </div>
                      <ul className="b-advert-safety-list">
                       <li>
-                       Do not pay in advance even for the delivery
+                       {getText("DO_NOT_PAY_ADVANCE")}
                       </li>
                       <li>
-                       Try to meet at a safe, public location
+                       {getText("PUBLIC_MEET_UP")}
                       </li>
                       <li>
-                       Check the item BEFORE you buy it
+                       {getText("CHECK_B4_PAY")}
                       </li>
                       <li>
-                       Pay only after collecting the item
+                       {getText("PAY_AFTER_COLLECTION")}
                       </li>
                      </ul>
                     </div>
                     <div className="h-mt-10" data-v-67bc6bc4="">
                      <a className="hide qa-button-report-abuse b-share-button h-mb-0 b-share-button--transparent">
-                      <span className="h-font-14 h-flex-center">
+                      <span className="h-font-14 h-flex-center cap-case">
                        <svg className="h-mr-5 h-mt-1 flag" data-v-67bc6bc4="" style={{width: "13px", height: "13px", maxWidth: "13px", maxHeight: "13px", fill: "rgb(210, 49, 63)", stroke: "inherit"}}>
                         <use xlinkHref="#flag">
                         </use>
                        </svg>
-                       Report Abuse
+                       {getText("REPORT_ABUSE")}
                       </span>
                      </a>
                     </div>
@@ -858,8 +860,8 @@ class ProductPage extends Component {
                   </div>
                   <div className="b-advert-seller-block b-advert-big-button-outer" data-v-67bc6bc4="">
                    <div className="b-button-wrapper">
-                    <a className="qa-post-ad-like-this b-button b-button--primary b-button--biggest-size" href={"/sell?cat="+this.state.product.cat_id+"&sub_cat="+this.state.product.sub_cat_id+"&country="+this.state.product.country_id+"&state="+this.state.product.state_id+"&city="+this.state.product.city_id} rel="nofollow">
-                     Post Ad Like This
+                    <a className="cap-case qa-post-ad-like-this b-button b-button--primary b-button--biggest-size" href={"/sell?cat="+this.state.product.cat_id+"&sub_cat="+this.state.product.sub_cat_id+"&country="+this.state.product.country_id+"&state="+this.state.product.state_id+"&city="+this.state.product.city_id} rel="nofollow">
+                     {getText("POST_AD_LIKE_THIS")}
                     </a>
                    </div>
                   </div>
@@ -880,7 +882,7 @@ class ProductPage extends Component {
 
                  <div className={this.state.similar_ads.length == 0?"hide":""}>
                  <h3 className="b-advert__description-title h-mt-0" data-v-67bc6bc4="">
-                  Similar adverts
+                  {getText("SIM_ADS")}
                  </h3>
                  <div className="b-bouncing-loader-wrapper" data-v-67bc6bc4="" style={this.state.similar_ads.length > 0?{display: "none"}:{display: "block"}}>
                     <div className="b-bouncing-loader spinner-absolute h-pt-20" style={{bottom: "0px"}}>
@@ -945,7 +947,7 @@ class ProductPage extends Component {
                                         ad.attrs.substring(1, ad.attrs.length - 1).split(",").map((attr, i) => (
                                             attr.split(":").length == 2 && i < 3?
                                             <div className="b-list-advert__item-attr" data-v-9681c3a6="">
-                                                {attr.split(":")[0]+": "+attr.split(":")[1]}
+                                                {translateAttrKey(this, attr.split(":")[0]) +": "+ translateAttrValue(this, attr.split(":")[1])}
                                             </div>
                                             :
                                             ""
@@ -967,7 +969,7 @@ class ProductPage extends Component {
                                        !timeAgo.format(new Date(ad.created), 'time').toLowerCase().includes("just") 
                                        && 
                                        !timeAgo.format(new Date(ad.created), 'time').toLowerCase().includes("ago")?
-                                       timeAgo.format(new Date(ad.created), 'time') + " ago"
+                                       timeAgo.format(new Date(ad.created), 'time') + " " + getText("AGO_LOWERCASE")
                                        :
                                        timeAgo.format(new Date(ad.created), 'time')
                                   }
@@ -989,7 +991,7 @@ class ProductPage extends Component {
                    {
                        this.state.similar_ads_has_next?
                        <a onClick={this.loadSimilarAds} className="js-handle-link-events b-button b-button--primary b-button--biggest-size h-block" data-v-67bc6bc4="" href="javascript:void(0)">
-                            Show more ads &gt;&gt;&gt;
+                            {getText("SHOW_MORE_ADS")} &gt;&gt;&gt;
                        </a>
                        :
                        ""
@@ -1024,13 +1026,14 @@ class ProductPage extends Component {
                </div>
                <div className="b-similar h-mt-20 h-pb-40 hide" data-v-67bc6bc4="">
                 <div>
-                 <div className="b-similar__head">
-                  Useful Links
+                 <div className="b-similar__head cap-case">
+                  {getText("USEFUL_LINKS")}
                   <span className="b-similar__head-icon">
                   </span>
                  </div>
                 </div>
-                <div className="b-similar__body">
+
+                <div className="b-similar__body d-none">
                  <div className="h-dflex h-mb-5 b-tag-list-wrapper-lbc" data-v-67bc6bc4="">
                   <div className="b-collapse h-mb-10">
                    <div className="b-collapse__body">
@@ -1148,6 +1151,7 @@ class ProductPage extends Component {
                   </div>
                  </div>
                 </div>
+
                </div>
               </div>
              </div>

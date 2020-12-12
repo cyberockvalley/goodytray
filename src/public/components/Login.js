@@ -89,15 +89,17 @@ onChange(e) {
   
       this.setState({posting_form: true})
       login(user).then(res => {
-         if(res.login_token != null) {console.log("login_token: "+res.login_token)
+         if(res.login_token != null) {console.log("login_token: "+res.login_token, this.state.query_values.next)
            localStorage.setItem("login_token", res.login_token)
             //redirect to after after login page
             
             if(this.state.query_values.next) {
-              window.location.href = decodeURI(this.state.query_values.next)
+              //window.location.href = decodeURI(this.state.query_values.next)
+              this.props.history.replace(this.state.query_values.next)
 
             } else {console.log("q2")
-              window.location.href = "/profile"
+              //window.location.href = "/profile"
+              this.props.history.replace("/profile")
             }
 
           } else if(res.form_errors != null) {
@@ -115,6 +117,9 @@ onChange(e) {
           }
           console.log("reg_response_text: "+JSON.stringify(res))
           this.setState({posting_form: false})
+      })
+      .catch(e => {
+        console.log("login_response_text:", e, JSON.stringify(e))
       })
     }
   }

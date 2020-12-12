@@ -12,11 +12,9 @@ const fileUploader = require("../utils/FileUploader")
 
 users.use(cors())
 import {isValidEmail, isValidNumber, jsonEmpty} from "../utils/Funcs"
-import {ERROR_DB_OP, LOGIN_SPAN_IN_SECONDS, USERS_PHOTOS_CLIENT_DIR, USERS_PHOTOS_SERVER_DIR} from "../../../Constants"
+import {ERROR_DB_OP, getText, LOGIN_SPAN_IN_SECONDS, USERS_PHOTOS_CLIENT_DIR, USERS_PHOTOS_SERVER_DIR} from "../../../Constants"
 import {checkUserAuth} from "../components/UserFunctions"
-const cryptoRandomString = require('crypto-random-string');
 
-import {mail} from "../utils/Mailer"
 import fs from "fs"
 
 //import { constants } from "fs"
@@ -37,19 +35,19 @@ users.post("/register", function(req, res) {
 
     const form_errors = {}
     if(!isValidEmail(userData.email)) {
-        form_errors.email_error = "Please enter a valid email address"
+        form_errors.email_error = getText("PLS_ENTER_VALID_EMAIL")
     }
     if(!isValidNumber(userData.number)) {
-        form_errors.number_error = "Please enter a valid phone number"
+        form_errors.number_error = getText("PLS_ENTER_VALID_PHONE_NUMBER")
     }
     if(userData.fullname.length < 2) {
-        form_errors.fullname_error = "Please enter your fullname"
+        form_errors.fullname_error = getText("PLS_ENTER_FULLNAME")
     }
     if(userData.password.length == 0) {
-        form_errors.password_error = "Please enter your password"
+        form_errors.password_error = getText("ERROR_ENTER_PWD")
 
     } else if(userData.password.length < 6) {
-        form_errors.password_error = "Your password is too short"
+        form_errors.password_error = getText("SHORT_PWD")
     }
 
     
@@ -73,7 +71,7 @@ users.post("/register", function(req, res) {
                             var token
 
                             //send email verification link here
-                            message = "Registration successfull. You can login now."
+                            message = getText("REG_OK")
                             token = jwt.sign({id: user.id}, process.env.SECRET_KEY, {
                                 expiresIn: "7d"
                             })
@@ -92,7 +90,7 @@ users.post("/register", function(req, res) {
                 }
     
             } else {
-                form_errors.email_error = "The email address has already been used."
+                form_errors.email_error = getText("EMAIL_USED")
                 res.json({status: 0, message: null, login_token: null, form_errors: form_errors})
             }
         })
@@ -114,10 +112,10 @@ users.post("/login", function(req, res) {
     }
     const form_errors = {}
     if(userData.email.length == 0) {
-        form_errors.email_error = "Please enter your email address"
+        form_errors.email_error = getText("ENTER_EMAIL")
     }
     if(userData.password.length == 0) {
-        form_errors.password_error = "Please enter your password"
+        form_errors.password_error = getText("ERROR_ENTER_PWD")
     }
 
     if(jsonEmpty(form_errors)) {
@@ -140,12 +138,12 @@ users.post("/login", function(req, res) {
                     res.json({status: 1, message: null, login_token: token, form_errors: null})
     
                 } else {
-                    form_errors.password_error = "Wrong password"
+                    form_errors.password_error = getText("WRONG_LOGIN_DATA")
                     res.json({status: 0, message: null, login_token: null, form_errors: form_errors})
                 }
 
             } else {
-                form_errors.email_error = "No account exists with your email address. Please create an account now."
+                form_errors.password_error = getText("WRONG_LOGIN_DATA")
                 res.json({status: 0, message: null, login_token: null, form_errors: form_errors})
             }
         })
@@ -167,15 +165,14 @@ users.post("/update_password", (req, res) => {
         var errors = {}
         var hasErrors = false
         if(!req.body.new_password || req.body.new_password.length == 0) {
-            errors.new_password = "Please enter your new password"
+            errors.new_password = getText("PLS_ENTER_NEW_PWD")
 
         } else if(req.body.new_password.length < 6) {
-            errors.new_password = "Your new password is too short"
+            errors.new_password = getText("NEW_PWD_SHORT")
 
         }
         if(!req.body.password || req.body.password.length == 0) {
-            errors.password = "Please enter your password"
-
+            errors.password = getText("ERROR_ENTER_PWD")
         } 
         if(hasErrors) {
             res.json({success: false, errors: errors})
@@ -189,7 +186,7 @@ users.post("/update_password", (req, res) => {
             .then(user => {
                 if(user) {
                     if(!bcrypt.compareSync(req.body.password.trim(), user.password)) {
-                        errors.password = "Wrong password!"
+                        errors.password = getText("WRONG_PWD")
                         res.json({success: false, errors: errors})
 
                     } else {
@@ -294,7 +291,7 @@ users.post("/mail-key", (req, res) => {
     const type = req.query.type
     const email = req.body.email
     if(allowed_type.includes(type)) {
-        res.status(400).json({message: "Invalid type", status: 0})
+        res.status(400).json({message: getText("INVALID_TYPE"), status: 0})
 
     } else {
 
@@ -329,14 +326,14 @@ users.post("/upload/profile-photo", checkUserAuth, (req, res) => {
                             const deletePath = USERS_PHOTOS_SERVER_DIR + "/" + old_photo.split("/")[old_photo.split("/").length - 1]
                             try {
                                 fs.unlinkSync(deletePath)
-                                return res.status(200).json({status: 1, message: "Upload successfull"})
+                                return res.status(200).json({status: 1, message: getText("UPLOAD_OK")})
 
                             } catch(e) {
-                                return res.status(200).json({status: 1, message: "Upload successfull"})
+                                return res.status(200).json({status: 1, message: getText("UPLOAD_OK")})
                             }
 
                         } else {
-                            return res.status(200).json({status: 1, message: "Upload successfull"})
+                            return res.status(200).json({status: 1, message: getText("UPLOAD_OK")})
                         }
                     })
                     .catch(e => {
@@ -344,7 +341,7 @@ users.post("/upload/profile-photo", checkUserAuth, (req, res) => {
                     })
 
                 } else {
-                    return res.status(200).json({status: 0, message: "Upload failed"})
+                    return res.status(200).json({status: 0, message: getText("UPLOAD_FAILED")})
                 }
             })
             .catch(e => {

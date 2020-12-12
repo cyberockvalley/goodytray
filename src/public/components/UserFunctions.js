@@ -1,10 +1,7 @@
-import axios from "axios"
-import {ERROR_NET_UNKNOWN, SITE_NAME, SITE_TITLE, API_ROOT, LOGIN_SPAN_IN_SECONDS} from "../../../Constants"
+import {ERROR_NET_UNKNOWN, API_ROOT, LOGIN_SPAN_IN_SECONDS} from "../../../Constants"
 const jwt = require("jsonwebtoken")
 const cookieParser = require('cookie-parser');
-import {PORT} from "../../../Constants"
 const browser = require("../utils/Browser");
-import { productLink } from "../utils/LinkBuilder";
 
 export const register = function(newUser) {
     return browser.axios.post( API_ROOT + "users/register", {

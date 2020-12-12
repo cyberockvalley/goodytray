@@ -60,7 +60,10 @@ export default ({ body, initialData }) => {
       <title>${initialData.pageMeta.title}</title>
       <script src="https://js.stripe.com/v3/"></script>
       
-      <script>window.__initialData__ = ${JSON.stringify(initialData)}</script>
+      <script>
+        window.__initialData__ = ${JSON.stringify(initialData)}
+        window.REQUEST_HOST = "${requestHost}"
+      </script>
   </head>
   <body class="DOMisLoaded AllIsLoaded">
     <noscript>You need to enable JavaScript to run this app.</noscript>

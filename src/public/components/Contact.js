@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { SITE_NAME, EMAIL_SUPPORT } from '../../../Constants'
+import { SITE_NAME, EMAIL_SUPPORT, getText } from '../../../Constants'
 
 
 class Contact extends Component {
@@ -16,9 +16,9 @@ class Contact extends Component {
    <div className="b-tips__wrapper">
     <h1 className="b-tips__h1">
         <Link to="/" className="logo font-bask-normal">
-            <img src="/public/logo.png" width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
+            <img src={`${getText("LOGO_PATH")}`} width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
         </Link>
-        Contact Us
+        {getText("CONTACT_US")}
     </h1>
     <div className="h-hflex b-tip__wrapper">
       <div className="b-tip__content-wrapper">

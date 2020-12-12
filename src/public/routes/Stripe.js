@@ -9,7 +9,7 @@ const Op = Sequelize.Op
 
 const bodyParser = require('body-parser');
 import {okResponse, jsonEmpty} from "../utils/Funcs"
-import { AD_PACKAGES } from "../../../Constants"
+import { AD_PACKAGES, getText } from "../../../Constants"
 
 const Product = require("../models/Product")
 
@@ -42,14 +42,14 @@ route.get("/client_secret", (req, res) => {
     var error = {}
 
     if(!amount) {
-        error.amount = "Please enter amount"
+        error.amount = getText("PLS_ENTER_AMOUNT")
 
     } else if(!packageKey) {
-        error.amount = "Invalid amount"
+        error.amount = getText("INVALID_AMOUNT")
     }
     
     if(!currency || isInvalidCurrency(currency)) {
-        error.currency = "Invalid currency sent"
+        error.currency = getText("INVALID_CURRENCY")
     }
 
     if(!jsonEmpty(error)) {

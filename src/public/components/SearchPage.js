@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { SITE_TITLE, API_ROOT, PAID_AD_NAME, STATIC_IMAGES_CLIENT_DIR } from "../../../Constants"
+import { SITE_TITLE, API_ROOT, PAID_AD_NAME, STATIC_IMAGES_CLIENT_DIR, getText, translateCat, translateAttrKey, translateAttrValue } from "../../../Constants"
 import { productLink, catLink, catIconName, countryLink } from "../utils/LinkBuilder"
 import { commaNum, id, remove } from "../utils/Funcs"
 import queryString from 'querystring'
@@ -313,6 +313,15 @@ class SearchPage extends Component {
             }
             this.setState({loading_products: false})
         })
+
+        const countryId = getText("COUNTRY_ID")
+        console.log("CCID", countryId)
+        if(countryId && countryId > 0) {
+          this.setState({country: countryId})
+          //this.onCountryChanged()
+          //this.checkResultCount()
+
+        }
     }
 
     hideMobileCatsTab = () => {
@@ -344,8 +353,8 @@ class SearchPage extends Component {
                                 <div id="mobile-cats-tab" className={"mobile-cats-tab md-hide-up" + (this.state.cats && this.state.cats.length > 0?"": " hide")}>
                                     <a onClick={this.hideMobileCatsTab} className="mobile-cats-tab-link mobile-cats-tab-link" id="categories-tab" data-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="false">
                                         <span className="fa fa-2x fa-filter" style={{color: "#3db83a", padding: "2px", width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px"}}></span>
-                                        <span>
-                                            All Filters
+                                        <span className="cap-case">
+                                            {getText("ALL_FILTERS")}
                                         </span>
                                     </a>
                                     {
@@ -370,21 +379,21 @@ class SearchPage extends Component {
                                         <div style={{cursor: "pointer"}} onClick={this.showMobileCatsTab} id="goods-tab" data-toggle="tab" href="#goods" role="tab" aria-controls="goods" aria-selected="true">
                                                 <i className="fa fa-chevron-left"></i>
                                         </div>
-                                        <div className="mobile-cats-header-title">Filters</div>
+                                        <div className="mobile-cats-header-title">{getText("FILTERS")}</div>
                                     </div>
                                     <div className="side-inner">
                                         <div className="b-categories-listing-outer">
                                         <div className="h-mb-15 h-ph-15 b-list-category-stack" data-v-4e3f0b28="">
-  <div className="" data-v-4e3f0b28="" style={{display: "none"}}>
-   <div className="b-bouncing-loader" style={{bottom: "0px"}}>
-    <div>
-    </div>
-    <div>
-    </div>
-    <div>
-    </div>
-   </div>
-  </div>
+                                          <div className="" data-v-4e3f0b28="" style={{display: "none"}}>
+                                          <div className="b-bouncing-loader" style={{bottom: "0px"}}>
+                                            <div>
+                                            </div>
+                                            <div>
+                                            </div>
+                                            <div>
+                                            </div>
+                                          </div>
+                                          </div>
 
   <form onSubmit={this.applyFilter} className="qa-filters-component b-filters red-border" data-v-4e3f0b28="">
    <div className={"b-filters__loader"+(this.state.loading_products || this.state.checking_products?" active":"")}>
@@ -403,15 +412,17 @@ class SearchPage extends Component {
    </ul>
    <div className="qa-filters-form">
 
-    <div className="b-form-section">
+    {
+      getText("IS_NOT_GLOBAL")? null : 
+      <div className="b-form-section">
         <div data-v-2f9b1610="">
          <div className=" b-form-section h-mb-15 qa-choose-category">
           <label className="b-form-section__title">
-           Country
+           {getText("COUNTRY")}
           </label>
           <div className="form-group">
             <select className="form-control" name="country" value={this.state.country} onChange={this.handleChange}>
-              <option value="-1">--- Choose country ---</option>
+              <option value="-1">--- {getText("SELECT_COUNTRY")} ---</option>
               {this.state.countries.map(country => (
                 <option key={country.id} value={country.id}>{country.name}</option>
               ))}
@@ -420,6 +431,7 @@ class SearchPage extends Component {
          </div>
         </div>
     </div>
+    }
 
     <div className="b-form-section">
         <div id="state-section" data-v-2f9b1610="" 
@@ -428,11 +440,11 @@ class SearchPage extends Component {
             "hide":""}>
          <div className=" b-form-section h-mb-15 qa-choose-category">
           <label className="b-form-section__title">
-           State
+           {getText("STATE")}
           </label>
           <div className="form-group">
             <select className="form-control" name="state" value={this.state.state} onChange={this.handleChange}>
-              <option value="-1">--- Choose state ---</option>
+              <option value="-1">--- {getText("SELECT_STATE")} ---</option>
               {this.state.states.map(state => (
                 <option key={state.id} value={state.id}>{state.name}</option>
               ))}
@@ -449,11 +461,11 @@ class SearchPage extends Component {
             "hide":""}>
          <div className=" b-form-section h-mb-15 qa-choose-category">
           <label className="b-form-section__title">
-           City
+           {getText("CITY")}
           </label>
           <div className="form-group">
             <select className="form-control" name="city" value={this.state.city} onChange={this.handleChange}>
-              <option value="-1">--- Choose city ---</option>
+              <option value="-1">--- {getText("SELECT_CITY")} ---</option>
               {this.state.states.map(state => (
                 <option key={state.id} value={state.id}>{state.name}</option>
               ))}
@@ -467,13 +479,13 @@ class SearchPage extends Component {
         <div id="cat-section" data-v-2f9b1610="">
          <div className=" b-form-section h-mb-15 qa-choose-category">
           <label className="b-form-section__title">
-           Category
+           {getText("CAT")}
           </label>
           <div className="form-group">
             <select className="form-control" name="cat" value={this.state.cat} onChange={this.handleChange}>
-              <option value="-1">--- Choose category ---</option>
+              <option value="-1">--- {getText("CHOOSE_CAT")} ---</option>
               {this.state.cats.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                <option key={cat.id} value={cat.id}>{translateCat(this, cat.name)}</option>
               ))}
             </select>
           </div>
@@ -488,13 +500,13 @@ class SearchPage extends Component {
             "hide":""}>
          <div className=" b-form-section h-mb-15 qa-choose-category">
           <label className="b-form-section__title">
-           Sub Category
+           {getText("SUB_CAT")}
           </label>
           <div className="form-group">
             <select className="form-control" name="sub_cat" value={this.state.sub_cat} onChange={this.handleChange}>
-              <option value="-1">--- Choose subcategory ---</option>
+              <option value="-1">--- {getText("CHOOSE_SUB_CAT")} ---</option>
               {this.state.sub_cats.map(scat => (
-                <option key={scat.id} value={scat.id}>{scat.name}</option>
+                <option key={scat.id} value={scat.id}>{translateSubCat(this, scat.name)}</option>
               ))}
             </select>
           </div>
@@ -522,13 +534,13 @@ class SearchPage extends Component {
           {this.state.select_attrs.map(attr => (
             <div key={"custom-"+attr.key} className="b-form-section h-mb-15">
               <label className="b-form-section__title">
-                {attr.key}
+                {translateAttrKey(this, attr.key)}
               </label>
               <div className="form-group">
                 <select data-attr="yes" className="form-control" name={attr.key} onChange={this.handleChange}>
-                  <option>--- Select {attr.key} ---</option>
+                  <option>--- {getText("SELECT")} {translateAttrKey(this, attr.key)} ---</option>
                   {attr.values.map(value => (
-                    <option key={"custom-"+attr.key+value} value={value}>{value}</option>
+                    <option key={"custom-"+attr.key+value} value={value}>{translateAttrValue(this, value)}</option>
                   ))}
                 </select>
               </div>
@@ -538,14 +550,14 @@ class SearchPage extends Component {
           {this.state.checkbox_attrs.map(attr => (
             <div key={"custom-"+attr.key} className="b-form-section h-mb-15">
               <label className="b-form-section__title">
-                {attr.key}
+                {translateAttrKey(this, attr.key)}
               </label>
               <div classname="b-form-section__elem-wrapp">
                 {attr.values.map(value => (
                   <div key={"custom-"+attr.key+value} className="b-form-section__row">
                     <div className="qa-checkbox b-form-section h-mb-0">
                     <input data-attr="yes" onChange={this.handleChange} name={attr.key} value={value} id={"custom-"+attr.key+"-"+value} type="checkbox" className="b-form-section__checkbox"/> 
-                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{value}</label>
+                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{translateAttrValue(this, value)}</label>
                     </div>
                   </div>
                 ))}
@@ -558,7 +570,7 @@ class SearchPage extends Component {
     
     <div className="b-form-section b-input-range h-mb-15 qa-range-filter">
      <label className="b-form-section__title" for="price">
-      Price Range in USD ($)
+      {getText("PRICE_RANGE")} ({getText("CURRENCY")})
      </label>
      <div className="h-hflex h-overflow-inherit-f">
       <div className="b-input-range__item-wrap">
@@ -572,8 +584,8 @@ class SearchPage extends Component {
      </div>
     </div>
    </div>
-   <button type="submit" className=" b-filters__submit-btn b-button b-button--primary b-button--border-radius b-button--shadow b-button--size-full h-mt-10">
-    Apply Filters ({this.state.result_count})
+   <button type="submit" className="cap-case b-filters__submit-btn b-button b-button--primary b-button--border-radius b-button--shadow b-button--size-full h-mt-10">
+    {getText("APPLY_FILTERS")} ({this.state.result_count})
    </button>
   </form>
  </div>
@@ -606,7 +618,7 @@ class SearchPage extends Component {
                                                 this.state.products.length > 0?
                                                 <div>
                                                    
-                                                <h3 className="sm-hide-down b-listing-cards-title">Result</h3>
+                                                <h3 className="sm-hide-down b-listing-cards-title">{getText("RESULTS")}</h3>
                                                 <div className="row">
                                                     {
                                                         this.state.products.map((product, index) => (
@@ -648,7 +660,7 @@ class SearchPage extends Component {
                                                  <div className="h-centerItem">
                                                   <div className="b-empty-cart__info">
                                                    <img alt="" className="h-mb-10 h-rl-15" src={STATIC_IMAGES_CLIENT_DIR+"no_ads.png"}/>
-                                                   <p>No result found.<br />Please try widening your search.</p>
+                                                   <p>{getText("NO_REZ_FOUND")}<br />{getText("NO_REZ_ALT")}</p>
                                                   </div>
                                                  </div>
                                                 </div>

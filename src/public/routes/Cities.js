@@ -7,13 +7,13 @@ cities.use(cors())
 const Sequelize = require("sequelize")
 const Op = Sequelize.Op
 
-import {ERROR_DB_OP} from "../../../Constants"
+import {getText} from "../../../Constants"
 
 //get cities
 cities.get("/", function(req, res) {
     const id = req.query.sid
     if(!id) {
-        res.json({cities: null, message: "No identifier provided"})
+        res.json({cities: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
         City.findAll({
@@ -27,7 +27,7 @@ cities.get("/", function(req, res) {
             res.json({cities: cities})
         })
         .catch((error) => {
-            res.json({cities: null, message: "An error occurred while trying to get the list"})
+            res.json({cities: null, message: etText("API_LIST_ERROR", "An error occurred while trying to get the list")})
         })
     }
 })
@@ -36,7 +36,7 @@ cities.get("/", function(req, res) {
 cities.get("/details", function(req, res) {
     const id = req.query.id
     if(!id) {
-        res.json({details: null, message: "No identifier provided"})
+        res.json({details: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
         City.findOne({
@@ -47,7 +47,7 @@ cities.get("/details", function(req, res) {
             res.json({details: details})
         })
         .catch((error) => {
-            res.json({details: null, message: "An error occurred while trying to get the list"})
+            res.json({details: null, message: getText("API_LIST_ERROR")})
         })
     }
 })

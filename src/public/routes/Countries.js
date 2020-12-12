@@ -7,7 +7,7 @@ countries.use(cors())
 const Sequelize = require("sequelize")
 const Op = Sequelize.Op
 
-import {ERROR_DB_OP} from "../../../Constants"
+import {ERROR_DB_OP, getText} from "../../../Constants"
 const db = require("../database/db")
 
 //get countries
@@ -50,7 +50,7 @@ countries.get("/", function(req, res) {
 countries.get("/details", function(req, res) {
     const id = req.query.id
     if(!id) {
-        res.json({details: null, message: "No identifier provided"})
+        res.json({details: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
         Country.findOne({
@@ -61,7 +61,7 @@ countries.get("/details", function(req, res) {
             res.json({details: product})
         })
         .catch((error) => {
-            res.json({details: null, message: "An error occurred while trying to get the list"})
+            res.json({details: null, message: getText("API_LIST_ERROR")})
         })
     }
 })

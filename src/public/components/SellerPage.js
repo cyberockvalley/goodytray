@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { Link } from "react-router-dom"
-import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS, FACEBOOK_PAGE_LINK, FACEBOOK_PAGE_NAME } from "../../../Constants"
+import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS, FACEBOOK_PAGE_LINK, FACEBOOK_PAGE_NAME, getText } from "../../../Constants"
 import { getIdFromPath, commaNum } from "../utils/Funcs";
 const browser = require("../utils/Browser")
 var dateFormat = require('dateformat');
@@ -129,7 +129,7 @@ class SellerPage extends Component {
             {dateFormat(new Date(this.state.seller.created), "d mmm yyyy")}
           </p>
           <p>
-           Registered
+          {getText("REGED")}
           </p>
          </div>
          <div className="b-seller-info-rl--inner">
@@ -147,7 +147,7 @@ class SellerPage extends Component {
             }
           </p>
           <p>
-           Last seen
+          {getText("LAST_SEEN")}
           </p>
          </div>
         </div>
@@ -271,7 +271,7 @@ class SellerPage extends Component {
         this.state.products_has_next?
         <a onClick={this.loadProducts} rel="nofollow" className="h-a-without-underline" style={{width: "200px", display: "block", margin: "15px auto"}}>
             <span className="qa-start-chat b-button b-button--transparent b-button--biggest-size">
-                Show more
+            {getText("SHOW_MORE")}
             </span>
         </a>
         :

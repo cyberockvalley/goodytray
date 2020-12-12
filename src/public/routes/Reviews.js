@@ -11,7 +11,7 @@ const User = require("../models/User")
 reviews.use(cors())
 
 import {checkUserAuth} from "../components/UserFunctions"
-import { REVIEWS_PER_HOUR, ERROR_DB_OP, REVIEWS_PER_PAGE } from "../../../Constants"
+import { REVIEWS_PER_HOUR, ERROR_DB_OP, REVIEWS_PER_PAGE, getText } from "../../../Constants"
 import { userDetails } from "../utils/ExpressFunc"
 import { intOrMin, buildError, okResponse, userFromRes, returnServerError } from "../utils/Funcs"
 import DatabaseCursor from "../objects/DatabaseCursor"
@@ -23,7 +23,7 @@ reviews.get("/:id", (req, res) => {
     var result = rootResponse();
     var productId = intOrMin(req.params.id, -1)
     if(productId < 0) {
-        result.error = "Invalid product"
+        result.error = getText("INVALID_PRODUCT")
         okResponse(res, result)
     }
     var count_only = intOrMin(req.query.count_only, 0)
@@ -100,7 +100,7 @@ reviews.post("/create", checkUserAuth, (req, res) => {
             !experiences.includes(payload.experience_id) || 
             !payload.body || payload.body.length < 5
             ) {
-            result.error = "Input error!"
+            result.error = getText("IN_ERROR")
             okResponse(res, result)
 
         } else {
@@ -118,7 +118,7 @@ reviews.post("/create", checkUserAuth, (req, res) => {
             })
             .then(review => {
                 if(!review.total_reviews > REVIEWS_PER_HOUR) {
-                    res.json({status: 0, error: "You are sending reviews too fast. Please try again later"})
+                    res.json({status: 0, error: getText("REV_MAX_RATE_REACHED")})
 
                 } else {
                     //get the product details
@@ -127,11 +127,11 @@ reviews.post("/create", checkUserAuth, (req, res) => {
                     })
                     .then(product => {
                         if(!product) {
-                            result.error = "The product does not exist"
+                            result.error = getText("IN_ERROR")
                             okResponse(res, result)
 
                         } else if(product.user_id == user.id) {
-                            result.error = "You can't write a review on your product"
+                            result.error = getText("CANT_WRITE_REV_2_URSELF")
                             okResponse(res, result)
 
                         } else {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { SITE_NAME, SITE_DOT_COM, EMAIL_SUPPORT } from '../../../Constants'
+import { SITE_NAME, SITE_DOT_COM, EMAIL_SUPPORT, getText } from '../../../Constants'
 
 
 class About extends Component {
@@ -24,7 +24,7 @@ class About extends Component {
    <div className="b-tips__wrapper">
     <h1 className="b-tips__h1">
         <Link to="/" className="logo font-bask-normal">
-            <img src="/public/logo.png" width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
+            <img src={`${getText("LOGO_PATH")}`} width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
         </Link>
         Privacy Policy
     </h1>
@@ -32,7 +32,7 @@ class About extends Component {
 <div className="b-about-wrapper container">
  <div className="h-bg-white h-pv-15 h-ph-15">
   <h1 className="h-mt-0">
-   Privacy Policy
+   {getText("PRIVACY_POLICY")}
   </h1>
   <p>
 {"   This Privacy Policy explains what personal data is collected when you use the " + SITE_DOT_COM + " any " + SITE_DOT_COM + " mobile application (“"}

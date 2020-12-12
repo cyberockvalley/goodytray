@@ -1,8 +1,6 @@
 const express = require("express")
 const products = express.Router()
 const cors = require("cors")
-const jwt = require("jsonwebtoken")
-const bcrypt = require("bcrypt")
 
 import { logger } from "../utils/Funcs"
 //logger.disableLogger()
@@ -18,16 +16,13 @@ const fileUploader = require("../utils/FileUploader")
 //const Jimp = require("jimp")
 
 import {checkUserAuth} from "../components/UserFunctions"
-import {truncText, jsonEmpty, randNum, okResponse} from "../utils/Funcs"
-import { ERROR_DB_OP, MAX_PRODUCT_PHOTOS_SIZE, PRODUCTS_PER_PAGE, PRODUCTS_PHOTOS_CLIENT_DIR, SERVER_ADDR, PRODUCTS_PHOTOS_SERVER_DIR, API_ROOT } from "../../../Constants"
+import {truncText, randNum, okResponse} from "../utils/Funcs"
+import { ERROR_DB_OP, MAX_PRODUCT_PHOTOS_SIZE, PRODUCTS_PER_PAGE, PRODUCTS_PHOTOS_CLIENT_DIR, API_ROOT, getText } from "../../../Constants"
 const db = require("../database/db")
 const Sequelize = require("sequelize")
-const Op = Sequelize.Op
 
 import fs from "fs"
-import { nameToId, userDetails, EXCHANGE_RATE } from "../utils/ExpressFunc"
-import { subCatLink } from "../utils/LinkBuilder"
-import { sequelize } from "../database/db"
+import { nameToId, EXCHANGE_RATE } from "../utils/ExpressFunc"
 
 const andQuery = function(query, filter) {
     return query.includes("WHERE")? query + " AND " + filter : query + " WHERE " + filter
@@ -70,7 +65,7 @@ products.get(["/user/boosted/:id", "/user/non_boosted/:id"], (req, res) => {
     })
     .then(prods => {
         if(!prods || prods.length == 0) {
-            res.json({status: 1, message: "No result", list: null, counts: 0})
+            res.json({status: 1, message: getText("NO_REZ_FOUND"), list: null, counts: 0})
 
         } else {
             if(req.query.count_only) {
@@ -104,7 +99,7 @@ products.get("/sponsored", (req, res) => {
     })
     .then(prods => {
         if(!prods || prods.length == 0) {
-            res.json({status: 1, message: "No result", list: null})
+            res.json({status: 1, message: getText("NO_REZ_FOUND"), list: null})
 
         } else {
             //update the results last_sponsored_view_time and sponsored_views
@@ -132,7 +127,7 @@ products.get("/sponsored", (req, res) => {
             }
             Promise.all(updates)
             .then(updatesResults => {
-                res.json({status: 1, message: "Success", list: prods, updates_results: updatesResults})
+                res.json({status: 1, message: getText("SUCCESS"), list: prods, updates_results: updatesResults})
             })
         }
     })
@@ -336,7 +331,7 @@ products.get("/", async function(req, res) {
     .then((counts) => {
         if(!counts || !counts[0] || counts[0].id == 0) {
             hasPrev = false
-            res.json({status: 0, message: "No result found", list: null, has_prev: hasPrev, has_next: hasNext})
+            res.json({status: 0, message: getText("NO_REZ_FOUND"), list: null, has_prev: hasPrev, has_next: hasNext})
 
         } else {
             if(req.query.count_only && parseInt(req.query.count_only) == 1) {
@@ -356,7 +351,7 @@ products.get("/", async function(req, res) {
                     mapToModel: true
                 })
                 .then(products => {
-                    res.json({status: 1, message: "Success", list: products, has_prev: hasPrev, has_next: hasNext, counts: counts[0].id})
+                    res.json({status: 1, message: getText("SUCCESS"), list: products, has_prev: hasPrev, has_next: hasNext, counts: counts[0].id})
                 })
                 .catch(e => {
                     res.json({status: 0, message: ERROR_DB_OP+e, list: null, has_prev: hasPrev, has_next: hasNext})
@@ -416,7 +411,7 @@ products.get("/details", function(req, res) {
         viewsSize = 0;
     }
     if(!id) {
-        res.json({details: null, message: "No identifier provided"})
+        res.json({details: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
         db.sequelize.query("SELECT products.*, users.username AS poster_username, users.fullname AS poster_fullname, users.profile_photo AS poster_profile_photo, users.number AS poster_number, users.created AS poster_created, users.last_seen AS poster_last_seen FROM products, users WHERE products.id = ? AND users.id = products.user_id LIMIT 1", {
@@ -515,7 +510,7 @@ products.get("/details", function(req, res) {
             })
         })
         .catch((error) => {
-            res.json({details: null, message: "An error occurred while trying to get the product details"})
+            res.json({details: null, message: getText("PRODUCT_GET_ERROR")})
         })
     }
 })
@@ -588,12 +583,12 @@ products.post("/upload/photos", checkUserAuth, (req, res) => {
                 i++
             }
             if(fileNames.length == 0) {
-                return res.status(200).json({status: 3, message: "Upload failed"})
+                return res.status(200).json({status: 3, message: getText("UPLOAD_FAILED")})
 
             } else {
                 return imageEditor.waterMark(filePaths)
                 .then(result => {
-                    return res.status(200).json({status: 1, message: "Upload successfull", filenames: fileNames})
+                    return res.status(200).json({status: 1, message: getText("UPLOAD_OK"), filenames: fileNames})
                 })
                 .catch(e => {
                     return res.status(200).json({status: 0, message: e})
@@ -611,7 +606,7 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
         res.json({status: 5, message: "Login required", auth_required: true})
 
     } else if(req.originalUrl.includes("edit") && res.locals.token_user.id != product.user_id) {
-        res.json({status: 4, message: "Permission required"})
+        res.json({status: 4, message: getText("PERMIT_NEEDED")})
 
     } else {
         const today = new Date()
@@ -624,7 +619,7 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
 
         productData.user_id = res.locals.token_user.id
         if(!product.cat || isNaN(parseInt(product.cat)) || parseInt(product.cat) < 0) {
-            form_errors.push({key: "cat", value: "Please select a category"})
+            form_errors.push({key: "cat", value: getText("PLS_SELECT_A_CAT")})
 
         } else {
             productData.cat_id = parseInt(product.cat)
@@ -632,7 +627,7 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
         
     
         if(!product.sub_cat || isNaN(parseInt(product.sub_cat)) || parseInt(product.sub_cat) < 0) {
-            form_errors.push({key: "sub_cat", value: "Please select a sub category"})
+            form_errors.push({key: "sub_cat", value: getText("PLS_SELECT_A_SUB_CAT")})
 
         } else {
             productData.sub_cat_id = parseInt(product.sub_cat)
@@ -652,28 +647,28 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
         }
 
         if(!product.title || product.title.length == 0) {
-            form_errors.push({key: "title", value: "Please enter title"})
+            form_errors.push({key: "title", value: getText("PLS_ENTER_TITLE")})
 
         } else {
             productData.title = truncText(product.title, 70, null)
         }
 
         if(!product.desc || product.desc.length == 0) {
-            form_errors.push({key: "desc", value: "Please enter description"})
+            form_errors.push({key: "desc", value: getText("PLS_ENTER_DESC")})
 
         } else {
             productData.description = truncText(product.desc, 1000, null)
         }
 
         if(!product.price_currency_symbol || product.price_currency_symbol.length == 0) {
-            form_errors.push({key: "price", value: "Please enter your price currency"})
+            form_errors.push({key: "price", value: getText("PLS_SELECT_YOUR_CURRENCY")})
 
         } else {
             productData.currency_symbol = truncText(product.price_currency_symbol, 30, null)
         }
 
         if(!product.price || isNaN(parseInt(product.sub_cat)) || parseInt(product.sub_cat) < 0) {
-            form_errors.push({key: "price", value: "Please enter price"})
+            form_errors.push({key: "price", value: getText("PLS_ENTER_PRICE")})
 
         } else {
             productData.price = parseInt(truncText(product.price, 30, null))
@@ -684,21 +679,21 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
         }
 
         if(!product.country || isNaN(parseInt(product.country)) || parseInt(product.country) < 0) {
-            form_errors.push({key: "country", value: "Please select a country"})
+            form_errors.push({key: "country", value: getText("PLS_SELECT_YOUR_COUNTRY")})
 
         } else {
             productData.country_id = parseInt(product.country)
         }
 
         if(!product.state || isNaN(parseInt(product.state)) || parseInt(product.state) < 0) {
-            form_errors.push({key: "state", value: "Please select a state"})
+            form_errors.push({key: "state", value: getText("PLS_SELECT_YOUR_STATE")})
 
         } else {
             productData.state_id = parseInt(product.state)
         }
 
         if(!product.city || isNaN(parseInt(product.city)) || parseInt(product.city) < 0) {
-            form_errors.push({key: "city", value: "Please select a city"})
+            form_errors.push({key: "city", value: getText("PLS_SELECT_YOUR_CITY")})
 
         } else {
             productData.city_id = parseInt(product.city)
@@ -711,7 +706,7 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
                     try {
                         fs.unlinkSync("dist" + product.photos[i])
                     } catch(e) {
-                        res.json({status: 0, message: "Failed to delete file: ("+"dist" + product.photos[i]+")" + e})
+                        res.json({status: 0, message: getText("FILE_DEL_FAILED")})
                     }
                     i++
                 }
@@ -767,7 +762,7 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
                                 if(sub_cat) {
                                     const newSubCat = {total_products: sub_cat.total_products + 1};
                                     sub_cat.update(newSubCat)
-                                    return res.status(200).json({status: 1, message: "1 Ad posted successfully"+JSON.stringify(prod), product_id: prod.id})
+                                    return res.status(200).json({status: 1, message: getText("AD_POSTED")})
                     
                                 } else {
                                     return res.status(200).json({status: -1, message: ERROR_DB_OP})
@@ -830,11 +825,11 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
                                         resolve({cats: "Success 1 2"})
                                     })
                                     .catch(e => {
-                                        resolve({cats: "Success 1 Failed 2", e: e})
+                                        resolve({cats: "Success 1 Failed 2", e: ""/*e*/})
                                     })
                                 })
                                 .catch(e => {
-                                    resolve({cats: "Failed 1", e: e})
+                                    resolve({cats: "Failed 1", e: ""/*e*/})
                                 })
                             })
                         )
@@ -864,11 +859,11 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
                                         resolve({sub_cats: "Success 1 2"})
                                     })
                                     .catch(e => {
-                                        resolve({sub_cats: "Success 1 Failed 2", e: e})
+                                        resolve({sub_cats: "Success 1 Failed 2", e: ""/*e*/})
                                     })
                                 })
                                 .catch(e => {
-                                    resolve({sub_cats: "Failed 1", e: e})
+                                    resolve({sub_cats: "Failed 1", e: ""/*e*/})
                                 })
                             })
                         )
@@ -877,14 +872,14 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
                     //if the category and sub category wasn't changed
                     if(cats_and_sub_cats_updates.length == 0) {
                         console.log("c-a-t", 99)
-                        return res.status(200).json({status: 1, message: "2 Ad posted successfully"+JSON.stringify(prod), product_id: productData.id})
+                        return res.status(200).json({status: 1, message: getText("AD_POSTED"), product_id: productData.id})
 
                     } else {
                         console.log("c-a-t", 88)
                         Promise.all(cats_and_sub_cats_updates)
                         .then(results => {
                             console.log("cats_and_sub_cats_updatesResult", results)
-                            return res.status(200).json({status: 1, message: "3 Ad posted successfully"+JSON.stringify(prod), product_id: productData.id})
+                            return res.status(200).json({status: 1, message: getText("AD_POSTED"), product_id: productData.id})
                         })
                     }
                     

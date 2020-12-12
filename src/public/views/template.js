@@ -1,6 +1,6 @@
 import { SITE_TRADE_MARK, SITE_NAME, getText } from "../../../Constants";
 
-export default ({ body, initialData }) => {
+export default ({ body, initialData, requestHost }) => {
     return `
     <!DOCTYPE html>
 <html lang="en">
@@ -63,6 +63,7 @@ export default ({ body, initialData }) => {
       <script>
         //console.log = function() {}
         window.__initialData__ = ${JSON.stringify(initialData)}
+        window.REQUEST_HOST = "${requestHost}"
       </script>
   </head>
   <body>

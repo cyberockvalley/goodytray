@@ -3,17 +3,14 @@ const states = express.Router()
 const cors = require("cors")
 
 const State = require("../models/State")
+const { getText } = require("../../../Constants")
 states.use(cors())
-const Sequelize = require("sequelize")
-const Op = Sequelize.Op
-
-import {ERROR_DB_OP} from "../../../Constants"
 
 //get states
 states.get("/", function(req, res) {
     const id = req.query.cid
     if(!id) {
-        res.json({states: null, message: "No identifier provided"})
+        res.json({states: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
         State.findAll({
@@ -27,7 +24,7 @@ states.get("/", function(req, res) {
             res.json({states: states})
         })
         .catch((error) => {
-            res.json({states: null, message: "An error occurred while trying to get the list"})
+            res.json({states: null, message: getText("API_LIST_ERROR")})
         })
     }
 })
@@ -36,7 +33,7 @@ states.get("/", function(req, res) {
 states.get("/details", function(req, res) {
     const id = req.query.id
     if(!id) {
-        res.json({details: null, message: "No identifier provided"})
+        res.json({details: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
         State.findOne({
@@ -47,7 +44,7 @@ states.get("/details", function(req, res) {
             res.json({details: details})
         })
         .catch((error) => {
-            res.json({details: null, message: "An error occurred while trying to get the list"})
+            res.json({details: null, message: getText("API_LIST_ERROR")})
         })
     }
 })

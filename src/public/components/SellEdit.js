@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
-import { SITE_NAME, API_ROOT, SITE_DOT_COM, AD_PACKAGES, SERVER_ADDR, MAX_PRODUCT_PHOTO_WIDTH } from '../../../Constants'
+import { SITE_NAME, API_ROOT, SITE_DOT_COM, AD_PACKAGES, MAX_PRODUCT_PHOTO_WIDTH, getText, translateCat, translateSubCat, translateAttrKey, translateAttrValue } from '../../../Constants'
 const browser = require('../utils/Browser')
-import {id, cls, commaNum, remove, removeObject, currencyLogo, getObjectValue, queries, uniqueArray, isFile, jsonEmpty, resizeImageFile, blobToFile} from '../utils/Funcs'
+import {id, cls, commaNum, remove, removeObject, queries, isFile, jsonEmpty, resizeImageFile, blobToFile} from '../utils/Funcs'
 import {MAX_PRODUCT_PHOTOS_SIZE} from "../../../Constants"
 import { productLink } from '../utils/LinkBuilder'
 const StripeView = require("../components/third_party/stripe/StripeView")
 import TextView from "./widgets/TextView"
-import { relative } from 'path'
 
 class SellEdit extends Component {
   constructor(props) {
@@ -14,16 +13,16 @@ class SellEdit extends Component {
     this.state()
     this.state.seven_days_advert = {
       amount: AD_PACKAGES.paid_package_b.amount,
-      description: "Payment to get more people to see your ad for 7 days"
+      description: getText("BOOSTED_1_DESCIPTION")
     },
     this.state.thirty_days_advert = {
       amount: AD_PACKAGES.paid_package_c.amount,
-      description: "Payment to get more people to see your ad for 30 days"
+      description: getText("BOOSTED_2_DESCIPTION")
     }
     this.state.payment_data = {
       amount: this.state.thirty_days_advert.amount,
-      currency: "usd",
-      currency_symbol: "$",
+      currency: getText("CURRENCY").toLowerCase(),
+      currency_symbol: getText("CURRENCY_SYMBOL"),
       description: this.state.thirty_days_advert.description,
       name: props.initialData.user.fullname,
       email: props.initialData.user.email
@@ -36,9 +35,11 @@ class SellEdit extends Component {
 
     //set arrays
     this.state.cats = props.initialData.cats
+    var productCurrencySymbol = getText("PRODUCT_CURRENCY_SYMBOL")
+
     this.state.countries = props.initialData.countries
-    this.state.currency_symbols = props.initialData.currency_symbols
-    this.state.price_currency_symbol = props.initialData.currency_symbols[0]
+    this.state.currency_symbols = productCurrencySymbol.length == 0? props.initialData.currency_symbols : [productCurrencySymbol]
+    this.state.price_currency_symbol = productCurrencySymbol.length == 0? props.initialData.currency_symbols[0] : productCurrencySymbol
     console.log("PRICE_SYM", 1, this.state.price_currency_symbol)
     
     this.handleChange = this.handleChange.bind(this)
@@ -186,28 +187,12 @@ class SellEdit extends Component {
         this.setState({price: commaNum(product.price)})
       }
 
-      /*
-      var i = 0
-      while(i < states.length) {
-        try {
-          this.setState(states[i])
-        }catch(e) {
-          console.log("SET_ERROR", e)
-        }
-        i++
-      }*/
-
       //set photos
       console.log("EditProduct", product)
       i = 0
       const files = product.photos? product.photos.split(",") : []
       this.setState({next_photo_index: files.length -1})
-      /*
-      const maxUpload = 20 - files.length
-      while(i < maxUpload) {
-        //files.push(null)
-        i++
-      }*/
+      
       this.setState({photos: files})
 
     } else {
@@ -276,7 +261,7 @@ class SellEdit extends Component {
             if(response.data.details) {
                 const product = response.data.details
                 if(!this.props.initialData.user || this.props.initialData.user.id != product.user_id) {
-                  alert("You don't have permission to edit this ad")
+                  alert(getText("ERROR_ADVERT_EDIT_PERMISSION"))
                   window.location.href = productLink(product.title, id)
                 }
                 //set attributes
@@ -357,7 +342,7 @@ class SellEdit extends Component {
 
     const allowed_packages = ["0", "1", "2"]
     if(!this.state.paid_package || !allowed_packages.includes(this.state.paid_package)) {
-      this.setError("paid_package", "Please select a package")
+      this.setError("paid_package", getText("PLS_SELECT_A_PACKAGE"))
       hasError = true
     }
     
@@ -368,7 +353,7 @@ class SellEdit extends Component {
     console.log("product.hide_phone_number", product.hide_phone_number, this.state.hide_phone_number, this.state)
 
     if(this.state.cat == -1) {
-      this.setError("cat", "Please select a category")
+      this.setError("cat", getText("PLS_SELECT_A_CAT"))
       hasError = true
 
     } else {
@@ -379,7 +364,7 @@ class SellEdit extends Component {
     }
 
     if(this.state.sub_cat == -1) {
-      this.setError("sub_cat", "Please select a sub category")
+      this.setError("sub_cat", getText("PLS_SELECT_A__SUB_CAT"))
       hasError = true
 
     } else {
@@ -395,7 +380,7 @@ class SellEdit extends Component {
     for(var index = 0; index < this.state.compulsory_attrs.length; index++) {
       var key = this.state.compulsory_attrs[index]
       if(this.getAttrKeyValues(key).length == 0) {
-        this.setError(key, key+" cannot be empty")
+        this.setError(key, key+": " + getText("THIS_MUST_BE_PROVIDED"))
         hasError = hasAttrError = true
       }
     }
@@ -426,16 +411,16 @@ class SellEdit extends Component {
     console.log("noPhoto", noPhoto)
     console.log("formData a", JSON.stringify(formData))
     if(noPhoto) {
-      this.setError("photo", "Please upload at least one photo")
+      this.setError("photo", getText("UPLOAD_AD_PHOTO"))
       hasError = true
     }
 
     if(this.state.currency_symbols.indexOf(this.state.price_currency_symbol) == -1) {
-      this.setError("price", "Please select your currency")
+      this.setError("price", getText("PLS_SELECT_YOUR_CURRENCY"))
       hasError = true
 
     } else if(this.state.price.length == 0 || isNaN(parseInt(this.state.price))) {
-      this.setError("price", "Please enter your price")
+      this.setError("price", getText("PLS_ENTER_PRICE"))
       hasError = true
 
     } else {
@@ -451,7 +436,7 @@ class SellEdit extends Component {
     }
 
     if(this.state.title.length == 0) {
-      this.setError("title", "Please enter advert title")
+      this.setError("title", getText("PLS_ENTER_TITLE"))
       hasError = true
 
     } else {
@@ -462,7 +447,7 @@ class SellEdit extends Component {
     }
 
     if(this.state.desc.length == 0) {
-      this.setError("desc", "Please enter description")
+      this.setError("desc", getText("PLS_ENTER_DESC"))
       hasError = true
 
     } else {
@@ -473,7 +458,7 @@ class SellEdit extends Component {
     }
 
     if(this.state.country == -1) {
-      this.setError("country", "Please select country")
+      this.setError("country", getText("PLS_SELECT_YOUR_COUNTRY"))
       hasError = true
 
     } else {
@@ -484,7 +469,7 @@ class SellEdit extends Component {
     }
 
     if(this.state.state == -1) {
-      this.setError("state", "Please select state")
+      this.setError("state", getText("PLS_SELECT_STATE"))
       hasError = true
 
     } else {
@@ -495,7 +480,7 @@ class SellEdit extends Component {
     }
 
     if(this.state.city == -1) {
-      this.setError("city", "Please select city")
+      this.setError("city", getText("PLS_SELECT_CITY"))
       hasError = true
 
     } else {
@@ -613,7 +598,7 @@ class SellEdit extends Component {
 
         } else {
           this.onServerResponse()
-          alert("An unexpected error occurred")
+          alert(getText("ERROR_SERVER_RESPONSE"))
         }
         
       }
@@ -629,7 +614,7 @@ class SellEdit extends Component {
     const msg = message.message
     const paymentSuccessfull = message.payment_successfull
     if(paymentSuccessfull) {
-      alert("Payment successfull. Your product has been updated with the purchased package.")
+      alert(getText("BOOSTED_UPLOAD_OK"))
       window.location.href = productLink(this.state.title, this.state.product_id)
     } else {
       alert(msg)
@@ -821,7 +806,7 @@ class SellEdit extends Component {
       console.log("photos.length: "+photos.length)
       if(this.state.photo_size + files[i].size > MAX_PRODUCT_PHOTOS_SIZE) {
         console.log("max reached")
-        this.setError("photo", "You've exceded the total maximum file size allowed")
+        this.setError("photo", getText("MAX_FILE_SIZE_ERROR"))
 
       } else {
         var file = blobToFile(files[i].name, await resizeImageFile({
@@ -1044,7 +1029,7 @@ class SellEdit extends Component {
           <div className="container-fluid nav-container" style={{margin: "0px"}}>
             <div className="navbar-header">
               <a href="/" className="navbar-brand logo font-bask-normal text-left">
-              <img src="/public/logo.png" width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
+              <img src={`${getText("LOGO_PATH")}`} width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
                 {SITE_NAME}
               </a>
             </div>
@@ -1066,15 +1051,15 @@ class SellEdit extends Component {
       <div className="h-ph-25 h-pv-7 h-dflex h-flex-main-center h-flex-dir-column">
         <div className="b-notification-text">
           <div className="h-main-gray-force">
-              <div className="h-font-18 h-darker-red h-bold h-mb-5">Your ad won't be posted unless you confirm your email address!</div>
+              <div className="h-font-18 h-darker-red h-bold h-mb-5">{getText("EMAIL_CONFIRM_4_LISTING")}</div>
               <div>
-                Email: <b>{this.state.user.email}</b> If you did not receive the email with confirmation link you can request it again.
+                {getText("EMAIL")}: <b>{this.state.user.email}</b> {getText("EMAIL_CONFIRM_NOT_SEEN")}
               </div> 
               <div>
                 <form name="baseform" method="post" validate="true" action="/resend-confirmation-email.html">
                   <input id="csrf_token" name="csrf_token" type="hidden" value="1573919242##f3d9acaa6df8f64e4b320384d393ff92ba5888b5"/>
                     <button className="b-button b-button--black-light b-button--bg-transparent b-button--border-radius-5 b-button--size-small-2 h-mt-10">
-                      Resend email
+                      {getText("RESEND_EMAIL_CONFIRM")}
                     </button>
                 </form>
               </div>
@@ -1089,7 +1074,7 @@ class SellEdit extends Component {
     <div className="h-text-center h-mb-20 h-mt-10">
      <h1 className="qa-h1-title h-mv-0">
       <b className="h-font-26">
-       Post Ad
+       {getText("POST_AD")}
       </b>
      </h1>
     </div>
@@ -1101,12 +1086,12 @@ class SellEdit extends Component {
      <div className="block h-p-15 b-content-area b-content-area--shadow" data-v-2f9b1610="">
       <div className="h-hflex h-flex-cross-center h-mb-5" data-v-2f9b1610="">
        <h4 className="h-flex" data-v-2f9b1610="">
-        <b data-v-2f9b1610="">
-         Ad Details
+        <b data-v-2f9b1610="" className="cap-case">
+         {getText("AD_DETAILS")}
         </b>
        </h4>
        <button onClick={this.clearAllFields} className="qa-clear-all-fields-button js-clear-fields b-button b-button--primary-light b-button--size-small" data-v-2f9b1610="" type="button">
-        Clear all fields
+        {getText("CLEAR_ALL_FIELDS")}
        </button>
       </div>
 
@@ -1115,17 +1100,17 @@ class SellEdit extends Component {
        <div id="cat-section" data-v-2f9b1610="">
          <div className=" b-form-section h-mb-15 qa-choose-category b-form-section--required">
           <label className="b-form-section__title">
-           Category
+           {getText("CAT")}
           </label>
           <div className="form-group">
             <select className="form-control" name="cat" value={this.state.cat} onChange={this.handleIntChange}>
-              <option value={-1}>--- Choose category ---</option>
+              <option value={-1}>--- {getText("CHOOSE_CAT")} ---</option>
               {this.state.cats.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                <option key={cat.id} value={cat.id}>{translateCat(this, cat.name)}</option>
               ))}
             </select>
             <span id="cat-error" className="fw-field__error qa-fw-field__error hide">
-              this field is required.
+              {getText("FIELD_REQUIRED_LOWERCASE")}
             </span>
           </div>
          </div>
@@ -1133,18 +1118,18 @@ class SellEdit extends Component {
 
         <div id="sub_cat-section" data-v-2f9b1610="" className={parseInt(this.state.cat) == -1? "disabled-section":""}>
          <div className="b-form-section h-mb-15 qa-choose-category b-form-section--required">
-          <label className="b-form-section__title">
-           Sub Category
+          <label className="b-form-section__title cap-case">
+          {getText("SUB_CAT")}
           </label>
           <div className="form-group">
             <select className="form-control" name="sub_cat" value={this.state.sub_cat} onChange={this.handleIntChange}>
-              <option value={-1}>--- Choose subcategory ---</option>
+              <option value={-1}>--- {getText("CHOOSE_SUB_CAT")} ---</option>
               {this.state.sub_cats.map(scat => (
-                <option key={scat.id} value={scat.id}>{scat.name}</option>
+                <option key={scat.id} value={scat.id}>{translateSubCat(this, scat.name)}</option>
               ))}
             </select>
             <span id="sub_cat-error" className="fw-field__error qa-fw-field__error hide">
-              this field is required.
+              {getText("FIELD_REQUIRED_LOWERCASE")}
             </span>
           </div>
          </div>
@@ -1155,7 +1140,7 @@ class SellEdit extends Component {
           {this.state.input_attrs.map(attr => (
             <div key={"custom-"+attr.key} className={attr.allow_null? allow_null_class : no_null_class}>
               <label className="b-form-section__title">
-                {attr.key}
+                {translateAttrKey(this, attr.key)}
               </label>
               <div className="form-group">
                 <input value={
@@ -1164,7 +1149,7 @@ class SellEdit extends Component {
                   :""
                   } data-attr={"input"+(!attr.allow_null?"_must":"")} type="text" className="form-control" name={attr.key} onChange={this.handleAttrInput} />
                 <span id={attr.key+"-error"} className="fw-field__error qa-fw-field__error hide">
-                  this field is required.
+                  {getText("FIELD_REQUIRED_LOWERCASE")}
                 </span>
               </div>
             </div>
@@ -1173,21 +1158,21 @@ class SellEdit extends Component {
           {this.state.select_attrs.map(attr => (
             <div key={"custom-"+attr.key} className={attr.allow_null? allow_null_class : no_null_class}>
               <label className="b-form-section__title">
-                {attr.key}
+                {translateAttrKey(this, attr.key)}
               </label>
               <div className="form-group">
                 <select data-attr={"select"+(!attr.allow_null?"_must":"")} className="form-control" name={attr.key} onChange={this.handleAttrSelect}>
-                  <option>--- Select {attr.key} ---</option>
+                  <option>--- {getText("SELECT")} {translateAttrKey(this, attr.key)} ---</option>
                   {attr.values.map(value => (
                     
                     this.state.attrs.includes(this.keyValue(attr.key, value))?
-                      <option key={"custom-"+attr.key+value} selected>{value}</option>
+                      <option key={"custom-"+attr.key+value} selected>{translateAttrValue(this, value)}</option>
                       :
-                      <option key={"custom-"+attr.key+value}>{value}</option>
+                      <option key={"custom-"+attr.key+value}>{translateAttrValue(this, value)}</option>
                   ))}
                 </select>
                 <span id={attr.key+"-error"} className="fw-field__error qa-fw-field__error hide">
-                  this field is required.
+                  {getText("FIELD_REQUIRED_LOWERCASE")}
                 </span>
               </div>
             </div>
@@ -1196,7 +1181,7 @@ class SellEdit extends Component {
           {this.state.checkbox_attrs.map(attr => (
             <div key={"custom-"+attr.key} className={attr.allow_null? allow_null_class : no_null_class}>
               <label className="b-form-section__title">
-                {attr.key}
+                {translateAttrKey(this, attr.key)}
               </label>
               <div classname="b-form-section__elem-wrapp">
                 {attr.values.map(value => (
@@ -1205,20 +1190,20 @@ class SellEdit extends Component {
                     <div className="qa-checkbox b-form-section h-mb-0">
                       <input onChange={this.handleAttrCheckbox} name={attr.key} value={value} id={"custom-"+attr.key+"-"+value} type="checkbox" className="b-form-section__checkbox" 
                       checked/> 
-                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{value}</label>
+                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{translateAttrValue(this, value)}</label>
                     </div>
                   </div>
                   :
                   <div key={"custom-"+attr.key+value} className="b-form-section__row">
                     <div className="qa-checkbox b-form-section h-mb-0">
                       <input onChange={this.handleAttrCheckbox} name={attr.key} value={value} id={"custom-"+attr.key+"-"+value} type="checkbox" className="b-form-section__checkbox" /> 
-                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{value}</label>
+                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{translateAttrValue(this, value)}</label>
                     </div>
                   </div>
                 ))}
               </div>
               <span id={attr.key+"-error"} className="fw-field__error qa-fw-field__error hide">
-                this field is required.
+                {getText("FIELD_REQUIRED_LOWERCASE")}
               </span>
             </div>
           ))}
@@ -1230,16 +1215,16 @@ class SellEdit extends Component {
       <div id="photo-section" className="block h-pl-0 b-content-area h-p-15" data-v-2f9b1610="" data-v-b364e386="">
        <h4 className="title" data-v-b364e386="">
         <b data-v-b364e386="">
-         Photos
+         {getText("PHOTOS")}
         </b>
        </h4>
        <p data-v-b364e386="">
         <b data-v-b364e386="">
-         Ads with photo get 5x more clients.
+         {PHOTO_ADS_ADVANTAGE}
         </b>
-        Accepted formats are .jpg, .gif and .png. <span className="hide">Max allowed size for uploaded files is 5 MB.</span>
+        {getText("ACCEPTED_FORMATS_MSG")} <span className="hide">{getText("MAX_UPLOAD_SIZE_MSG")}</span>
         <br data-v-b364e386=""/>
-        Add at least 1 photo for this category.
+        {getText("MIN_PHOTOS_MSG")}
        </p>
 
        <div className="form-group mt-3" ondragenter={this.allowDrop} ondragleave={this.dragLeft}>
@@ -1247,9 +1232,9 @@ class SellEdit extends Component {
           <div className="card card-body view file-upload">
           <div className="card-text file-upload-message">
             <p>
-            <span>Click to add images </span> 
+            <span>{getText("CLICK_TO_ADD_IMAGES")} </span> 
               <span className="xs-hide sm-hide-down">
-                or drag and drop images
+                {getText("OR_DRAG_AND_DROP_IMAGES")}
               </span>
             </p>
             <i ariaHidden="true" className={this.state.drag_over? "fa fa-cloud-upload fa-5x" : "fa fa-cloud-upload fa-3x"}>
@@ -1374,11 +1359,11 @@ class SellEdit extends Component {
         ""
        }
        <span id="photo-error" className="fw-field__error qa-fw-field__error hide">
-        this field is required.
+        {getText("FIELD_REQUIRED_LOWERCASE")}
        </span>
        <div className="h-grey" data-v-b364e386="">
         <b data-v-b364e386="">
-         First picture - is the title picture.
+         {getText("FIRST_PICTURE_ROLE")}
         </b>
        </div>
       </div>
@@ -1387,13 +1372,13 @@ class SellEdit extends Component {
        <div className="qa-attributes" data-v-2f9b1610="">
         <div className="qa-input b-form-section qa-title h-phone-max-width-100p b-form-section--required">
          <label className="b-form-section__title" for="input-54">
-          Title
+          {getText("TITLE")}
          </label>
          <div className="b-form-section__elem-wrapp">
           <input data-limit="70" onChange={this.handleChange} id="input-54" name="title" placeholder="Please write a clear title for your item" value={this.state.title} type="text"/>
          </div>
          <span id="title-error" className="fw-field__error qa-fw-field__error hide">
-          this field is required.
+          {getText("FIELD_REQUIRED_LOWERCASE")}
          </span>
          <div className="b-input-style-maxlength h-mv-3">
           {70 - this.state.title.length} characters left
@@ -1404,7 +1389,7 @@ class SellEdit extends Component {
 
         <div className="h-max-width-300 h-phone-max-width-100p b-form-section--required">
           <label className="b-form-section__title">
-            Price
+            {getText("PRICE")}
           </label>
           <div className="input-group">
             <span className="input-group-addon">
@@ -1413,22 +1398,22 @@ class SellEdit extends Component {
             <input data-type="number" name="price" value={this.state.price} type="text" className="form-control" onChange={this.handleChange}/>
           </div>
           <span id="price-error" className="fw-field__error qa-fw-field__error hide">
-            this field is required.
+            {getText("FIELD_REQUIRED_LOWERCASE")}
           </span>
         </div>
         
         <div className="qa-textarea b-form-section qa-description b-form-section--required" data-v-cca4341a="">
          <label className="b-form-section__title" data-v-cca4341a="" for="textarea-58">
-          Description
+          {getText("DESC")}
          </label>
          <div className="b-form-section__elem-wrapp" data-v-cca4341a="">
-          <textarea data-limit="1000" onChange={this.handleChange} data-v-cca4341a="" id="textarea-58" name="desc" value={this.state.desc} placeholder="Please provide a detailed description. You can mention as many details as possible. It will make your ad more attractive for buyers" rows="5"></textarea>
+          <textarea data-limit="1000" onChange={this.handleChange} data-v-cca4341a="" id="textarea-58" name="desc" value={this.state.desc} placeholder={getText("PRODUCT_DESC_PLACEHOLDER")} rows="5"></textarea>
          </div>
          <span id="desc-error" className="fw-field__error qa-fw-field__error hide">
-            this field is required.
+            {getText("FIELD_REQUIRED_LOWERCASE")}
          </span>
          <div className="b-text-area-max-length" data-v-cca4341a="">
-         {1000 - this.state.desc.length} characters left
+         {1000 - this.state.desc.length} {getText("CHARS_LEFT")}
          </div>
          <div className="b-form-section__error-descr" data-v-cca4341a="">
          </div>
@@ -1439,18 +1424,18 @@ class SellEdit extends Component {
      <div className="block b-content-area b-content-area--shadow h-p-15" data-v-50679713="">
       <h4 className="title" data-v-50679713="">
        <b data-v-50679713="">
-        Contact Information for Ad
+        {getText("AD_CONTACT_INFO")}
        </b>
       </h4>
       <div className="h-mb-10" data-v-50679713="">
        <p data-v-50679713="">
-        Name:&nbsp;
+        {getText("NAME")}:&nbsp;
         <b className="user-data" data-v-50679713="">
          {this.state.fullname}
         </b>
        </p>
        <p data-v-50679713="">
-          Phone:&nbsp;
+          {getText("PHONE_NUMBER")}:&nbsp;
           <b className="user-data" data-v-50679713="">
           {this.state.number}
           </b>
@@ -1464,46 +1449,49 @@ class SellEdit extends Component {
                 :
                 <input data-type="number" onChange={this.handleSingleCheckbox} name="hide_phone_number" id="hide_phone_number" value={1} empty-value={0} type="checkbox" className="b-form-section__checkbox" />
               }
-              <label for="hide_phone_number" className="qa-description-label">Hide phone number</label>
+              <label for="hide_phone_number" className="qa-description-label">{getText("HIDE_PHONE_NUMBER")}</label>
             </div>
         </div>
       </div>
       
       <div id="location-section" className="h-max-width-300 h-phone-max-width-100p" data-v-2f9b1610="">
       
-       <div id="country-section" data-v-2f9b1610="">
+       {
+         getText("IS_NOT_GLOBAL")? null : 
+         <div id="country-section" data-v-2f9b1610="">
          <div className=" b-form-section h-mb-15 qa-choose-category b-form-section--required">
           <label className="b-form-section__title">
-           Country
+           {getText("COUNTRY")}
           </label>
           <div className="form-group">
             <select className="form-control" name="country" value={this.state.country} onChange={this.handleIntChange}>
-              <option value={-1}>--- Select country ---</option>
+              <option value={-1}>--- {getText("SELECT_COUNTRY")} ---</option>
               {this.state.countries.map(country => (
                 <option key={country.id} value={country.id}>{country.name}</option>
               ))}
             </select>
             <span id="country-error" className="fw-field__error qa-fw-field__error hide">
-              this field is required.
+              {getText("FIELD_REQUIRED_LOWERCASE")}
             </span>
           </div>
          </div>
         </div>
+       }
 
         <div id="state-section" data-v-2f9b1610="" className={parseInt(this.state.country) == -1? "disabled-section":""}>
          <div className=" b-form-section h-mb-15 qa-choose-category b-form-section--required">
           <label className="b-form-section__title">
-           State
+           {getText("STATE")}
           </label>
           <div className="form-group">
             <select className="form-control" name="state" value={this.state.state} onChange={this.handleIntChange}>
-              <option value={-1}>--- Select state ---</option>
+              <option value={-1}>--- {getText("SELECT_STATE")} ---</option>
               {this.state.states.map(state => (
                 <option key={state.id} value={state.id}>{state.name}</option>
               ))}
             </select>
             <span id="state-error" className="fw-field__error qa-fw-field__error hide">
-              this field is required.
+              {getText("FIELD_REQUIRED_LOWERCASE")}
             </span>
           </div>
          </div>
@@ -1512,17 +1500,17 @@ class SellEdit extends Component {
         <div id="city-section" data-v-2f9b1610="" className={parseInt(this.state.country) == -1 || parseInt(this.state.state) == -1? "disabled-section":""}>
          <div className=" b-form-section h-mb-15 qa-choose-category b-form-section--required">
           <label className="b-form-section__title">
-           City
+           {getText("CITY")}
           </label>
           <div className="form-group">
             <select className="form-control" name="city" value={this.state.city} onChange={this.handleIntChange}>
-              <option value={-1}>--- Select city ---</option>
+              <option value={-1}>--- {getText("SELECT_CITY")} ---</option>
               {this.state.cities.map(city => (
                 <option key={city.id} value={city.id}>{city.name}</option>
               ))}
             </select>
             <span id="city-error" className="fw-field__error qa-fw-field__error hide">
-              this field is required.
+              {getText("FIELD_REQUIRED_LOWERCASE")}
             </span>
           </div>
          </div>
@@ -1534,21 +1522,21 @@ class SellEdit extends Component {
      <div className="qa-premium-section block b-content-area b-content-area--shadow h-p-15" data-v-0d6ab1a8="">
  <h4 className="title" data-v-0d6ab1a8="">
   <b data-v-0d6ab1a8="">
-   Boost your ad
+   {getText("BOOST_AD")}
   </b>
  </h4>
  <p className="h-mb-20" data-v-0d6ab1a8="">
-  Please, choose one of the following packages to publish your ad.
+  {getText("AD_BOOST_CHOICE_MSG")}
  </p>
  <div className="b-form-section h-mb-0" data-v-0d6ab1a8="">
   <div className="b-form-section__row" data-v-0d6ab1a8="">
    <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="0-free_post" name="paid_package" value="0" type="radio" onChange={this.handleChange}/>
    <label className="h-font-normal h-mb-0" data-v-0d6ab1a8="" for="0-free_post">
     <span className="package-label package-label--free" data-v-0d6ab1a8="">
-      No-Boost Package
+      {getText("PUBLISH_WITHOUT_BOOST")}
     </span>
     <div data-v-0d6ab1a8="" style={{display: "inline-block", padding: "3px 0px"}}>
-      No <b>top placement(Selecting this package does not cancel your previously purchased boosted packages)</b>.
+      <b>{getText("PUBLISH_WITHOUT_BOOST_DESC")}</b>
     </div>
    </label>
   </div>
@@ -1556,10 +1544,10 @@ class SellEdit extends Component {
    <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="1-page_top_1" name="paid_package" value="1" type="radio" onChange={this.handleChange}/>
    <label className="h-font-normal h-mb-0" data-v-0d6ab1a8="" for="1-page_top_1">
     <span className="package-label package-label--top" data-v-0d6ab1a8="">
-     7-DAYS-BOOST package
+    {getText("SEVEN_DAYS_BOOST")}
     </span>
     <div data-v-0d6ab1a8="" style={{display: "inline-block", padding: "3px 0px"}}>
-     One advert promotion for <b>7 days(your ad will be frequently placed on top of other ads to get more people to see your ad for 7 days. If this ad already has a boosted package, the boost duration will be extended by 7 days)</b>.
+     <b>{getText("SEVEN_DAYS_BOOST_DESC")}</b>
     </div>
    </label>
   </div>
@@ -1567,28 +1555,27 @@ class SellEdit extends Component {
    <input className=" b-form-section__radio b-form-section__radio--vertical-center" data-v-0d6ab1a8="" id="2-page_top_1_30" name="paid_package" value="2" type="radio" onChange={this.handleChange}/>
    <label className="h-font-normal h-mb-0" data-v-0d6ab1a8="" for="2-page_top_1_30">
     <span className="package-label package-label--top" data-v-0d6ab1a8="">
-     30-DAYS-BOOST package
+     {getText("THIRTY_DAYS_BOOST")}
     </span>
     <div data-v-0d6ab1a8="" style={{display: "inline-block", padding: "3px 0px"}}>
-     One advert promotion for <b>30 days(your ad will be frequently placed on top of other ads to get more people to see your ad for 30 days. If this ad already has a boosted package, the boost duration will be extended by 30 days)</b>.
+     <b>{getText("THIRTY_DAYS_BOOST_DESC")}</b>
     </div>
    </label>
   </div>
   <span id="paid_package-error" className="fw-field__error qa-fw-field__error hide">
-    this field is required.
+    {getText("FIELD_REQUIRED_LOWERCASE")}
   </span>
  </div>
 </div>
      <div className="h-text-center h-mb-50">
       <button className="qa-submit-button b-button b-button--secondary b-button--border-radius b-button--shadow" data-package-category="" data-package-id="" data-package-name="" id="submitButton" type="submit">
        <b>
-        Post Ad
+        {getText("POST_AD")}
        </b>
       </button>
       <p className="h-pt-10">
-       By publishing an ad you agree and accept&nbsp;
        <a href="/rules.html" target="_blank">
-        the Rules of {SITE_DOT_COM}
+        {getText("AD_POST_DESCLAIMER")}
        </a>
       </p>
       <div className="h-pt-10">
@@ -1597,7 +1584,7 @@ class SellEdit extends Component {
          <use xlinkHref="#info">
          </use>
         </svg>
-        How to create an effective ad
+        {getText("HOW_TO_POST")}
        </a>
        
       </div>

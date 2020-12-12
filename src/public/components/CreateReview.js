@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import Navbar from './Navbar'
 import Footer from "./Footer"
-import { API_ROOT } from "../../../Constants"
+import { API_ROOT, getText } from "../../../Constants"
 import { intOrMin, queries } from "../utils/Funcs"
 
 const browser = require("../utils/Browser")
@@ -16,13 +16,7 @@ class CreateReview extends Component {
           selected_weight: 0,
           rating: -1,
           body: "",
-          ratings_text: [
-            "Successful purchase(you bought the product)",
-            "The deal failed(the product didn't meet your expectation)",
-            "Can`t reach the seller(by call or by chat)",
-            "Successful purchase(you bought the product)",
-            "My experience is not listed(Let us no in the feedback)"
-          ],
+          ratings_text: getText("RATINGS_TEXTS"),
           editor_error: "",
           experience_error: ""
         }
@@ -62,21 +56,21 @@ class CreateReview extends Component {
       this.setState({editor_error: ""})
       var hasError = false
       if(this.state.rating < 0 || this.state.rating == this.state.ratings_text.length) {
-        this.setState({experience_error: "Please select your experience"})
+        this.setState({experience_error: getText("SELECT_EXPERIENCE_WITH_SELLER")})
         hasError = true
 
       }
       
       if(this.state.body.length == 0) {
-        this.setState({editor_error: "Please enter your review"})
+        this.setState({editor_error: getText("SELECT_REVIEW")})
         hasError = true
 
       } else if(this.state.body.length < MIN_BODY_SIZE) {
-        this.setState({editor_error: "Your review is too short"})
+        this.setState({editor_error: getText("SHORT_REVIEW")})
         hasError = true
 
       } else if(this.state.body.length > MAX_BODY_SIZE) {
-        this.setState({editor_error: "Your review is too long"})
+        this.setState({editor_error: getText("ERROR_LONG_REVIEW")})
         hasError = true
 
       }
@@ -123,7 +117,7 @@ class CreateReview extends Component {
               <div className="row center-xs h-pt-30">
                <div className="b-opinions-card">
                 <div className="b-opinions-card__title">
-                 Leave feedback 
+                 {getText("LEAVE_REVIEW")} 
                  <a className="hide" href="/sellerpage-187196">
                   Bibiana O-Onadipe
                  </a>
@@ -131,7 +125,7 @@ class CreateReview extends Component {
                 <div className="b-opinions-card__form">
                  <div className="b-opinions-card__form--rating">
                   <span className="b-opinions-card__form--rating-title">
-                   How was your experience?
+                   {getText("HOW_WAS_UR_EXP")}
                   </span>
                   <div className="b-opinions-card__form--rating__container">
                    <div onClick={this.handleClick} data-weight={1} className={"b-opinions-card__form--rating__container--item b-opinions-card__form--rating__container--item-positive"+(this.state.selected_weight==1?" b-opinions-card__form--rating__container--item-active":"")}>
@@ -140,7 +134,7 @@ class CreateReview extends Component {
                      </use>
                     </svg>
                     <span data-weight={1}>
-                     Positive
+                     {getText("POSITIVE")}
                     </span>
                    </div>
                    <div onClick={this.handleClick} data-weight={0} className={"b-opinions-card__form--rating__container--item b-opinions-card__form--rating__container--item-neutral"+(this.state.selected_weight==0?" b-opinions-card__form--rating__container--item-active":"")}>
@@ -149,7 +143,7 @@ class CreateReview extends Component {
                      </use>
                     </svg>
                     <span data-weight={0}>
-                     Neutral
+                     {getText("NEUTRAL")}
                     </span>
                    </div>
                    <div onClick={this.handleClick} data-weight={-1} className={"b-opinions-card__form--rating__container--item b-opinions-card__form--rating__container--item-negative"+(this.state.selected_weight==-1?" b-opinions-card__form--rating__container--item-active":"")}>
@@ -158,14 +152,14 @@ class CreateReview extends Component {
                      </use>
                     </svg>
                     <span data-weight={-1}>
-                     Negative
+                     {getText("NEGATIVE")}
                     </span>
                    </div>
                   </div>
                      <div className={"form-group fw" 
                    + (this.state.experience_error.length > 0?" fw-has-error":" fw-focused")} style={{maxHeight: "600px"}} tabIndex="-1">
                        <select onChange={this.handleChange} name="rating" className="form-control">
-                         <option value="-1">Select your experience</option>
+                         <option value="-1">{getText("SELECT_UR_EXP")}</option>
                          {
                            this.state.ratings_text.map((rt, i) => (
                             <option key={i} value={i}>{rt}</option>
@@ -183,7 +177,7 @@ class CreateReview extends Component {
                    + (this.state.editor_error.length > 0?" fw-has-error":" fw-focused")}>
                     <div className="fw-field__content">
                      <label for="">
-                      Write a detailed feedback
+                      {getText("WRITE_FEEDBACK")}
                      </label>
                      <textarea onChange={this.handleChange} name="body" className="fw-textarea"></textarea>
                     </div>
@@ -191,13 +185,13 @@ class CreateReview extends Component {
                    <span className="fw-field__error qa-fw-field__error">
                      {this.state.editor_error}
                    </span>
-                   <div class="b-text-area-max-length" data-v-cca4341a="">{MAX_BODY_SIZE - this.state.body.length} characters left</div>
+                   <div class="b-text-area-max-length" data-v-cca4341a="">{MAX_BODY_SIZE - this.state.body.length} {getText("CHARS_LEFT")}</div>
                   </div>
                   <div className="b-tab-feedback__summary--copy-link">
                    <button onClick={this.submit} className="h-width-100p h-bold fw-button qa-fw-button fw-button--type-success fw-button--size-medium" type="button">
                     <span className="fw-button__content">
-                     <span className="fw-button__slot-wrapper">
-                      Send Feedback
+                     <span className="fw-button__slot-wrapper cap-case">
+                      {getText("SEND_FEEDBACK")}
                      </span>
                     </span>
                    </button>
@@ -212,7 +206,7 @@ class CreateReview extends Component {
                   </use>
                  </svg>
                  <br/>
-                  Your feedback is very important for the seller review. Please, leave the honest review to help other buyers and the seller in the customer attraction.
+                  {getText("UR_FEEDBACK_IS_IMPORTANT")}
                  
                 </div>
                </div>

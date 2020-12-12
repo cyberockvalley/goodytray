@@ -2,8 +2,7 @@ import React from 'react';
 import {ElementsConsumer, CardElement} from '@stripe/react-stripe-js';
 
 import CardSection from './CardSection';
-import { API_ROOT } from '../../../../../Constants';
-import { modalAlert } from '../../../utils/Funcs';
+import { API_ROOT, getText } from '../../../../../Constants';
 import ImageView from '../../widgets/ImageView';
 
 const Loading = require("../../widgets/Loading")
@@ -31,7 +30,7 @@ class CheckoutForm extends React.Component {
     .then(response => {console.log("StripeEmail", this.props.payment_data.email)
       if(!response.data.client_secret) {
         console.log("StripeClientSecret", "An error occurred", response)
-        this.sendMessage("An error occurred"+response, false)
+        this.sendMessage(getText("ERROR_SERVER_RESPONSE"), false)
       } else {
         this.setState({client_secret: response.data.client_secret})
         console.log("StripeClientSecret", response.data.client_secret)
@@ -41,7 +40,7 @@ class CheckoutForm extends React.Component {
     })
     .catch(e => {
       console.log("StripeClientSecret", "Error", e)
-      this.sendMessage(e, false)
+      this.sendMessage(e.message, false)
     })
   }
   handleSubmit = async (event) => {
@@ -82,17 +81,17 @@ class CheckoutForm extends React.Component {
           // execution. Set up a webhook or plugin to listen for the
           // payment_intent.succeeded event that handles any business critical
           // post-payment actions.
-          this.sendMessage("Payment successfull", true)
+          this.sendMessage(getText("PAYMENT_OK"), true)
   
         } else {
-          this.sendMessage("Payment failed", false)
+          this.sendMessage(getText("PAYMENT_NOT_OK"), false)
         }
       }
       this.setState({loading: false})
     })
     .catch(e => {
       console.log("Error", e)
-      this.sendMessage("A network error occurred", false)
+      this.sendMessage(getText("NET_ERROR"), false)
       this.setState({loading: false})
     })
     
@@ -105,9 +104,9 @@ class CheckoutForm extends React.Component {
           <div style={{display: this.state.loading || !stripe? "block" : "none"}}>
             <Loading 
             visibility={this.state.loading || !stripe? "visible" : "gone"} 
-            text={"Please wait..."} />
+            text={`${getText("PLS_WAIT")}...`} />
             <TextView 
-                    text="Please wait..."
+                    text={`${getText("PLS_WAIT")}...`}
                     margin="10px"
                     font_style="italic"
                     center_horizontal={true} />
@@ -127,7 +126,7 @@ class CheckoutForm extends React.Component {
                     font_weight="600" />
           <CardSection />
           <button id="stripe-submit" type="submit" disabled={!stripe}>
-            Pay {this.props.payment_data.currency_symbol + this.props.payment_data.amount}
+            {getText("PAY")} {this.props.payment_data.currency_symbol + this.props.payment_data.amount}
           </button>
         </form>
       </div>

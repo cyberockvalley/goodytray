@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { SITE_NAME, SITE_DOT_COM, EMAIL_SUPPORT } from '../../../Constants'
+import { SITE_DOT_COM, EMAIL_SUPPORT, getText } from '../../../Constants'
 
 
 class About extends Component {
@@ -24,16 +24,16 @@ class About extends Component {
    <div className="b-tips__wrapper">
     <h1 className="b-tips__h1">
         <Link to="/" className="logo font-bask-normal">
-            <img src="/public/logo.png" width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
+            <img src={`${getText("LOGO_PATH")}`} width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
         </Link>
-        Terms of Services and Use
+        {getText("TOS")}
     </h1>
     
 <div className="b-about-wrapper container">
  <div className="h-bg-white h-pv-15 h-ph-15">
      
 <h1>
-{" Rules on Use of " + SITE_DOT_COM + " site"}
+{getText("RULES_OF_USE")}
 </h1>
 <p>
 {" If you browse or otherwise access any content or data on the " + SITE_DOT_COM + " website where this Terms and Condition appears in the footer, and to any " + SITE_DOT_COM + " application, service, or tool (collectively"}

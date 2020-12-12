@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIENT_DIR, SITE_NAME } from '../../../Constants'
-import { commaNum, modalAlert } from '../utils/Funcs'
+import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIENT_DIR, SITE_NAME, getText } from '../../../Constants'
+import { commaNum } from '../utils/Funcs'
 const browser = require("../utils/Browser")
 import queryString from 'querystring'
 import { productLink } from '../utils/LinkBuilder'
@@ -41,41 +41,46 @@ class Profile extends Component {
       uploading_profile_photo: false,
       profile_photo_error: null
     }
-    this.setState({user: props.user})
+    var tempUser = {"id":2,"username":"jinminetics","fullname":"Jinmi Adegoke","profile_photo":"/public/res/images/users/dcc26b9e-c37a-4146-89dc-cf56e3105434-1577153147680.jpg","email":"jinminetics@gmail.com","number":"08130729216","created":"2019-11-04","last_seen":"2019-11-21","rank":0}
+    this.state.user = props.user || tempUser
 
     this.uploadPhoto = this.uploadPhoto.bind(this)
     //this.loadProducts = this.loadProducts.bind(this)
     this.updateProductsData = this.updateProductsData.bind(this)
     this.showStats = this.showStats.bind(this)
+    if(!this.state.user) props.history.replace("/login")
   }
 
   componentDidMount() {
-    console.log("mounted")
-    document.title = "Profile"
-    console.log("PROPS", this.props)
-    this.setState({user: this.props.user})
+    console.log("mounted", this.props.user, this.state.user)
+    if(!this.state.user) {
+      this.state.history.replace("/login")
 
-    const queryValues = queryString.parse(this.props.location.search.substring(1))
-    const p_type = queryValues.products_type?queryValues.products_type : "active"
-    this.state.products_type = p_type
-    this.setState({products_type: p_type})
-    console.log("queryValues.products_type", queryValues.products_type, this.state.products_type)
-    //get active counts
-    browser.axios.get(API_ROOT + "products/user/non_boosted/"+this.state.user.id+"?count_only=1")
-    .then(resp => {console.log("CountNonBoosted", resp.data)
-      if(resp.data.counts) {
-        this.setState({active_total: resp.data.counts})
-      }
-    })
-    //get sponsored counts
-    browser.axios.get(API_ROOT + "products/user/boosted/"+this.state.user.id+"?count_only=1")
-    .then(resp => {
-      console.log("CountBoosted", resp.data)
-      if(resp.data.counts) {
-        this.setState({sponsored_total: resp.data.counts})
-      }
-    })
-    this.loadProducts()
+    } else {
+
+      const queryValues = queryString.parse(this.props.location.search.substring(1))
+      const p_type = queryValues.products_type? queryValues.products_type : "active"
+      this.state.products_type = p_type
+      this.setState({products_type: p_type})
+      console.log("queryValues.products_type", queryValues.products_type, this.state.products_type)
+      //get active counts
+      browser.axios.get(API_ROOT + "products/user/non_boosted/"+this.state.user.id+"?count_only=1")
+      .then(resp => {console.log("CountNonBoosted", resp.data)
+        if(resp.data.counts) {
+          this.setState({active_total: resp.data.counts})
+        }
+      })
+      //get sponsored counts
+      browser.axios.get(API_ROOT + "products/user/boosted/"+this.state.user.id+"?count_only=1")
+      .then(resp => {
+        console.log("CountBoosted", resp.data)
+        if(resp.data.counts) {
+          this.setState({sponsored_total: resp.data.counts})
+        }
+      })
+      this.loadProducts()
+    }
+    
   }
 
 
@@ -202,14 +207,14 @@ class Profile extends Component {
 
       } else if(response && response.data && response.data.message && response && response.data.message.length > 0) {
         if(response.data.status == 3) {
-          this.setState({profile_photo_error: "Your profile photo size is too high"})
+          this.setState({profile_photo_error: getText("DP_SIZE_HIGH_ERROR")})
 
         } else {
           this.setState({profile_photo_error: response.data.message})
         }
 
       } else {
-        this.setState({profile_photo_error: "An error occurred while trying to upload your profile photo"})
+        this.setState({profile_photo_error: getText("PHOTO_UPLOAD_ERROR")})
       }
       this.setState({uploading_profile_photo: false})
       $('#add_profile_photo').modal('toggle');
@@ -222,9 +227,10 @@ class Profile extends Component {
   }
 
   render() {
+    console.log("SSS_USER", this.state.user)
     return (
       <div>
-            <Navbar user={this.props.user} />
+            <Navbar user={this.state.user} />
 <div className="h-bg-grey container h-pt-10 h-pb-15">
   {
     !this.state.user?
@@ -259,7 +265,7 @@ class Profile extends Component {
        </div>
        <div className="h-mt-15 h-width-100p h-ph-5">
         <Link to="/settings" className="general-button general-button--full general-button--border-radius general-button--with-shadow general-button--orange-color" href="/request-call.html">
-         Settings
+         {getText("SETTINGS")}
         </Link>
        </div>
       </div>
@@ -271,7 +277,7 @@ class Profile extends Component {
            ×
           </button>
           <h5 className="h-bold">
-           Add a profile photo
+           {getText("ADD_A_DP")}
           </h5>
          </div>
          <div className="modal-body">
@@ -281,10 +287,10 @@ class Profile extends Component {
            <div className="js-upload-preview h-hidden b-user-settings__avatarblock__avatar" style={{zIndex: "2"}}>
            </div>
            <div className="b-user-settings__avatarblock__text-1">
-            Upload your profile photo.
+            {getText("UPLOAD_UR_DP")}
            </div>
            <div className="b-user-settings__avatarblock__text-2">
-            Must be a .jpg, .gif or .png file smaller than 5MB
+            {getText("DP_RULES")}
            </div>
            <div className=" b-user-settings__avatarblock__text b-user-settings__avatarblock__text_red h-hidden h-mt-15">
            </div>
@@ -294,7 +300,7 @@ class Profile extends Component {
              <div className="b-user-settings__avatarblock__btnblock">
               <div className="b-user-settings__avatarblock__btn btn btn-lg">
                <div className="btn btn-lg btn-success btn-block" id="file-name-btn">
-                Choose a File
+                {getText("CHOOSE_A_FILE")}
                </div>
                <input onChange={this.uploadPhoto} accept="image/*" className="js-input-image" name="photo" type="file"/>
               </div>
@@ -314,7 +320,7 @@ class Profile extends Component {
        <div className="h-pr-10 h-dflex h-flex-main-center h-flex-dir-column">
         <div className="b-notification-text">
          <div>
-          Check out tips to create an effective ad
+          {getText("AD_TIP_CHECK")}
          </div>
         </div>
        </div>
@@ -325,7 +331,7 @@ class Profile extends Component {
        <ul>
         <li className="h-mr-15">
          <a onClick={this.changeProductsType} data-type="active" className={this.state.products_type == "active"?"active b-link-tabs__a qa-list-advert-tab":"b-link-tabs__a qa-list-advert-tab"} href="javascript:void(0)">
-          Non-Boosted ads
+          {getText("NON_BOOSTED_ADS")}
          </a>
          {
            this.state.active_total > 0?
@@ -338,7 +344,7 @@ class Profile extends Component {
         </li>
         <li className="h-mr-15">
          <a onClick={this.changeProductsType} data-type="sponsored" className={this.state.products_type == "sponsored"?"active b-link-tabs__a qa-list-advert-tab":"b-link-tabs__a qa-list-advert-tab"} href="javascript:void(0)">
-          Boosted ads
+          {getText(getText("BOOSTED_ADS"))}
          </a>
          {
            this.state.sponsored_total > 0?
@@ -351,7 +357,7 @@ class Profile extends Component {
         </li>
        </ul>
        <div className="h-float-right h-font-16">
-        Total: {this.state.active_total + this.state.sponsored_total} ads
+        {getText("TOTAL")}: {this.state.active_total + this.state.sponsored_total} ads
        </div>
       </div>
       {
@@ -367,7 +373,7 @@ class Profile extends Component {
             </a>
            </div>
            <div className="b-profile-advert__text">
-            Updated: {dateFormat(new Date(product.last_update), "mmm dd")}
+            {getText("UPDATED")}: {dateFormat(new Date(product.last_update), "mmm dd")}
            </div>
            <div className="h-mt-5">
             <span className="b-profile-advert__price" dangerouslySetInnerHTML={{__html: product.currency_symbol+" "+commaNum(product.price)}}></span>
@@ -377,23 +383,23 @@ class Profile extends Component {
            <div className="b-profile-advert__footer" style={{paddingLeft: "175px"}}>
             <div className="b-profile-advert__footer-info-panel">
              <a className="b-profile-advert__go-to-edit" href={"/edit-ad?id="+product.id}>
-              Edit
+              {getText("EDIT")}
              </a>
-             <a onClick={this.showStats} href="javascript:void(0)" data-index={index} data-id={product.id} style={{paddingLeft: "5px", paddingRight: "5px"}} className="qa-fw-field__error b-profile-advert__go-to-publish qa-btn-owner-publish-draft">
-              Show Stats&nbsp;<i className="fa fa-bar-chart"></i>
+             <a onClick={this.showStats} href="javascript:void(0)" data-index={index} data-id={product.id} style={{paddingLeft: "5px", paddingRight: "5px"}} className="cap-case qa-fw-field__error b-profile-advert__go-to-publish qa-btn-owner-publish-draft">
+              {getText("SHOW_STATS")}&nbsp;<i className="fa fa-bar-chart"></i>
              </a>
              <div className="h-inline-block">
-              <p className="hide b-profile-advert__footer-block">
+              <p className="hide b-profile-advert__footer-block low-case">
                <i className="h-icon icon-profile-eye-new">
                </i>
-               {product.views} views
+               {product.views} {getText("VIEWS")}
               </p>
              </div>
              <div className="h-inline-block">
-              <p className="hide b-profile-advert__footer-block">
+              <p className="hide b-profile-advert__footer-block low-case">
                <i className="h-icon icon-profile-phone-new">
                </i>
-               {product.contact_views} contact views
+               {product.contact_views} {getText("CONTACT_VIEWS")}
               </p>
              </div>
              <a className="b-profile-advert__go-to-statistic hide" href="/statistics.html">
@@ -417,9 +423,9 @@ class Profile extends Component {
            <img alt="" className="h-mb-10 h-rl-15" src={STATIC_IMAGES_CLIENT_DIR+"no_ads.png"}/>
            {
              this.state.products_type == "active"?
-              <p>You don't have non-boosted ads.<br />Post ads for free and get clients.</p>
+              <p>{getText("NO_NON_BOOSTED_AD")}<br />{getText("POST_AD_4_FREE")}</p>
               :
-              <p>You don't have any ad Boosted yet.<br />Boosted ads get more views, engagements and more sales.</p>
+              <p>{getText("NO_BOOSTED_AD")}<br />{getText("POST_BOOSTED_AD_FREE")}</p>
           }
           </div>
          </div>
@@ -442,7 +448,7 @@ class Profile extends Component {
        this.state.products_has_next?
        <a onClick={this.loadProducts} rel="nofollow" className="h-a-without-underline" style={{width: "200px", display: "block", margin: "15px auto"}}>
            <span className="qa-start-chat b-button b-button--transparent b-button--biggest-size">
-               Show more
+               {getText("SHOW_MORE")}
            </span>
        </a>
        :

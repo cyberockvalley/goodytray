@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { Link } from "react-router-dom"
-import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE } from "../../../Constants"
+import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, getText } from "../../../Constants"
 const browser = require("../utils/Browser")
 var dateFormat = require('dateformat');
 import Navbar from './Navbar'
@@ -195,7 +195,7 @@ class ProductReviews extends Component {
                <div className="bc-opinions-left-container">
                 <div className="b-opinions-card">
                  <div className="b-opinions-card__title">
-                  Feedbacks&nbsp;
+                  {getText("FEEDBACKS")}&nbsp;
                   {
                     this.state.product.id?
                     <Link to={"/seller/"+this.state.product.user_id}>
@@ -219,7 +219,7 @@ class ProductReviews extends Component {
                          </svg>
                          <br/>
                           <span>
-                           Positive ({this.state.positive_count})
+                           {getText("POSITIVE")} ({this.state.positive_count})
                           </span>
                         </div>
                         <div onClick={this.showNeutral} className={"b-tab-feedback__summary--reactions-item b-tab-feedback__summary--reactions-item-neutral" 
@@ -230,7 +230,7 @@ class ProductReviews extends Component {
                          </svg>
                          <br/>
                           <span>
-                           Neutral ({this.state.neutral_count})
+                           {getText("NEUTRAL")} ({this.state.neutral_count})
                           </span>
                         </div>
                         <div onClick={this.showNegative} className={"b-tab-feedback__summary--reactions-item b-tab-feedback__summary--reactions-item-negative" 
@@ -241,7 +241,7 @@ class ProductReviews extends Component {
                          </svg>
                          <br/>
                           <span>
-                           Negative ({this.state.negative_count})
+                          {getText("NEGATIVE")} ({this.state.negative_count})
                           </span>
                         </div>
                        </div>
@@ -249,7 +249,7 @@ class ProductReviews extends Component {
                         <button onClick={this.handleClick} data-type="create-review" className="h-width-100p h-bold fw-button qa-fw-button fw-button--type-success fw-button--size-medium" type="button">
                          <span className="fw-button__content" data-type="create-review">
                           <span className="fw-button__slot-wrapper" data-type="create-review">
-                           Leave Feedback
+                          {getText("LEAVE_REVIEW")}
                           </span>
                          </span>
                         </button>
@@ -267,7 +267,7 @@ class ProductReviews extends Component {
                             {review.fullname}
                            </Link>
                            <span className="b-feedback-item--profile-info-status b-feedback-item--profile-info-status--negative">
-                            Positive
+                           {getText("POSITIVE")}
                            </span>
                           </div>
                          </div>
@@ -291,7 +291,7 @@ class ProductReviews extends Component {
                         }>
                          <span className="fw-button__content" data-type="create-review">
                           <span className="fw-button__slot-wrapper" data-type="create-review">
-                          Load more >>
+                          {getText("LOAD_MORE")} &gt;&gt;
                           </span>
                          </span>
                         </button>
@@ -308,7 +308,7 @@ class ProductReviews extends Component {
                             {review.fullname}
                            </Link>
                            <span className="b-feedback-item--profile-info-status b-feedback-item--profile-info-status--negative">
-                            Neutral
+                           {getText("NEUTRAL")}
                            </span>
                           </div>
                          </div>
@@ -332,7 +332,7 @@ class ProductReviews extends Component {
                       }>
                        <span className="fw-button__content" data-type="create-review">
                         <span className="fw-button__slot-wrapper" data-type="create-review">
-                        Load more >>
+                        {getText("LOAD_MORE")} &gt;&gt;
                         </span>
                        </span>
                       </button>
@@ -349,7 +349,7 @@ class ProductReviews extends Component {
                             {review.fullname}
                            </Link>
                            <span className="b-feedback-item--profile-info-status b-feedback-item--profile-info-status--negative">
-                            Negative
+                           {getText("NEGATIVE")}
                            </span>
                           </div>
                          </div>
@@ -373,7 +373,7 @@ class ProductReviews extends Component {
                       }>
                        <span className="fw-button__content" data-type="create-review">
                         <span className="fw-button__slot-wrapper" data-type="create-review">
-                        Load more >>
+                        {getText("LOAD_MORE")} &gt;&gt;
                         </span>
                        </span>
                       </button>
@@ -392,7 +392,7 @@ class ProductReviews extends Component {
                   </use>
                  </svg>
                  <br/>
-                  Your feedback is very important for the seller review. Please, leave the honest review to help other buyers and the seller in the customer attraction.
+                 {getText("UR_FEEDBACK_IS_IMPORTANT")}
                  
                 </div>
                </div>

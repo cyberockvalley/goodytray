@@ -4,16 +4,14 @@ const cors = require("cors")
 
 const SubCat = require("../models/SubCat")
 sub_cats.use(cors())
-const Sequelize = require("sequelize")
-const Op = Sequelize.Op
 
-import {ERROR_DB_OP} from "../../../Constants"
+import {getText} from "../../../Constants"
 
 //get sub_cats
 sub_cats.get("/", function(req, res) {
     const id = req.query.cid
     if(!id) {
-        res.json({sub_cats: null, message: "No identifier provided"})
+        res.json({sub_cats: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
         SubCat.findAll({
@@ -27,7 +25,7 @@ sub_cats.get("/", function(req, res) {
             res.json({sub_cats: subCats})
         })
         .catch((error) => {
-            res.json({sub_cats: null, message: "An error occurred while trying to get the list"})
+            res.json({sub_cats: null, message: getText("API_LIST_ERROR")})
         })
     }
 })
@@ -36,7 +34,7 @@ sub_cats.get("/", function(req, res) {
 sub_cats.get("/details", function(req, res) {
     const id = req.query.id
     if(!id) {
-        res.json({details: null, message: "No identifier provided"})
+        res.json({details: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
         SubCat.findOne({
@@ -47,7 +45,7 @@ sub_cats.get("/details", function(req, res) {
             res.json({details: details})
         })
         .catch((error) => {
-            res.json({details: null, message: "An error occurred while trying to get the list"})
+            res.json({details: null, message: getText("API_LIST_ERROR")})
         })
     }
 })

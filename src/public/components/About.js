@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { SITE_NAME } from '../../../Constants'
+import { getText, SITE_NAME } from '../../../Constants'
 
 
 class About extends Component {
@@ -22,11 +22,11 @@ class About extends Component {
  <div>
   <div firstLoad="true">
    <div className="b-tips__wrapper">
-    <h1 className="b-tips__h1">
+    <h1 className="b-tips__h1 cap-case">
         <Link to="/" className="logo font-bask-normal">
-            <img src="/public/logo.png" width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
+            <img src={`${getText("LOGO_PATH")}`} width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
         </Link>
-        About Us
+        {getText("ABOUT_US")}
     </h1>
     
 <div className="b-about-bg">
@@ -36,16 +36,16 @@ class About extends Component {
     <div className="b-about-side">
      <div className="b-about-header-wrapper">
       <h2 className="b-about-header-title">
-       {SITE_NAME + " is the best place to sell anything from anywhere to anyone"}
+       {getText("ABOUT_SITE_SHORT")}
       </h2>
       <span className="b-about-span h-mt-30 h-mb-30">
-       It is the biggest free online classified with an advanced security system.                                 We provide a simple hassle-free solution to sell and buy almost anything.
+       {getText("LONG_SITE_DESC")}
       </span>
       <span className="b-about-scroll-to-header">
-       Table of contents
+       {getText("TABLE_OF_CONTENT")}
       </span>
       <a href="#howToSell" className="b-about-scroll-to div">
-       {"How to sell on "+SITE_NAME+"?"}
+       {getText("HOW_TO_SELL_ON") + " " + SITE_NAME + "?"}
        <div className="b-about-scroll-to-icon">
         <svg className="bottom" strokeWidth="0" style={{width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(189, 189, 189)", stroke: "inherit"}}>
          <use xlinkHref="#bottom">
@@ -54,7 +54,7 @@ class About extends Component {
        </div>
       </a>
       <a href="#howToBuy" className="b-about-scroll-to div">
-       {"How to buy on "+SITE_NAME+"?"}
+      {getText("HOW_TO_SELL_ON") + " " + SITE_NAME + "?"}
        <div className="b-about-scroll-to-icon">
         <svg className="bottom" strokeWidth="0" style={{width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(189, 189, 189)", stroke: "inherit"}}>
          <use xlinkHref="#bottom">
@@ -63,7 +63,7 @@ class About extends Component {
        </div>
       </a>
       <a href="#safety" className="b-about-scroll-to div">
-       Safety
+       {getText("SAFETY")}
        <div className="b-about-scroll-to-icon">
         <svg className="bottom" strokeWidth="0" style={{width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(189, 189, 189)", stroke: "inherit"}}>
          <use xlinkHref="#bottom">
@@ -72,7 +72,7 @@ class About extends Component {
        </div>
       </a>
       <a href="#sellLikePro" className="hidden b-about-scroll-to div">
-       Sell like a pro!
+       {getText("SELL_LIKE_A_PRO")}
        <div className="b-about-scroll-to-icon">
         <svg className="bottom" strokeWidth="0" style={{width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(189, 189, 189)", stroke: "inherit"}}>
          <use xlinkHref="#bottom">
@@ -89,51 +89,51 @@ class About extends Component {
    <div className="b-about-section reverse" id="howToSell">
     <div className="b-about-side">
      <h2 className="b-about-header-title">
-      {"How to sell on "+SITE_NAME+"?"}
+      {getText("HOW_TO_SELL_ON") + " " + SITE_NAME + "?"}
      </h2>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       1.
+       {getText("FIG_1")}.
        <a href="/register">
-        Register
+        {getText("REG")}
        </a>
       </h3>
       <span>
-       Register using your e-mail and phone number (or do it via Facebook or Google).                                 Make sure you’re entering a correct phone number, so your clients could reach you!
+       {getText("REG_MARKETING")}
       </span>
      </div>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       2. Make photos of your item.
+      {getText("FIG_2")}. {getText("MAKE_ITEM_PHOTOS")}
       </h3>
       <span>
-       Feel free to make a lot of photos using your smartphone.                                 Make sure they show your item in the best light.
+       {getText("PHOTO_UPLOAD_MARKETING")}
       </span>
      </div>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       3. Click the <a href="/sell">SELL Button</a>.
+      {getText("FIG_3")}. <a href="/sell" className="up-case">{getText("CLICK_D_SELL_BTN")}</a>.
       </h3>
       <span>
-       Choose a proper category, upload your photos and write a clear title and full description of your item.                                 Enter a fair price, select attributes and send your advert to review!
+       {getText("AD_POST_MARKETING")}
       </span>
      </div>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       4. Answer the messages and calls from your clients!
+       {getText("FIG_4")}. {getText("ANS_REACTIONS")}
       </h3>
       <span>
 {"       If everything is ok with your advert, it’ll be on " + SITE_NAME + " in a couple of hours after sending to moderation.                                 We’ll send you a letter and notification when your advert goes live.                                 Check your messages and be ready to earn money!"}
        <span className="hidden">
-        Do you want to sell like a pro? Check out our <a className="" href="/sc/premium-services">
-         Premium Services
+        {getText("SELL_LIKE_A_PRO_QUEST")} <a className="" href="/sc/premium-services">
+        {getText("CHECK_PREMIUM")}
         </a>
         .
        </span>
       </span>
      </div>
      <button onClick={this.sell} className="b-primary-button about accent h-mt-30">
-      Sell
+      {getText("SELL")}
      </button>
     </div>
     <div className="b-about-side">
@@ -143,42 +143,42 @@ class About extends Component {
    <div className="b-about-section" id="howToBuy">
     <div className="b-about-side">
      <h2 className="b-about-header-title">
-      {"How to buy on "+SITE_NAME+"?"}
+      {getText("HOW_TO_BUY_ON") + " " + SITE_NAME + "?"}
      </h2>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       1. Search for the item.
+       {getText("FIG_1")}. {getText("BROWSE_OR_SEARCH_CTL")}
       </h3>
       <span>
-       Find what you need using search panel and filters.                                 We have over a million adverts, choose exactly what you are looking for.
+       {getText("FIND_WHAT_U_NEED")}
       </span>
      </div>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       2. Contact a seller.
+       {getText("FIG_2")}. {getText("CONTACT_A_SELLER")}
       </h3>
       <span>
-{"       You may use chat on " + SITE_NAME + " or call them via phone.                                 Discuss all the details, negotiate about the price."}
+          {getText("USE_CHAT")}
       </span>
      </div>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       3. Take your item or order a delivery.
+       {getText("FIG_3")}. {getText("PICK_OR_DELIVERY")}
       </h3>
       <span>
-       We check our sellers carefully, but it’s always better to check twice, right?                                 Meet a seller in public place and be sure to pay only after collecting your item.
+       {getText("CHECK_SELLER")}
       </span>
      </div>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       4. Leave your feedback about the seller.
+       {getText("FIG_4")}. {getText("GIVE_SELLER_FEEDBACK")}
       </h3>
       <span>
-       Feel free to tell us about your purchase.                                 Your feedback will be published online on the seller’s page and will be very helpful for other buyers.                                 Let’s build a safe and professional business community together!
+       {getText("FEEDBACK_ENCOURAGED")}
       </span>
      </div>
      <button onClick={this.shop} className="b-primary-button about accent h-mt-30">
-      Go shopping
+      {getText("GO_SHOPPING")}
      </button>
     </div>
     <div className="b-about-side">
@@ -188,39 +188,39 @@ class About extends Component {
    <div className="b-about-section reverse" id="safety">
     <div className="b-about-side">
      <h2 className="b-about-header-title">
-      Safety
+      {getText("SAFETY")}
      </h2>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       1. General
+       {getText("FIG_1")}. {getText("GENERAL")}
       </h3>
       <span>
-{"       We are highly focused on the security and can solve any issues in short-terms.                                 That’s why we ask you, kindly, to leave a review after purchasing.                                 If you run into any problems with a seller, you can report us and " + SITE_NAME + " Team will check this seller as soon as possible."}
+          {getText("USER_REPORT_ENCOURAGED")}
       </span>
      </div>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       2. Personal safety tips.
+       {getText("FIG_2")}. {getText("PERSONAL_SAFETY_TIPS")}
       </h3>
       <span>
-       - Do not pay in advance, even for the delivery
+       - {getText("DO_NOT_PAY_ADVANCE")}
        <br/>
-        - Try to meet at a safe, public location
+        - {getText("PUBLIC_MEET_UP")}
         <br/>
-         - Check the item BEFORE you buy it
-          - Pay only after collecting the item
+         - {getText("CHECK_B4_PAY")}
+          - {getText("PAY_AFTER_COLLECTION")}
           <br/>
       </span>
      </div>
      <div className="hidden b-about-list-element">
       <h3 className="b-about-list-element-title">
-       3. Secure payments.
+       {getText("FIG_3")}. {getText("SECURE_PAY")}
       </h3>
       <span>
-{"       " + SITE_NAME + " provides"} <a className="" href="/sc/premium-services">
-        Premium Services
-       </a>
-{"       for those who want to sell and earn more.                                 We accept both online and offline payments for these services.                                 We guarantee secure and reliable payments on " + SITE_NAME + "."}
+        <a className="" href="/sc/premium-services">
+            {getText("WE_PROVIDE_PREMIUM")}
+        </a>
+        {getText("PREMIUM_FOR_THOSE")}
       </span>
      </div>
     </div>
@@ -231,48 +231,46 @@ class About extends Component {
    <div className="hidden b-about-section" id="sellLikePro">
     <div className="b-about-side">
      <h2 className="b-about-header-title">
-      Sell like a pro!
+     {getText("SELL_LIKE_A_PRO")}
      </h2>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       1. Pay attention to the details.
+       {getText("FIG_1")}. {getText("ATTENTION_TO_INFO")}
       </h3>
       <span>
-       Make good photos of your goods, write clear and detailed description.
+       {getText("MAKE_GOOD_PHOTOS")}
       </span>
      </div>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       2. Answer quickly.
+       {getText("FIG_2")}. {getText("ANS_QUICKLY")}
       </h3>
       <span>
-       Don’t make your buyer wait for your message for days.
+       {getText("DONT_MAKE_BUYERS_WAIT")}
        <span>
-        Be online or get
-        <a className="" href="/sc/premium-services">
-         SMS notifications
+        Be online
+        <a className="D-none" href="/sc/premium-services">
+            {getText("OR_GET_SMS_NOT")}
         </a>
-        on your messages.
        </span>
       </span>
      </div>
      <div className="b-about-list-element">
       <h3 className="b-about-list-element-title">
-       3. Use
+       {getText("FIG_3")}. {getText("USE")}
        <a className="" href="/sc/premium-services">
-        Premium Services
+        {getText("USE_PREMIUM_15X")}
        </a>
-       to get 15x more customers!
       </h3>
       <span>
-       Your adverts will appear at the top of the page and you will sell faster!
+       {getText("UR_ADVERT_ON_TOP")}
        <a className="" href="/sc/premium-services/how-it-works">
-        How does it work?
+        {getText("HOW_DOES_IT_WORK")}
        </a>
       </span>
      </div>
      <button className="b-primary-button about accent h-mt-30">
-      Go premium
+      {getText("GO_PREMIUM")}
      </button>
     </div>
     <div className="b-about-side">
@@ -281,7 +279,7 @@ class About extends Component {
    </div>
    <div className="b-about-questions">
     <button className="hidden b-primary-button about">
-     Still have questions? Read FAQ.
+     {getText("GOT_QUEST_READ_FAQ")}
     </button>
    </div>
   </div>

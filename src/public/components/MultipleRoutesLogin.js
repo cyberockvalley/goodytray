@@ -16,6 +16,10 @@ import About from './About'
 import Contact from './Contact'
 import Privacy from './Privacy'
 import Tos from './Tos'
+import Register from './Register'
+import Login from './Login'
+
+import Sell from './SellEdit'
 
 const MultipleRoutesLogin = (props) => (
   <div className="App">
@@ -26,7 +30,7 @@ const MultipleRoutesLogin = (props) => (
       render={(propz) => <SearchPage {...propz} user={props.initialData.user} />}
     />
     <Route 
-      exact path="/(profile|register|login)" 
+      exact path="/profile" 
       render={(propz) => <Profile {...propz} user={props.initialData.user} />}
     />
     <Route exact path="/products/:title/:id" 
@@ -52,6 +56,10 @@ const MultipleRoutesLogin = (props) => (
     />
     <Route exact path="/messages/:id" 
       render={(propz) => <Messages {...propz} user={props.initialData.user} />}
+    />
+    <Route 
+      path="/(sell|edit-ad)" 
+      render={(propz) => <Sell {...propz} initialData={props.initialData} />}
     />
     <Route path="/about" component={About} />
     <Route path="/contact" component={Contact} />

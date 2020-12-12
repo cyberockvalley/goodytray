@@ -5,6 +5,7 @@ import {isValidNumber, isValidEmail, id, cls, shuffleHash, randomHashString, add
 import Navbar from './Navbar'
 import Footer from "./Footer"
 import queryString from 'querystring'
+import { getText } from '../../../Constants'
 
 class Register extends Component {
     constructor(props) {
@@ -134,7 +135,7 @@ class Register extends Component {
                    }
                    this.setState({posting_form: false})
                } else {
-                   if(res.message == null) res.message = "Failed to get response from the server"
+                   if(res.message == null) res.message = getText("ERROR_SERVER_RESPONSE")
                    console.log("reg_message: "+res.message)
                    this.setState({posting_form: false})
                }
@@ -163,7 +164,7 @@ class Register extends Component {
                                                 style={{ width: "40px", height: "40px", maxWidth: "40px", maxHeight: "40px", fill: "rgb(112, 185, 63)", stroke: "inherit" }}>
                                                 <use xlinkHref="#person"></use>
                                             </svg>
-                                            Registration
+                                            {getText("REG")}
                                         </div>
                                         <div className="fw-card-content qa-fw-card-content">
                                             <div className="row center-xs">
@@ -182,7 +183,7 @@ class Register extends Component {
                                                                                 style={{ width: "20px", height: "20px", maxWidth: "20px", maxHeight: "20px", fill: "rgb(255, 255, 255)", stroke: "inherit" }}>
                                                                                 <use xlinkHref="#facebook"></use>
                                                                             </svg>
-                                                                            Login with Facebook
+                                                                            {getText("LOG_WITH_FB")}
                                                                 </span></span></a></div>
                                                                 <div className="col-xs-12"><a
                                                                     href={this.state.third_party_login_links.google}
@@ -195,7 +196,7 @@ class Register extends Component {
                                                                                 style={{ width: "30px", height: "30px", maxWidth: "30px", maxHeight: "30px", fill: "rgb(255, 255, 255)", stroke: "inherit" }}>
                                                                                 <use xlinkHref="#google"></use>
                                                                             </svg>
-                                                                            Login with Google
+                                                                            {getText("LOG_WITH_G")}
                                                                 </span></span></a></div>
                                                             </div>
                                                         </div>
@@ -204,7 +205,7 @@ class Register extends Component {
                                                         <div className="text-left">
                                                             
                                                             <div id="email-group" className="form-group input-group-lg">
-                                                                <label for="email">Email:</label>
+                                                                <label for="email">{getText("EMAIL")}:</label>
                                                                 <input autoComplete="off" type="text"
                                                                         className="form-control"
                                                                         name="email"
@@ -212,12 +213,12 @@ class Register extends Component {
                                                                         value={this.state.email}
                                                                         onChange={this.onChange}/>
                                                                 <span id="email-error" className="fw-field__error qa-fw-field__error hide">
-                                                                    This field is required.
+                                                                    {getText("FIELD_REQUIRED_LOWERCASE")}
                                                                 </span>
                                                             </div>
 
                                                             <div id="password-group" className="form-group input-group-lg">
-                                                                <label for="password">Password:</label>
+                                                                <label for="password">{getText("PASSWORD")}:</label>
                                                                 <input autoComplete="off" type="password"
                                                                         className="form-control"
                                                                         name="password"
@@ -225,12 +226,12 @@ class Register extends Component {
                                                                         value={this.state.password}
                                                                         onChange={this.onChange}/>
                                                                 <span id="password-error" className="fw-field__error qa-fw-field__error hide">
-                                                                    This field is required.
+                                                                    {getText("FIELD_REQUIRED_LOWERCASE")}
                                                                 </span>
                                                             </div>
 
                                                             <div id="fullname-group" className="form-group input-group-lg">
-                                                                <label for="fullname">Fullname:</label>
+                                                                <label for="fullname">{getText("FULLNAME")}:</label>
                                                                 <input autoComplete="off" type="text"
                                                                         className="form-control"
                                                                         name="fullname"
@@ -238,12 +239,12 @@ class Register extends Component {
                                                                         value={this.state.fullname}
                                                                         onChange={this.onChange}/>
                                                                 <span id="fullname-error" className="fw-field__error qa-fw-field__error hide">
-                                                                    This field is required.
+                                                                    {getText("FIELD_REQUIRED_LOWERCASE")}
                                                                 </span>
                                                             </div>
                                                             
                                                             <div id="number-group" className="form-group input-group-lg">
-                                                                <label for="number">Phone number (e.g <b>+1</b>xxx...):</label>
+                                                                <label for="number">{getText("PHONE_NUMBER")} {!getText("IS_NOT_GLOBAL")? "(e.g <b>+1</b>xxx...)" : ""}:</label>
                                                                 <div className="input-group input-group-lg">
                                                                     <input autoComplete="off" type="text"
                                                                         className="form-control"
@@ -255,14 +256,14 @@ class Register extends Component {
                                                                     <span className="input-group-addon">Tel</span>
                                                                 </div>
                                                                 <span id="number-error" className="fw-field__error qa-fw-field__error hide">
-                                                                    This field is required.
+                                                                    {getText("FIELD_REQUIRED_LOWERCASE")}
                                                                 </span>
                                                             </div>
                                                         </div>
                                                         
                                                         <div className="fw-checkbox qa-fw-checkbox h-mb-30 fw-checked">
                                                             <label className="fw-checkbox__label">
-                                                                By clicking the registration button below, you agree with our <a href="/tos" className="h-base-link">Terms of Services</a> and <a href="/privacy-policy" className="h-base-link">Privacy Policy</a>.
+                                                                {getText("BY_CLICKING_REG")} <a href="/tos" className="h-base-link">{getText("TOS")}</a> {getText("AND_LOWERCASE")} <a href="/privacy-policy" className="h-base-link">{getText("PRIVACY_POLICY")}</a>.
                                                             </label>
                                                         </div>
                                                         {
@@ -270,14 +271,14 @@ class Register extends Component {
                                                             <button id="submit" type="submit" disabled="disabled" 
                                                                 className="fw-button--disabled h-width-100p h-bold fw-button qa-fw-button fw-button--type-success fw-button--size-large">
                                                                 <span className="fw-button__content"> 
-                                                                    <span className="fw-button__slot-wrapper italic">Please wait...</span>
+                                                                    <span className="fw-button__slot-wrapper italic">{getText("PLS_WAIT")}...</span>
                                                                 </span>
                                                             </button>
                                                             :
                                                             <button id="submit" type="submit" 
                                                                 className="h-width-100p h-bold fw-button qa-fw-button fw-button--type-success fw-button--size-large">
                                                                 <span className="fw-button__content"> 
-                                                                    <span className="fw-button__slot-wrapper">REGISTER</span>
+                                                                    <span className="fw-button__slot-wrapper up-case">{getText("REGISTER")}</span>
                                                                 </span>
                                                             </button>
                                                         }
@@ -291,7 +292,7 @@ class Register extends Component {
                                     <div className="bc-social-buttons-container col-xs">
                                         <div className="h-font-12 row center-xs">
                                             <div className="bc-auth-card__form-holder">
-                                                Already registered? <Link to={"/login" +(this.state.query_values.next?"?next="+this.state.query_values.next:"")} className="h-base-link">Sign in</Link></div>
+                                                {getText("HAVE_ACCOUNT_QUEST")} <Link to={"/login" +(this.state.query_values.next?"?next="+this.state.query_values.next:"")} className="h-base-link">{getText("SIGN_IN")}</Link></div>
                                         </div>
                                     </div>
                                 </div>
