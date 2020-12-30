@@ -2,7 +2,7 @@ const express = require("express")
 const products = express.Router()
 const cors = require("cors")
 
-import { logger } from "../utils/Funcs"
+import { intOrMin, logger } from "../utils/Funcs"
 //logger.disableLogger()
 
 const Product = require("../models/Product")
@@ -17,12 +17,13 @@ const fileUploader = require("../utils/FileUploader")
 
 import {checkUserAuth} from "../components/UserFunctions"
 import {truncText, randNum, okResponse} from "../utils/Funcs"
-import { ERROR_DB_OP, MAX_PRODUCT_PHOTOS_SIZE, PRODUCTS_PER_PAGE, PRODUCTS_PHOTOS_CLIENT_DIR, API_ROOT, getText } from "../../../Constants"
+import { ERROR_DB_OP, MAX_PRODUCT_PHOTOS_SIZE, PRODUCTS_PER_PAGE, PRODUCTS_PHOTOS_CLIENT_DIR, API_ROOT, getText, getDatabaseTranslatedColumnName, AD_APPROVAL_RANK } from "../../../Constants"
 const db = require("../database/db")
 const Sequelize = require("sequelize")
 
 import fs from "fs"
 import { nameToId, EXCHANGE_RATE } from "../utils/ExpressFunc"
+import { request } from "http"
 
 const andQuery = function(query, filter) {
     return query.includes("WHERE")? query + " AND " + filter : query + " WHERE " + filter
@@ -33,6 +34,80 @@ const orQuery = function(query, filter) {
 const orderQuery = function(query, filter) {
     return query.includes("ORDER BY")? query + ", " + filter : query + " ORDER BY " + filter
 }
+
+products.get("/approve/:id", checkUserAuth, (req, res) => {
+    if(!res.locals.token_user) {
+        res.json({auth_required: true})
+
+    } else if(res.locals.token_user.rank < AD_APPROVAL_RANK) {
+        res.json({permission_required: true})
+
+    } else {
+        if(!req.params.id) {
+            okResponse(res.status, {status: 0, message: "Identifier not supplied"})
+        }
+        var id = parseInt(req.params.id)
+        Product.update(
+        { reviewed: 1 },
+        { where: { id: id } }
+        )
+        .then(result =>
+            okResponse(res, {status: 1})
+        )
+        .catch(err =>
+            okResponse(res, {status: 0, message: ERROR_DB_OP})
+        )
+    }
+})
+products.get("/pending", checkUserAuth, (req, res) => {
+    if(!res.locals.token_user) {
+        res.json({auth_required: true})
+
+    } else if(res.locals.token_user.rank < AD_APPROVAL_RANK) {
+        res.json({permission_required: true})
+
+    } else {
+        var offset = (parseInt(req.query.page) - 1) * PRODUCTS_PER_PAGE
+        var queryObject = {
+            limit: PRODUCTS_PER_PAGE,
+            offset: offset,
+            where: {
+                reviewed: 0
+            },
+            order: [
+                ['id', 'DESC']
+            ]
+        }
+        
+        if(req.query.count_only) {
+            queryObject.limit = 1000000
+            Product.count(queryObject)
+            .then(result => {
+                okResponse(res, {status: 1, message: "ok", list: null, counts: result})
+            })
+            .catch(e => {
+                okResponse(res, {status: 0, message: ERROR_DB_OP + JSON.stringify(e), list: null, counts: 0})
+            })
+
+        } else {
+            Product.findAll(queryObject)
+            .then(result => {
+                okResponse(res, {
+                    status: 1, 
+                    message: "ok", 
+                    list: result,
+                    has_prev: req.query.page > 1,
+                    has_next: result.length > PRODUCTS_PER_PAGE
+                })
+            })
+            .catch(e => {
+                okResponse(res, {status: 0, message: ERROR_DB_OP + JSON.stringify(e), list: null, counts: 0})
+            })
+        }
+        
+    }
+})
+
 products.get(["/user/boosted/:id", "/user/non_boosted/:id"], (req, res) => {
     var currentTime = (new Date()).getTime()
     var userId = req.params.id
@@ -84,12 +159,12 @@ products.get(["/user/boosted/:id", "/user/non_boosted/:id"], (req, res) => {
         }
     })
     .catch(e => {
-        res.json({status: 0, message: ERROR_DB_OP+e, list: null, counts: 0})
+        res.json({status: 0, message: ERROR_DB_OP, list: null, counts: 0})
     })
 })
 products.get("/sponsored", (req, res) => {
     var currentTime = (new Date()).getTime()
-    var q = "SELECT * FROM products WHERE sponsored_end_time > ? ORDER BY last_sponsored_view_time ASC LIMIT ?"
+    var q = "SELECT * FROM products WHERE reviewed=1 && sponsored_end_time > ? ORDER BY last_sponsored_view_time ASC LIMIT ?"
     db.sequelize.query(q, {
         replacements: [currentTime, 4],
         raw: false, 
@@ -132,17 +207,18 @@ products.get("/sponsored", (req, res) => {
         }
     })
     .catch(e => {
-        res.json({status: 0, message: ERROR_DB_OP+e, list: null})
+        res.json({status: 0, message: ERROR_DB_OP, list: null})
     })
 })
 //get products
-products.get("/", async function(req, res) {
+products.get("/", checkUserAuth, async function(req, res) {
     const today = new Date()
     const page = req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0? parseInt(req.query.page) : 1
     var hasNext = false, hasPrev = page > 1
     const select = "SELECT * FROM products"
     const selectCount = "SELECT COUNT(id) AS id FROM products"
     var query = ""
+    query = andQuery(query, "reviewed>0")
     const replacements = []
     
     var i = 0
@@ -354,20 +430,20 @@ products.get("/", async function(req, res) {
                     res.json({status: 1, message: getText("SUCCESS"), list: products, has_prev: hasPrev, has_next: hasNext, counts: counts[0].id})
                 })
                 .catch(e => {
-                    res.json({status: 0, message: ERROR_DB_OP+e, list: null, has_prev: hasPrev, has_next: hasNext})
+                    res.json({status: 0, message: ERROR_DB_OP, list: null, has_prev: hasPrev, has_next: hasNext})
                 })
             }
         }
     })
     .catch((error) => {
-        res.json({status: 0, message: ERROR_DB_OP+error, list: null, has_prev: hasPrev, has_next: hasNext})
+        res.json({status: 0, message: ERROR_DB_OP, list: null, has_prev: hasPrev, has_next: hasNext})
     })
 })
 
 //get products counts by category and sub category
 products.get("/cats_and_sub_cats", (req, res) => {
-    var q = "SELECT cats.id, cat.name, sub_cats.id as sub_cat_id"
-    db.sequelize.query("SELECT sub_cats.*, cats.name as cat_name, cats.total_products as cat_total_products FROM sub_cats, cats WHERE sub_cats.cat_id = cats.id ORDER BY cat_id ASC", {
+    var q = `SELECT cats.id, ${getDatabaseTranslatedColumnName("cats.name")}, sub_cats.id as sub_cat_id`
+    db.sequelize.query(`SELECT sub_cats.id, sub_cats.cat_id, sub_cats.total_products, ${getDatabaseTranslatedColumnName("sub_cats.name")} as sub_cat_name, ${getDatabaseTranslatedColumnName("cats.name")} as cat_name, cats.total_products as cat_total_products FROM sub_cats, cats WHERE sub_cats.cat_id = cats.id ORDER BY cat_id ASC`, {
         replacements: [],
         raw: false, 
         type: Sequelize.QueryTypes.SELECT
@@ -386,10 +462,10 @@ products.get("/cats_and_sub_cats", (req, res) => {
                 current.name = cats[i].cat_name
                 current.total_products = cats[i].cat_total_products
                 current.sub_cats = []
-                current.sub_cats.push({id: cats[i].id, name: cats[i].name, total_products: cats[i].total_products})
+                current.sub_cats.push({id: cats[i].id, name: cats[i].sub_cat_name, total_products: cats[i].total_products})
                 lastCatId = cats[i].cat_id
             } else {
-                current.sub_cats.push({id: cats[i].id, name: cats[i].name, total_products: cats[i].total_products})
+                current.sub_cats.push({id: cats[i].id, name: cats[i].sub_cat_name, total_products: cats[i].total_products})
             }
         }
         if(current) {
@@ -399,13 +475,14 @@ products.get("/cats_and_sub_cats", (req, res) => {
         
     })
     .catch(e => {
-        res.json(null+e)
+        res.json()
     })
 })
 
 //get products details
-products.get("/details", function(req, res) {
+products.get("/details", checkUserAuth, function(req, res) {
     const id = req.query.id
+    const forceShow = intOrMin(req.query.force_show, -1)
     var viewsSize = randNum(1, 10)
     if(viewsSize > 1) {
         viewsSize = 0;
@@ -414,7 +491,7 @@ products.get("/details", function(req, res) {
         res.json({details: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
-        db.sequelize.query("SELECT products.*, users.username AS poster_username, users.fullname AS poster_fullname, users.profile_photo AS poster_profile_photo, users.number AS poster_number, users.created AS poster_created, users.last_seen AS poster_last_seen FROM products, users WHERE products.id = ? AND users.id = products.user_id LIMIT 1", {
+        db.sequelize.query(`SELECT products.*, users.username AS poster_username, users.fullname AS poster_fullname, users.profile_photo AS poster_profile_photo, users.number AS poster_number, users.created AS poster_created, users.last_seen AS poster_last_seen FROM products, users WHERE reviewed>${res.locals.user && res.locals.user.rank >= AD_APPROVAL_RANK || forceShow == 1? -1 : 0} && products.id = ? AND users.id = products.user_id LIMIT 1`, {
             replacements: [id],
             raw: false, 
             type: Sequelize.QueryTypes.SELECT,
@@ -424,7 +501,7 @@ products.get("/details", function(req, res) {
         .then((product) => {
             product = product[0]
             //get cat and sub_cat name
-            db.sequelize.query("SELECT cats.name AS cat_name, sub_cats.name AS sub_cat_name from cats, sub_cats WHERE cats.id = ? AND sub_cats.id = ? LIMIT 1 ", {
+            db.sequelize.query(`SELECT ${getDatabaseTranslatedColumnName("cats.name")} AS cat_name, ${getDatabaseTranslatedColumnName("sub_cats.name")} AS sub_cat_name from cats, sub_cats WHERE cats.id = ? AND sub_cats.id = ? LIMIT 1 `, {
                 replacements: [product.cat_id, product.sub_cat_id],
                 raw: false, 
                 type: Sequelize.QueryTypes.SELECT,
@@ -544,7 +621,7 @@ const LOGO_MARGIN_PERCENTAGE = 5;
   ]).image.write(SERVER_ADDR + "/public/products/jimp_1.jpg");
   return true;
 //var imageFromMain = main();
-//return main().then(image => image.write(FILENAME)).catch(e => console.log("Jinmp upload error: "+e));
+//return main().then(image => image.write(FILENAME)).catch(e => console.log("Jinmp upload error: "));
 */
 }
 
@@ -742,6 +819,7 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
             productData.photos = photos
             if(req.originalUrl.includes("upload")) {
                 console.log("c-a-t", 77)
+                productData.reviewed = 0
                 Product.create(productData)
                 .then(prod => {
                     Cat.findOne({
@@ -762,14 +840,14 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
                                 if(sub_cat) {
                                     const newSubCat = {total_products: sub_cat.total_products + 1};
                                     sub_cat.update(newSubCat)
-                                    return res.status(200).json({status: 1, message: getText("AD_POSTED")})
+                                    return res.status(200).json({status: 1, message: getText("AD_POSTED"), product_id: prod.id})
                     
                                 } else {
                                     return res.status(200).json({status: -1, message: ERROR_DB_OP})
                                 }
                             })
                             .catch(err => {
-                                return res.status(200).json({status: -1, message: ERROR_DB_OP+err})
+                                return res.status(200).json({status: -1, message: ERROR_DB_OPrr})
                             })
             
                         } else {
@@ -777,11 +855,11 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
                         }
                     })
                     .catch(err => {
-                        return res.status(200).json({status: -1, message: ERROR_DB_OP+err})
+                        return res.status(200).json({status: -1, message: ERROR_DB_OPrr})
                     })
                 })
                 .catch(e => {
-                    return res.status(200).json({status: -1, message: ERROR_DB_OP+e, c: productData.currency_symbol})
+                    return res.status(200).json({status: -1, message: ERROR_DB_OP, c: productData.currency_symbol})
                 })
 
             } else {
@@ -885,7 +963,7 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
                     
                 })
                 .catch(e => {
-                    return res.status(200).json({status: -1, message: ERROR_DB_OP+e, c: productData.currency_symbol})
+                    return res.status(200).json({status: -1, message: ERROR_DB_OP, c: productData.currency_symbol})
                 })
             }
             

@@ -7,6 +7,11 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     dialect: "mysql",
     operatorsAliases: false,
 
+    define: {
+        //prevent sequelize from pluralizing table names
+        freezeTableName: true
+    },
+
     pool: {
         max: 5,
         min: 0,

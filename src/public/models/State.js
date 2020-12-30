@@ -2,7 +2,7 @@ const Sequelize = require("sequelize")
 const db = require("../database/db")
 
 module.exports = db.sequelize.define(
-    "state", 
+    "states", 
     {
         id: {
             type: Sequelize.INTEGER,

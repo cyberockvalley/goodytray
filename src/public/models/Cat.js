@@ -1,8 +1,10 @@
 const Sequelize = require("sequelize")
+const { getDatabaseTranslatedColumnName } = require("../../../Constants")
 const db = require("../database/db")
 
+
 module.exports = db.sequelize.define(
-    "cat", 
+    "cats", 
     {
         id: {
             type: Sequelize.INTEGER,
@@ -11,7 +13,8 @@ module.exports = db.sequelize.define(
         },
 
         name: {
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            field: getDatabaseTranslatedColumnName("name")
         },
 
         sub_cats: {

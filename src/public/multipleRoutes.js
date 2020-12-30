@@ -32,13 +32,13 @@ const AppSingle = () => (
   </Router>
 )
 
-var App = initialData.user == null? AppLogout : AppLogin;
+let App = initialData.user == null? AppLogout : AppLogin;
 /*
 if(initialData.isSingle) {
   App = AppSingle
 
 } else {
   App = initialData.user == null? AppLogout : AppLogin
-}*/
-
+}
+*/
 ReactDOM.hydrate(<App suppressHydrationWarning={true} />, document.getElementById('root'))

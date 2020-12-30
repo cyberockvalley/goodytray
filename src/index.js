@@ -12,8 +12,8 @@ if (result.error) {
 }
 
 //require('https').globalAgent.options.ca = require('ssl-root-cas/latest').create();
-console.log("PROCESS_ENV_DATA", result.parsed)
-console.log("DB_PASS", process.env.DB_PASS)
+//console.log("PROCESS_ENV_DATA", result.parsed)
+//console.log("DB_PASS", process.env.DB_PASS)
 import compression from 'compression'
 import express from 'express'
 import path from 'path'
@@ -58,8 +58,9 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
 app.use("*", (req, res, next) => {
-  global.REQUEST_HOST = req.get("host")
-  res.REQUEST_HOST = req.get("host")
+  global.REQUEST_HOST = req.hostname
+  res.REQUEST_HOST = req.hostname
+  //console.log("H_HOST", req.headers)
   next()
 })
 
@@ -119,274 +120,15 @@ app.use("*", checkUserAuth);
 
 app.use(LOGIN_PATHS, logOut);
 
-const http = require("https")
-const jijiHome = "https://jiji.ng"
-var headers = {
-  "Host": "jiji.ng",
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0",
-  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-  "Accept-Language": "en-US,en;q=0.5",
-  "DNT": "1",
-  "Connection": "keep-alive",
-  "Cookie": "__cfduid=d581ec910fa12b89fb91de6f2ba15285c1577679687; first_visit=1577679687; app=424394a3db1337c2c279eda31139d846; uid=44cfa8e7187ffd9f1c032e673714c4674c4bb864; device_logged=true; visits=done; rid=direct",
-  "Upgrade-Insecure-Requests": "1",
-  "TE": "Trailers",
-};
-app.get("/insp", async (req, res) => {
-  const user = res.locals.token_user
-  if(!user || user.email != "jinminetics@gmail.com") {
-    res.send("Action denied")
+app.use("/", PageMetaSetter);
+
+
+app.get(SELL_PATHS, (req, res, next) => {
+  if(!res.locals.token_user) {
+    res.redirect("/login?next="+encodeURI("/sell"))
 
   } else {
-    const cats = [/*
-      [15, "cars:191"], 
-      [9, "mobile-phones:101"],
-      [4, "computers-and-laptops:37", "tv-dvd-equipment:38"],
-      [0, "farm-machinery-equipment:0", 
-      "feeds-supplements-seeds:1", "livestock-and-poultry:2", 
-      "meals-and-drinks:3"
-      ],
-      [1, "birds:4", "cats-and-kittens:5", "dogs-and-puppies:6"],
-      [7, "decor-accessories:58", "furniture:56"],
-      [2, "babies-and-kids-accessories:11", "baby-care:12", "toys:19"],
-      [3, "industrial-ovens:20", "manufacturing-equipments:21"],
-      [5, "bags:41", "clothing:42", "shoes:45", "watches:46", 
-      "wedding-wear:47"],
-      [14, "art-collectibles:183", "books-and-games:184", "musical-instruments:187", 
-      "sports-bicycles-and-fitness:188"],
-      [12, "accounting-and-finance-cvs:122", "advertising-and-marketing-cvs:123"],
-      [13, "automotive-services:160", "building-and-trades-services:161"],*/
-      [8, "accounting-and-finance-jobs:62", "advertising-and-marketing-jobs:63"]
-    ]
-/*
-    for(var i = 0; i < cats.length; i++) {
-      await saveCatProducts(cats[i], res, i == cats.length - 1);
-    }*/
-    fs.readFile('json/result.json', async function (err, data) {
-      if(err) {
-        res.json({err})
-
-      } else {
-        var json = null
-        if(data.length == 0) {
-          json = []
-
-        } else {
-          json = JSON.parse(data)
-        }
-
-        var sliced = json.slice(200)
-        console.log("JSON_SIZE", json.length)
-        console.log("SLICED_SIZE", sliced.length)
-  
-        for(var i = 0; i < sliced.length; i++) {
-          var advert = sliced[i]
-          console.log("SAVE_PRODUCT", advert.addr)
-          await saveProduct(advert.addr, advert.cat_id, advert.sub_cat_id, "", res, i == sliced.length - 1)
-        }
-      }
-    })
-  }
-})
-const saveCatProducts = async (list, res, isLast) => {
-  console.log("saveCatProducts", list)
-  const catId = list[0];
-  for(var i = 1; i < list.length; i++) {
-    const idAndLink = list[i].split(":")
-    await saveSubcatProducts(catId, idAndLink[1], idAndLink[0], res, isLast && i == list.length - 1)
-  }
-}
-
-const product_links = []
-const saveSubcatProducts = async (catId, subCatId, subCatLink, res, isLast) => {
-  console.log("saveSubcatProducts", subCatLink);
-  const link = "https://jiji.ng/api_web/v1/listing?slug=" + subCatLink
-  
-  var request = http.get(link, {headers: headers});
-  request.on("response", (data) => {
-    data.setEncoding('utf8');
-    console.log("HEADERS", data.headers);
-      var chunks = [];
-      data.on('data', (chunk) => {
-       chunks.push(chunk);
-      })
-      data.on('end', async () => {
-        const productsPage = chunks.join('');
-        console.log("saveSubcatProducts", "https://jiji.ng/api_web/v1/listing?slug=" + subCatLink, truncText(productsPage, 100, "..."))
-        const json = JSON.parse(productsPage)
-        var adverts = json.adverts_list
-        adverts = adverts.adverts
-        var productApiPrefix = "https://jiji.ng/api_web/v1/item/"
-        fs.readFile('json/result.json', function (err, data) {
-          if(err) {
-            res.json({err})
-
-          } else {
-            var json = null
-            if(data.length == 0) {
-              json = []
-
-            } else {
-              json = JSON.parse(data)
-            }
-      
-            adverts.forEach(async (advert, index) => {
-              if(advert.images_count > 3) {
-                var pathAndQuery = advert.url.split("\?")
-                var path = pathAndQuery[0].split("-")
-                path = path[path.length - 1]
-                path = path.substring(0, path.indexOf("."))
-                const toSave = productApiPrefix + path + "?" + pathAndQuery[1]
-                await json.push({cat_id: catId, sub_cat_id: parseInt(subCatId), addr: toSave});
-                
-                
-                //await saveProduct(toSave, catId, subCatId, subCatLink, res, isLast && index == adverts.length - 1)
-              }
-            });
-            fs.writeFile("json/result.json", JSON.stringify(json), function(err){
-              if (err) throw err;
-              console.log('The "data to append" was appended to file!');
-              if(isLast) {
-                console.log("COMPLETED");//res.json({data: json})
-              }
-            });
-          }
-        })
-        
-    })
-  })
-}
-
-var FormData = require('form-data');
-const User = require("../src/public/models/User")
-const Product = require("../src/public/models/Product")
-const fs = require('fs');
-const saveProduct = async (productLink, catId, subCatId, subCatLink, res, isLast) => {
-  var request = http.get(productLink, {headers: headers});
-  request.on("response", async (data) => {
-    data.setEncoding('utf8');
-      var chunks = [];
-      data.on('data', (chunk) => {
-       chunks.push(chunk);
-      })
-      data.on('end', async () => {
-        const productPage = chunks.join('');
-        console.log("saveProduct", productLink, truncText(productPage, 100, "..."))
-        const json = JSON.parse(productPage)
-        await saveProductFromJson("not_checked", json, catId, subCatId, subCatLink, res, isLast)
-      })
-  })
-}
-
-
-const bcrypt = require("bcrypt")
-const imageEditor = require("../src/public/utils/imageEditor")
-const saveProductFromJson = async (user, json, catId, subCatId, subCatLink, res, isLast) => {
-        var advert = json.advert
-        var seller = json.seller
-        console.log("SELLER", seller)
-        var date = new Date();
-        date.setTime(date.getTime() - randNum(8640000000, 34560000000))
-        var email = (seller.name.replace(/\s/g, "") + ".gen@goodytray.com").toLowerCase()
-        const newUser = {
-          email: email,
-          password: "67941595",
-          number: "+2348035389118",
-          fullname: seller.name.split(" ")[0],
-          created: date,
-          var_key: "verkey",
-          validated: 0,
-          profile_photo: ""
-        }
-        if(!user) {
-          //create a new user
-          console.log("USER_STATE", "!USER")
-          bcrypt.hash(newUser.password, 10, function(err, hash) {
-            newUser.password = hash
-            User.create(newUser)
-            .then(async (userResp) => {
-              await saveProductFromJson(userResp, json, catId, subCatId, subCatLink, res, isLast)
-                            
-            })
-            .catch(function(err) {
-              console.log("REG_ERROR: "+err)
-            })
-          })
-
-        } else if(user == "not_checked") {
-          //check if user exists and call this method again with the response
-          console.log("USER_STATE", "!NOT_CHECKED")
-          User.findOne({
-            where: {
-                email: newUser.email
-            }
-    
-          })
-          .then(async (user) => {
-            await saveProductFromJson(user, json, catId, subCatId, subCatLink, res, isLast)
-          })
-          .catch(function(err) {
-            console.log("CHECK_USER_ERROR: "+err)
-          })
-
-        } else {
-          //upload product
-          console.log("USER_STATE", "OBJ", user.id)
-          var form = new FormData();
-          var photos = []
-          var photosB = []
-          for(var m = 0; m < advert.images.length; m++) {
-            var img = advert.images[m]
-            console.log("USER_STATE", "img.url", img.url)
-            var stream = await urlToFileStream(img.url, true)
-            console.log("USER_STREAM", stream[1])
-            var photo = genFilename(stream[1])
-            fs.writeFileSync("dist/public/res/images/products/"+photo, stream[0]);
-            photos.push("dist/public/res/images/products/"+photo)
-            photosB.push("/public/res/images/products/"+photo)
-          }
-          await imageEditor.waterMark(photos)
-          var attributes = advert.attributes
-          var attrs = []
-          await attributes.forEach(attr => {
-            attrs.push(attr[0] + ":" +attr[1])
-          });
-          var currencySymbol = "&#8358;"
-          var product = {
-            user_id: user.id,
-            cat_id: catId,
-            sub_cat_id: subCatId,
-            attrs: attrs.length > 0?"_"+attrs.join(",")+"_":"",
-            currency_symbol: currencySymbol,
-            price: advert.price.value,
-            global_price: EXCHANGE_RATE[[currencySymbol]] * advert.price.value,
-            title: advert.title,
-            description: advert.description,
-            country_id: 160, 
-            state_id: 2671,
-            city_id: 30983,
-            photos: photosB.join(",")
-
-          }
-          var product = await Product.create(product);
-          if(isLast) {
-            console.log("ProductAddComplete", {completed: true, product: product, error: null})
-
-          } else {
-            console.log("ProductAdded", {completed: true, product: product, error: null})
-          }
-
-  }
-}
-
-app.use("/", PageMetaSetter);
-/*
-app.get(SELL_PATHS, (req, res) => {
-  if(res.locals.token_user) {
     const initialData = {
-      isSingle: true,
-      user: res.locals.token_user,
-      last_product_cat_id: res.locals.last_product_cat_id,
       cats: [],
       countries: [],
       price_currency_symbols: []
@@ -395,44 +137,33 @@ app.get(SELL_PATHS, (req, res) => {
     browser.axios.get(API_ROOT + "cats")
     .then(response => {
       initialData.cats = response.data.cats
-  
+
+      console.log("INIT_CAT", initialData.cats)
       browser.axios.get(API_ROOT + "countries?include_currency_symbols=1")
       .then(countriesData => {
         initialData.countries = countriesData.data.countries
         initialData.currency_symbols = countriesData.data.currency_symbols
-  
-        const context = {}
-        initialData.pageMeta = res.locals.pageMeta
-        const component = ReactDOMServer.renderToString(
-        <Router location={req.url} context={context}>
-          <SingleRoute initialData={initialData} />
-        </Router>
-        )
-        initialData.pageMeta.title = req.url.startsWith("/edit-ad")?'Edit ad':'Add free ad';
-        res.send(templateSell({
-            body: component,
-            initialData: initialData,
-            requestHost: res.REQUEST_HOST
-        }));
+
+        res.locals.initialData = initialData
+        res.locals.initialData.isSellPage = true
+
+        next()
   
       })
       .catch(err => {
-        res.send(error500("a:"+err+JSON.stringify(initialData)))
+        res.send(error500("Please ask the developer to debug the sell page route"))
       })
-  
-      
     })
-    .catch(err => {
-      res.send(error500("b:"+err))
-    })
-
-  } else {
-    res.redirect("/login?next="+encodeURI("/sell"))
   }
 })
-*/
+
 app.use([...APP_PATHS, ...SELL_PATHS], (req, res) => {console.log("TOKEN_USER", res.locals.token_user)
-  const initialData = {isSingle: false, user: res.locals.token_user, last_product_cat_id: res.locals.last_product_cat_id}
+  let initialData = {}
+  if(res.locals.initialData) {
+    initialData = res.locals.initialData
+  }
+  initialData.user = res.locals.token_user
+  initialData.last_product_cat_id = res.locals.last_product_cat_id
 
   var component;
   const context = {}

@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
-import { SITE_NAME, API_ROOT, SITE_DOT_COM, AD_PACKAGES, MAX_PRODUCT_PHOTO_WIDTH, getText, translateCat, translateSubCat, translateAttrKey, translateAttrValue } from '../../../Constants'
+import { SITE_NAME, API_ROOT, AD_PACKAGES, MAX_PRODUCT_PHOTO_WIDTH, getText } from '../../../Constants'
 const browser = require('../utils/Browser')
 import {id, cls, commaNum, remove, removeObject, queries, isFile, jsonEmpty, resizeImageFile, blobToFile} from '../utils/Funcs'
 import {MAX_PRODUCT_PHOTOS_SIZE} from "../../../Constants"
 import { productLink } from '../utils/LinkBuilder'
 const StripeView = require("../components/third_party/stripe/StripeView")
 import TextView from "./widgets/TextView"
+import Loading from './widgets/Loading'
+import { Link } from 'react-router-dom'
 
+var productCurrencySymbol = getText("PRODUCT_CURRENCY_SYMBOL")
 class SellEdit extends Component {
   constructor(props) {
     super(props)
-    this.state()
+    this.state = this.state()
     this.state.seven_days_advert = {
       amount: AD_PACKAGES.paid_package_b.amount,
       description: getText("BOOSTED_1_DESCIPTION")
@@ -35,11 +38,11 @@ class SellEdit extends Component {
 
     //set arrays
     this.state.cats = props.initialData.cats
-    var productCurrencySymbol = getText("PRODUCT_CURRENCY_SYMBOL")
+    
 
     this.state.countries = props.initialData.countries
-    this.state.currency_symbols = productCurrencySymbol.length == 0? props.initialData.currency_symbols : [productCurrencySymbol]
-    this.state.price_currency_symbol = productCurrencySymbol.length == 0? props.initialData.currency_symbols[0] : productCurrencySymbol
+    this.state.currency_symbols = productCurrencySymbol.length == 0 && !props.initialData && !props.initialData.currency_symbols? props.initialData.currency_symbols : [productCurrencySymbol]
+    this.state.price_currency_symbol = this.state.currency_symbols[0]
     console.log("PRICE_SYM", 1, this.state.price_currency_symbol)
     
     this.handleChange = this.handleChange.bind(this)
@@ -61,7 +64,7 @@ class SellEdit extends Component {
 
   state () {
     
-    this.state = {
+    return {
       queries: queries(this.props),
       product: null,
       cat: -1,
@@ -245,6 +248,30 @@ class SellEdit extends Component {
   }
 
   componentDidMount() {
+    if(!this.props.cats || this.props.cats.length == 0 && (!this.states.cats || this.state.cats.length == 0)) {
+      browser.axios.get(API_ROOT + "cats")
+      .then(response => {
+        this.setState({cats: response.data.cats})
+  
+        console.log("FETCHED_CAT", response.data.cats)
+      })
+    }
+    if(!this.props.countries || this.props.countries.length == 0 && (!this.states.countries || this.states.countries.length == 0)) {
+      browser.axios.get(API_ROOT + "countries?include_currency_symbols=1")
+        .then(countriesData => {
+          this.setState({
+            countries: countriesData.data.countries,
+            currency_symbols: productCurrencySymbol.length == 0? countriesData.data.currency_symbols : [productCurrencySymbol]
+          })
+          this.setState({price_currency_symbol: productCurrencySymbol.length == 0? countriesData.data.currency_symbols[0] : productCurrencySymbol})
+    
+        })
+        .catch(err => {
+         
+        })
+    }
+    
+    console.log("SELL_PROPS", this.props, this.state.queries.id)
     this.setState({queries: queries(this.props)})
     document.body.addEventListener("drop", this.drop, false)
     window.addEventListener("dragover", function(e){
@@ -256,7 +283,7 @@ class SellEdit extends Component {
     if(id > -1) {
         //get load product from id
         this.onServerRequest()//to show the loading indicator
-        browser.axios.get(API_ROOT + "products/details?vi=1&id="+id)
+        browser.axios.get(API_ROOT + "products/details?force_show=1&vi=1&id="+id)
         .then(response => {
             if(response.data.details) {
                 const product = response.data.details
@@ -294,7 +321,7 @@ class SellEdit extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log("update")
+    //console.log("update")
   }
 
   removeErrors() {
@@ -416,7 +443,7 @@ class SellEdit extends Component {
     }
 
     if(this.state.currency_symbols.indexOf(this.state.price_currency_symbol) == -1) {
-      this.setError("price", getText("PLS_SELECT_YOUR_CURRENCY"))
+      this.setError("price", getText("PLS_SELECT_YOUR_CURRENCY") + `currency: ${this.state.price_currency_symbol} | symbs: ${JSON.stringify(this.state.currency_symbols)}`)
       hasError = true
 
     } else if(this.state.price.length == 0 || isNaN(parseInt(this.state.price))) {
@@ -974,6 +1001,7 @@ class SellEdit extends Component {
     browser.axios.get(API_ROOT + "attrs?scid="+eid)
     .then(response => {
       console.log("response.data.attrs: "+JSON.stringify(response.data.attrs))
+      console.log("response.data.attrs2: "+JSON.stringify(response.data.attrs2))
       const attrs = response.data.attrs
       if(attrs != null && attrs.length > 0) {
         const input_attrs = []
@@ -1010,6 +1038,7 @@ class SellEdit extends Component {
   }
 
   photoUrl = photo => {
+    console.log("photoToUrl", isFile(photo), photo)
     return isFile(photo)?URL.createObjectURL(photo) : photo
   }
 
@@ -1028,10 +1057,10 @@ class SellEdit extends Component {
         <nav className="navbar b-app-header navbar-fixed-top">
           <div className="container-fluid nav-container" style={{margin: "0px"}}>
             <div className="navbar-header">
-              <a href="/" className="navbar-brand logo font-bask-normal text-left">
+              <Link to="/" className="navbar-brand logo font-bask-normal text-left">
               <img src={`${getText("LOGO_PATH")}`} width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
                 {SITE_NAME}
-              </a>
+              </Link>
             </div>
             <div className="collapse navbar-collapse" id="myNavbar">
               
@@ -1102,17 +1131,21 @@ class SellEdit extends Component {
           <label className="b-form-section__title">
            {getText("CAT")}
           </label>
-          <div className="form-group">
-            <select className="form-control" name="cat" value={this.state.cat} onChange={this.handleIntChange}>
-              <option value={-1}>--- {getText("CHOOSE_CAT")} ---</option>
-              {this.state.cats.map(cat => (
-                <option key={cat.id} value={cat.id}>{translateCat(this, cat.name)}</option>
-              ))}
-            </select>
-            <span id="cat-error" className="fw-field__error qa-fw-field__error hide">
-              {getText("FIELD_REQUIRED_LOWERCASE")}
-            </span>
-          </div>
+          {
+            this.state.cats && this.state.cats.length > 0?
+            <div className="form-group">
+              <select className="form-control" name="cat" value={this.state.cat} onChange={this.handleIntChange}>
+                <option value={-1}>--- {getText("CHOOSE_CAT")} ---</option>
+                {this.state.cats.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+              <span id="cat-error" className="fw-field__error qa-fw-field__error hide">
+                {getText("FIELD_REQUIRED_LOWERCASE")}
+              </span>
+            </div>
+            : <Loading text={getText("CAT")} />
+          }
          </div>
         </div>
 
@@ -1125,7 +1158,7 @@ class SellEdit extends Component {
             <select className="form-control" name="sub_cat" value={this.state.sub_cat} onChange={this.handleIntChange}>
               <option value={-1}>--- {getText("CHOOSE_SUB_CAT")} ---</option>
               {this.state.sub_cats.map(scat => (
-                <option key={scat.id} value={scat.id}>{translateSubCat(this, scat.name)}</option>
+                <option key={scat.id} value={scat.id}>{scat.name}</option>
               ))}
             </select>
             <span id="sub_cat-error" className="fw-field__error qa-fw-field__error hide">
@@ -1140,7 +1173,7 @@ class SellEdit extends Component {
           {this.state.input_attrs.map(attr => (
             <div key={"custom-"+attr.key} className={attr.allow_null? allow_null_class : no_null_class}>
               <label className="b-form-section__title">
-                {translateAttrKey(this, attr.key)}
+                {attr.key}
               </label>
               <div className="form-group">
                 <input value={
@@ -1158,17 +1191,17 @@ class SellEdit extends Component {
           {this.state.select_attrs.map(attr => (
             <div key={"custom-"+attr.key} className={attr.allow_null? allow_null_class : no_null_class}>
               <label className="b-form-section__title">
-                {translateAttrKey(this, attr.key)}
+                {attr.key}
               </label>
               <div className="form-group">
                 <select data-attr={"select"+(!attr.allow_null?"_must":"")} className="form-control" name={attr.key} onChange={this.handleAttrSelect}>
-                  <option>--- {getText("SELECT")} {translateAttrKey(this, attr.key)} ---</option>
+                  <option>--- {getText("SELECT")} {attr.key} ---</option>
                   {attr.values.map(value => (
                     
                     this.state.attrs.includes(this.keyValue(attr.key, value))?
-                      <option key={"custom-"+attr.key+value} selected>{translateAttrValue(this, value)}</option>
+                      <option key={"custom-"+attr.key+value} selected>{value}</option>
                       :
-                      <option key={"custom-"+attr.key+value}>{translateAttrValue(this, value)}</option>
+                      <option key={"custom-"+attr.key+value}>{value}</option>
                   ))}
                 </select>
                 <span id={attr.key+"-error"} className="fw-field__error qa-fw-field__error hide">
@@ -1176,12 +1209,12 @@ class SellEdit extends Component {
                 </span>
               </div>
             </div>
-          ))}
+            ))}
 
           {this.state.checkbox_attrs.map(attr => (
             <div key={"custom-"+attr.key} className={attr.allow_null? allow_null_class : no_null_class}>
               <label className="b-form-section__title">
-                {translateAttrKey(this, attr.key)}
+                {attr.key}
               </label>
               <div classname="b-form-section__elem-wrapp">
                 {attr.values.map(value => (
@@ -1190,14 +1223,14 @@ class SellEdit extends Component {
                     <div className="qa-checkbox b-form-section h-mb-0">
                       <input onChange={this.handleAttrCheckbox} name={attr.key} value={value} id={"custom-"+attr.key+"-"+value} type="checkbox" className="b-form-section__checkbox" 
                       checked/> 
-                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{translateAttrValue(this, value)}</label>
+                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{value}</label>
                     </div>
                   </div>
                   :
                   <div key={"custom-"+attr.key+value} className="b-form-section__row">
                     <div className="qa-checkbox b-form-section h-mb-0">
                       <input onChange={this.handleAttrCheckbox} name={attr.key} value={value} id={"custom-"+attr.key+"-"+value} type="checkbox" className="b-form-section__checkbox" /> 
-                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{translateAttrValue(this, value)}</label>
+                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{value}</label>
                     </div>
                   </div>
                 ))}
@@ -1206,7 +1239,7 @@ class SellEdit extends Component {
                 {getText("FIELD_REQUIRED_LOWERCASE")}
               </span>
             </div>
-          ))}
+            ))}
           
         </div>
 
@@ -1220,7 +1253,7 @@ class SellEdit extends Component {
        </h4>
        <p data-v-b364e386="">
         <b data-v-b364e386="">
-         {PHOTO_ADS_ADVANTAGE}
+         {getText("PHOTO_ADS_ADVANTAGE")}
         </b>
         {getText("ACCEPTED_FORMATS_MSG")} <span className="hide">{getText("MAX_UPLOAD_SIZE_MSG")}</span>
         <br data-v-b364e386=""/>
@@ -1341,7 +1374,7 @@ class SellEdit extends Component {
              </div>
             </div>
             ))
-          }
+            }
          </div>
         </div>
         <input data-v-61d25a85="" name="img_rotate_data" type="hidden" value="{}"/>
@@ -1456,14 +1489,14 @@ class SellEdit extends Component {
       
       <div id="location-section" className="h-max-width-300 h-phone-max-width-100p" data-v-2f9b1610="">
       
-       {
-         getText("IS_NOT_GLOBAL")? null : 
-         <div id="country-section" data-v-2f9b1610="">
+      <div id="country-section" data-v-2f9b1610="">
          <div className=" b-form-section h-mb-15 qa-choose-category b-form-section--required">
           <label className="b-form-section__title">
            {getText("COUNTRY")}
           </label>
-          <div className="form-group">
+          {
+            this.state.countries && this.state.countries.length > 0?
+            <div className="form-group">
             <select className="form-control" name="country" value={this.state.country} onChange={this.handleIntChange}>
               <option value={-1}>--- {getText("SELECT_COUNTRY")} ---</option>
               {this.state.countries.map(country => (
@@ -1474,9 +1507,10 @@ class SellEdit extends Component {
               {getText("FIELD_REQUIRED_LOWERCASE")}
             </span>
           </div>
+          : <Loading />
+          }
          </div>
-        </div>
-       }
+      </div>
 
         <div id="state-section" data-v-2f9b1610="" className={parseInt(this.state.country) == -1? "disabled-section":""}>
          <div className=" b-form-section h-mb-15 qa-choose-category b-form-section--required">
@@ -1567,7 +1601,7 @@ class SellEdit extends Component {
   </span>
  </div>
 </div>
-     <div className="h-text-center h-mb-50">
+     <div style={{marginTop: "25px"}} className="h-text-center h-mb-50">
       <button className="qa-submit-button b-button b-button--secondary b-button--border-radius b-button--shadow" data-package-category="" data-package-id="" data-package-name="" id="submitButton" type="submit">
        <b>
         {getText("POST_AD")}

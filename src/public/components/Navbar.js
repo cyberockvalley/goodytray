@@ -307,11 +307,11 @@ class Navbar extends Component {
           </li>
           <li className="nav-item sm-hide-down">
             <div className="h-width-120">
-              <a href="/sell" className="h-width-100p fw-button qa-fw-button fw-button--type-warning fw-button--size-medium">
+              <Link to="/sell" className="h-width-100p fw-button qa-fw-button fw-button--type-warning fw-button--size-medium">
                 <span className="fw-button__content">
                   <span className="fw-button__slot-wrapper cap-case">{getText("SELL")}</span>
                 </span>
-              </a>
+              </Link>
             </div>
           </li>
         </ul>
@@ -330,7 +330,7 @@ class Navbar extends Component {
                 <span className="icon-bar"></span>
               </button>
               <a style={{height: "30px", width: "30px", fontSize: "1.5em"}} onClick={this.toggleNavbar} className="navbar-toggle md-hide-up fa fa-2x fa-search"></a>
-              <a style={{height: "35px"}} href="/sell" className="navbar-toggle fw-button--type-warning">{getText("SELL")}</a>
+              <Link to="/sell" style={{height: "35px"}} className="navbar-toggle fw-button--type-warning">{getText("SELL")}</Link>
               <Link onClick={this.closeNavbar} to="/" className="navbar-brand logo font-bask-normal">
                 <img src={`${getText("LOGO_PATH")}`} width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
                 <span>{SITE_NAME}</span>

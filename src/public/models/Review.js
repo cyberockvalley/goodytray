@@ -2,7 +2,7 @@ const Sequelize = require("sequelize")
 const db = require("../database/db")
 
 var review = db.sequelize.define(
-    "review", 
+    "reviews", 
     {
         id: {
             type: Sequelize.INTEGER,

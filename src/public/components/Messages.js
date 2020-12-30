@@ -6,6 +6,8 @@ import $ from 'jquery';
 import Navbar from './Navbar'
 import { productLink } from '../utils/LinkBuilder'
 
+const browser = require("../utils/Browser")
+
 class Messages extends Component {
     constructor(props) {
         super(props)

@@ -6,7 +6,7 @@ const browser = {}
 const axiosBrowser = axios.create({
     baseURL: SERVER_ADDR,
     httpsAgent: new https.Agent({  
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
     })
 })
 browser.axios = axiosBrowser

@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize")
+const { getDatabaseTranslatedColumnName } = require("../../../Constants")
 const db = require("../database/db")
 
 module.exports = db.sequelize.define(
@@ -11,11 +12,13 @@ module.exports = db.sequelize.define(
         },
 
         attr_key: {
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            field: getDatabaseTranslatedColumnName("attr_key")
         },
 
         attr_value: {
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            field: getDatabaseTranslatedColumnName("attr_value")
         },
 
         cat_id: {

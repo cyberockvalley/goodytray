@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIENT_DIR, SITE_NAME, getText } from '../../../Constants'
+import { NO_PROFILE_PHOTO_IMAGE, API_ROOT, ERROR_NET_UNKNOWN, STATIC_IMAGES_CLIENT_DIR, SITE_NAME, getText, AD_APPROVAL_RANK } from '../../../Constants'
 import { commaNum } from '../utils/Funcs'
 const browser = require("../utils/Browser")
 import queryString from 'querystring'
@@ -11,6 +11,7 @@ import Footer from "./Footer"
 
 import ImageView from "./widgets/ImageView"
 import TextView from "./widgets/TextView"
+import Swal from 'sweetalert2'
 
 class Profile extends Component {
   constructor(props) {
@@ -36,6 +37,11 @@ class Profile extends Component {
       sponsored_products: [],
       sponsored_products_page: 0,
       sponsored_has_next: false,
+      
+      pending_total: 0,
+      pending_products: [],
+      pending_products_page: 0,
+      pending_has_next: false,
 
       loading: false,
       uploading_profile_photo: false,
@@ -48,16 +54,17 @@ class Profile extends Component {
     //this.loadProducts = this.loadProducts.bind(this)
     this.updateProductsData = this.updateProductsData.bind(this)
     this.showStats = this.showStats.bind(this)
+    this.approveAd = this.approveAd.bind(this)
     if(!this.state.user) props.history.replace("/login")
   }
 
   componentDidMount() {
     console.log("mounted", this.props.user, this.state.user)
+    
     if(!this.state.user) {
       this.state.history.replace("/login")
 
     } else {
-
       const queryValues = queryString.parse(this.props.location.search.substring(1))
       const p_type = queryValues.products_type? queryValues.products_type : "active"
       this.state.products_type = p_type
@@ -66,7 +73,7 @@ class Profile extends Component {
       //get active counts
       browser.axios.get(API_ROOT + "products/user/non_boosted/"+this.state.user.id+"?count_only=1")
       .then(resp => {console.log("CountNonBoosted", resp.data)
-        if(resp.data.counts) {
+        if(resp.data) {
           this.setState({active_total: resp.data.counts})
         }
       })
@@ -74,8 +81,16 @@ class Profile extends Component {
       browser.axios.get(API_ROOT + "products/user/boosted/"+this.state.user.id+"?count_only=1")
       .then(resp => {
         console.log("CountBoosted", resp.data)
-        if(resp.data.counts) {
+        if(resp.data) {
           this.setState({sponsored_total: resp.data.counts})
+        }
+      })
+      //get pending counts
+      browser.axios.get(API_ROOT + "products/pending/?count_only=1")
+      .then(resp => {
+        console.log("PendingAds", resp.data)
+        if(resp.data) {
+          this.setState({pending_total: resp.data.counts})
         }
       })
       this.loadProducts()
@@ -100,6 +115,13 @@ class Profile extends Component {
       this.state.products_has_next = this.state.active_has_next
       this.setState({products: this.state.active_products})
       this.setState({products_has_next: this.state.active_has_next})
+
+    } else if(type == "pending") {
+      console.log("updateProductsData", "pending")
+      this.state.products = this.state.pending_products
+      this.state.products_has_next = this.state.pending_has_next
+      this.setState({products: this.state.pending_products})
+      this.setState({products_has_next: this.state.pending_has_next})
 
     }
   }
@@ -127,6 +149,45 @@ class Profile extends Component {
     var dataIndex = e.target.getAttribute("data-index")
     this.setState({shown_stats: this.state.products[dataIndex]})
     this.setState({modal: true})
+  }
+
+  approveAd = e => {
+    e.preventDefault()
+    var dataIndex = e.target.getAttribute("data-index")
+    var product = this.state.products[dataIndex]
+    if(this.state["approving_ad_"+product.id]) return
+    this.setState({
+      ["approving_ad_"+product.id]: true
+    })
+    //approve product
+    browser.axios.get(API_ROOT + "products/approve/"+product.id)
+    .then(resp => {
+      console.log("ApprovaleResponse", resp.data)
+      if(resp.data && resp.data.status == 1) {
+        var pending_products = this.state.pending_products
+        pending_products.splice(dataIndex, 1)
+        this.setState({
+          pending_total: this.state.pending_total - 1,
+          pending_products: pending_products,
+          ["approving_ad_"+product.id]: false
+        })
+        if(this.state.products_type == "pending") {
+          this.setState({products: pending_products})
+        }
+
+      } else {
+        this.setState({
+          ["approving_ad_"+product.id]: false
+        })
+        Swal.fire('', 'An error occurred', 'error')
+      }
+    })
+    .catch(e => {
+      this.setState({
+        ["approving_ad_"+product.id]: false
+      })
+      Swal.fire('', 'An error occurred'+e, 'error')
+    })
   }
 
   hideStats = () => {
@@ -158,6 +219,14 @@ class Profile extends Component {
       productsKey = "active_products"
       productTotalKey = "active_total"
 
+    } else if(this.state.products_type == "pending") {
+      page = this.state.pending_products_page + 1
+      apiSubPath += "products/pending/?page="+page
+      hasNextKey = "pending_has_next"
+      productPageKey = "pending_products_page"
+      productsKey = "pending_products"
+      productTotalKey = "pending_total"
+
     }
     
     console.log("API_ROOT + apiSubPath", API_ROOT + apiSubPath)
@@ -174,7 +243,11 @@ class Profile extends Component {
         const products = this.state[[productsKey]].concat(prods)
         this.setState({[[productsKey]]: products})
         this.setState({[[hasNextKey]]: response.data.has_next})
-        this.setState({[[productTotalKey]]: response.data.counts})
+        if(response.data.counts) {
+          console.log("CountNonBoosted3", response.data.counts)
+          this.setState({[[productTotalKey]]: response.data.counts})
+        }
+        
         this.setState({[[productPageKey]]: page})
 
         this.updateProductsData(this.state.products_type)
@@ -256,9 +329,9 @@ class Profile extends Component {
         </button>
        </div>
        <div className="b-user-settings__avatarblock__name">
-        <a href={"/seller/"+this.state.user.id}>
+        <Link to={"/seller/"+this.state.user.id}>
          {this.state.user.fullname}
-        </a>
+        </Link>
        </div>
        <div className={this.state.profile_photo_error?"fw-field__error qa-fw-field__error":"fw-field__error qa-fw-field__error"} id="img_status">
         {this.state.profile_photo_error}
@@ -344,7 +417,7 @@ class Profile extends Component {
         </li>
         <li className="h-mr-15">
          <a onClick={this.changeProductsType} data-type="sponsored" className={this.state.products_type == "sponsored"?"active b-link-tabs__a qa-list-advert-tab":"b-link-tabs__a qa-list-advert-tab"} href="javascript:void(0)">
-          {getText(getText("BOOSTED_ADS"))}
+          {getText("BOOSTED_ADS")}
          </a>
          {
            this.state.sponsored_total > 0?
@@ -355,22 +428,38 @@ class Profile extends Component {
            ""
           }
         </li>
+        {
+          this.state.user && this.state.user.rank >= AD_APPROVAL_RANK?
+          <li className="h-mr-15">
+          <a onClick={this.changeProductsType} data-type="pending" className={this.state.products_type == "pending"?"active b-link-tabs__a qa-list-advert-tab":"b-link-tabs__a qa-list-advert-tab"} href="javascript:void(0)">
+            {getText("PENDING_ADS")}
+          </a>
+          {
+            this.state.pending_total > 0?
+            <span className="b-link-tabs__notification qa-list-advert-notification">
+              {commaNum(this.state.pending_total)}
+            </span>
+            :
+            ""
+            }
+        </li> : null
+        }
        </ul>
        <div className="h-float-right h-font-16">
-        {getText("TOTAL")}: {this.state.active_total + this.state.sponsored_total} ads
-       </div>
+          {getText("TOTAL")}: {this.state.active_total + this.state.sponsored_total} ads
+         </div>
       </div>
       {
         this.state.products.map((product, index) => (
           <div key={index} className="b-profile-advert box-shadow h-mb-10 h-pos-rel">
-          <a className="b-profile-advert__img" href={productLink(product.title, product.id)}>
+          <Link to={productLink(product.title, product.id)} className="b-profile-advert__img">
            <img alt={product.title} src={product.photos.split(",")[0]}/>
-          </a>
+          </Link>
           <div className="b-profile-advert__body">
            <div className="b-profile-advert__title">
-            <a href={productLink(product.title, product.id)}>
+            <Link to={productLink(product.title, product.id)}>
              {product.title}
-            </a>
+            </Link>
            </div>
            <div className="b-profile-advert__text">
             {getText("UPDATED")}: {dateFormat(new Date(product.last_update), "mmm dd")}
@@ -382,12 +471,30 @@ class Profile extends Component {
            </div>
            <div className="b-profile-advert__footer" style={{paddingLeft: "175px"}}>
             <div className="b-profile-advert__footer-info-panel">
-             <a className="b-profile-advert__go-to-edit" href={"/edit-ad?id="+product.id}>
-              {getText("EDIT")}
-             </a>
-             <a onClick={this.showStats} href="javascript:void(0)" data-index={index} data-id={product.id} style={{paddingLeft: "5px", paddingRight: "5px"}} className="cap-case qa-fw-field__error b-profile-advert__go-to-publish qa-btn-owner-publish-draft">
-              {getText("SHOW_STATS")}&nbsp;<i className="fa fa-bar-chart"></i>
-             </a>
+            {
+              this.state.products_type != "pending"?
+              <div>
+                <Link to={"/edit-ad?id="+product.id} className="b-profile-advert__go-to-edit fa fa-pencil">
+                {getText("EDIT")}
+                </Link>
+                <a onClick={this.showStats} href="javascript:void(0)" data-index={index} data-id={product.id} style={{paddingLeft: "5px", paddingRight: "5px"}} className="cap-case qa-fw-field__error b-profile-advert__go-to-publish qa-btn-owner-publish-draft">
+                  {getText("SHOW_STATS")}&nbsp;<i className="fa fa-bar-chart"></i>
+                </a>
+              </div> : 
+              <div>
+                <Link to={productLink(product.title, product.id)} target="_blank" className="b-profile-advert__go-to-edit fa fa-eye">
+                {getText("VIEW_AD")}
+                </Link>
+                <a onClick={this.approveAd} href="javascript:void(0)" data-index={index} data-id={product.id} style={{paddingLeft: "5px", paddingRight: "5px"}} className="cap-case qa-fw-field__error b-profile-advert__go-to-publish qa-btn-owner-publish-draft">
+                  {
+                    this.state["approving_ad_"+product.id]?
+                    "Please wait..."
+                    :
+                    <span data-index={index} data-id={product.id}>{getText("APPROVE_AD")}&nbsp;<i className="fa fa-check"></i></span>
+                  }
+                </a>
+              </div>
+            }
              <div className="h-inline-block">
               <p className="hide b-profile-advert__footer-block low-case">
                <i className="h-icon icon-profile-eye-new">
@@ -425,7 +532,10 @@ class Profile extends Component {
              this.state.products_type == "active"?
               <p>{getText("NO_NON_BOOSTED_AD")}<br />{getText("POST_AD_4_FREE")}</p>
               :
-              <p>{getText("NO_BOOSTED_AD")}<br />{getText("POST_BOOSTED_AD_FREE")}</p>
+              this.state.products_type == "sponsored"?
+                <p>{getText("NO_BOOSTED_AD")}<br />{getText("POST_BOOSTED_AD_FREE")}</p>
+                :
+                <p>{getText("NO_PENDING_AD")}</p>
           }
           </div>
          </div>

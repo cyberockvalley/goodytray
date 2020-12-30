@@ -16,6 +16,12 @@ export default ({ body, initialData, requestHost }) => {
       <link rel="stylesheet" href="/public/res/css/offline/boot.css">
       -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+      ${
+        initialData.isSellPages?
+        `<link href="/public/res/css/create_advert.module.css" type="text/css" rel="stylesheet">
+        <link href="/public/res/css/desktop-create.css" type="text/css" rel="stylesheet">`
+        : ""
+      }
       <link href="/public/res/css/portal.css" type="text/css" rel="stylesheet">
       <link href="/public/res/css/vue-spa.css" type="text/css" rel="stylesheet">
       <link href="/public/res/css/styles.css" type="text/css" rel="stylesheet">

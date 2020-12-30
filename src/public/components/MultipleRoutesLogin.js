@@ -30,7 +30,7 @@ const MultipleRoutesLogin = (props) => (
       render={(propz) => <SearchPage {...propz} user={props.initialData.user} />}
     />
     <Route 
-      exact path="/profile" 
+      exact path="/(profile|login)" 
       render={(propz) => <Profile {...propz} user={props.initialData.user} />}
     />
     <Route exact path="/products/:title/:id" 

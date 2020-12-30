@@ -123,7 +123,7 @@ class About extends Component {
        {getText("FIG_4")}. {getText("ANS_REACTIONS")}
       </h3>
       <span>
-{"       If everything is ok with your advert, it’ll be on " + SITE_NAME + " in a couple of hours after sending to moderation.                                 We’ll send you a letter and notification when your advert goes live.                                 Check your messages and be ready to earn money!"}
+        {getText("IF_AD_OK")}
        <span className="hidden">
         {getText("SELL_LIKE_A_PRO_QUEST")} <a className="" href="/sc/premium-services">
         {getText("CHECK_PREMIUM")}

@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { SITE_TITLE, API_ROOT, PAID_AD_NAME, STATIC_IMAGES_CLIENT_DIR, getText, translateCat, translateAttrKey, translateAttrValue } from "../../../Constants"
+import { SITE_TITLE, API_ROOT, PAID_AD_NAME, STATIC_IMAGES_CLIENT_DIR, getText } from "../../../Constants"
 import { productLink, catLink, catIconName, countryLink } from "../utils/LinkBuilder"
 import { commaNum, id, remove } from "../utils/Funcs"
 import queryString from 'querystring'
@@ -314,14 +314,16 @@ class SearchPage extends Component {
             this.setState({loading_products: false})
         })
 
-        const countryId = getText("COUNTRY_ID")
+        /*const countryId = getText("COUNTRY_ID")
         console.log("CCID", countryId)
         if(countryId && countryId > 0) {
-          this.setState({country: countryId})
-          //this.onCountryChanged()
-          //this.checkResultCount()
+          //this.setState({country: countryId})
+          this.onCountryChanged()
+          this.checkResultCount()
 
-        }
+        }*/
+        this.onCountryChanged()
+        this.checkResultCount()
     }
 
     hideMobileCatsTab = () => {
@@ -485,7 +487,7 @@ class SearchPage extends Component {
             <select className="form-control" name="cat" value={this.state.cat} onChange={this.handleChange}>
               <option value="-1">--- {getText("CHOOSE_CAT")} ---</option>
               {this.state.cats.map(cat => (
-                <option key={cat.id} value={cat.id}>{translateCat(this, cat.name)}</option>
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
           </div>
@@ -506,7 +508,7 @@ class SearchPage extends Component {
             <select className="form-control" name="sub_cat" value={this.state.sub_cat} onChange={this.handleChange}>
               <option value="-1">--- {getText("CHOOSE_SUB_CAT")} ---</option>
               {this.state.sub_cats.map(scat => (
-                <option key={scat.id} value={scat.id}>{translateSubCat(this, scat.name)}</option>
+                <option key={scat.id} value={scat.id}>{scat.name}</option>
               ))}
             </select>
           </div>
@@ -534,13 +536,13 @@ class SearchPage extends Component {
           {this.state.select_attrs.map(attr => (
             <div key={"custom-"+attr.key} className="b-form-section h-mb-15">
               <label className="b-form-section__title">
-                {translateAttrKey(this, attr.key)}
+                {attr.key}
               </label>
               <div className="form-group">
                 <select data-attr="yes" className="form-control" name={attr.key} onChange={this.handleChange}>
-                  <option>--- {getText("SELECT")} {translateAttrKey(this, attr.key)} ---</option>
+                  <option>--- {getText("SELECT")} {attr.key} ---</option>
                   {attr.values.map(value => (
-                    <option key={"custom-"+attr.key+value} value={value}>{translateAttrValue(this, value)}</option>
+                    <option key={"custom-"+attr.key+value} value={value}>{value}</option>
                   ))}
                 </select>
               </div>
@@ -550,14 +552,14 @@ class SearchPage extends Component {
           {this.state.checkbox_attrs.map(attr => (
             <div key={"custom-"+attr.key} className="b-form-section h-mb-15">
               <label className="b-form-section__title">
-                {translateAttrKey(this, attr.key)}
+                {attr.key}
               </label>
               <div classname="b-form-section__elem-wrapp">
                 {attr.values.map(value => (
                   <div key={"custom-"+attr.key+value} className="b-form-section__row">
                     <div className="qa-checkbox b-form-section h-mb-0">
                     <input data-attr="yes" onChange={this.handleChange} name={attr.key} value={value} id={"custom-"+attr.key+"-"+value} type="checkbox" className="b-form-section__checkbox"/> 
-                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{translateAttrValue(this, value)}</label>
+                      <label for={"custom-"+attr.key+"-"+value} className="qa-description-label">{value}</label>
                     </div>
                   </div>
                 ))}

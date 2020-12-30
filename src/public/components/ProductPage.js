@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { Link } from "react-router-dom"
-import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS, getText, translateCat, translateSubCat, translateAttrValue, timeAgoText, translateAttrKey, getTimeLocale } from "../../../Constants"
+import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS, getText, timeAgoText, getTimeLocale } from "../../../Constants"
 import { commaNum, truncText, cls } from "../utils/Funcs"
 const browser = require("../utils/Browser")
 var dateFormat = require('dateformat')
@@ -13,6 +13,7 @@ import Footer from "./Footer"
 // Load locale-specific relative date/time formatting rules.
 import en from 'javascript-time-ago/locale/en'
 import { productLink, subCatLink, catLink } from "../utils/LinkBuilder"
+import Swal from "sweetalert2"
 
 // Add locale-specific relative date/time formatting rules.
 TimeAgo.addLocale(getTimeLocale())
@@ -136,6 +137,16 @@ class ProductPage extends Component {
 
 
             } else {
+                Swal.fire({
+                    title: getText("PRODUCT_NOT_FOUND"), 
+                    text: getText("PRODUCT_NOT_FOUND_REASON"), 
+                    type: 'error',
+                    cancelButtonText: getText("OK")
+                })
+                .then(() => {
+                    this.props.history.goBack()
+                })
+
                 console.log("No product from response:", response.data, API_ROOT + "products/details?id="+id)
             }
 
@@ -283,7 +294,7 @@ class ProductPage extends Component {
                 <li className="b-breadcrumb-inner">
                  <Link className="qa-bread-crumbs-link b-breadcrumb-link" to={this.state.product?catLink(this.state.product.cat_name):""}>
                   <span>
-                   {this.state.product? translateCat(this, this.state.product.cat_name) : ""}
+                   {this.state.product? this.state.product.cat_name : ""}
                   </span>
                  </Link>
                  <meta/>
@@ -291,7 +302,7 @@ class ProductPage extends Component {
                 <li className="b-breadcrumb-inner">
                  <Link className="qa-bread-crumbs-link b-breadcrumb-link" to={this.state.product?subCatLink(this.state.product.sub_cat_name):""}>
                   <span>
-                   {this.state.product? translateSubCat(this, this.state.product.sub_cat_name) : ""}
+                   {this.state.product? this.state.product.sub_cat_name : ""}
                   </span>
                  </Link>
                  <meta/>
@@ -302,7 +313,7 @@ class ProductPage extends Component {
                         <li className="b-breadcrumb-inner">
                         <Link className="qa-bread-crumbs-link b-breadcrumb-link" to={"/search/types/"+keyPair.value}>
                          <span>
-                          {translateAttrValue(this, keyPair.value)}
+                          {keyPair.value}
                          </span>
                         </Link>
                         <meta/>
@@ -947,7 +958,7 @@ class ProductPage extends Component {
                                         ad.attrs.substring(1, ad.attrs.length - 1).split(",").map((attr, i) => (
                                             attr.split(":").length == 2 && i < 3?
                                             <div className="b-list-advert__item-attr" data-v-9681c3a6="">
-                                                {translateAttrKey(this, attr.split(":")[0]) +": "+ translateAttrValue(this, attr.split(":")[1])}
+                                                {attr.split(":")[0] +": "+ attr.split(":")[1]}
                                             </div>
                                             :
                                             ""

@@ -8,7 +8,7 @@ attrs.use(cors())
 const Sequelize = require("sequelize")
 const Op = Sequelize.Op
 
-import {ERROR_DB_OP, getText} from "../../../Constants"
+import {ERROR_DB_OP, getDatabaseTranslatedColumnName, getText} from "../../../Constants"
 
 const db = require("../database/db")
 
@@ -19,7 +19,9 @@ attrs.get("/", function(req, res) {
         res.json({attrs: null, message: getText("API_NO_DATA_KEY_PROVIDED")})
 
     } else {
-        db.sequelize.query("SELECT DISTINCT * from attrs WHERE sub_cat_id = ? ORDER BY attr_key, attr_value ASC ", {
+        const attr_key_locale = getDatabaseTranslatedColumnName("attr_key")
+        const attr_value_locale = getDatabaseTranslatedColumnName("attr_value")
+        db.sequelize.query(`SELECT attrs.id, attrs.attr_type, attrs.cat_id, attrs.sub_cat_id, attrs.${attr_key_locale} as attr_key, attrs.${attr_value_locale} as attr_value FROM attrs WHERE sub_cat_id = ? ORDER BY attrs.${attr_key_locale}, attrs.${attr_value_locale} ASC `, {
             replacements: [id],
             raw: false, 
             type: Sequelize.QueryTypes.SELECT,
@@ -30,24 +32,27 @@ attrs.get("/", function(req, res) {
             if(result.length == 0) {
                 res.json({attrs: null, message: getText("NO_REZ_FOUND")})
             } else {
-                const final_result = []
-                var i = 0;
-                var currentKey = null
-                var currentValues = []
-                var currentInputType = null
-                var currentNullAllow = false
-                while(i < result.length) {
-                    if(currentKey != null && currentKey != result[i].attr_key || i == result.length - 1) {
-                        final_result.push({key: currentKey, values: currentValues, input_type: currentInputType, allow_null: currentNullAllow})
-                        currentValues = []
+                const finalResult = []
+                const keyMap = {}//attr_key to array pos
+                for(var i = 0; i < result.length; i++) {
+                    var key = result[i].attr_key
+                    var value = result[i].attr_value
+                    var attrIndex = keyMap[key]
+                    if(finalResult[attrIndex]) {
+                        finalResult[attrIndex].values.push(value)
+
+                    } else {
+                        var item = {}
+                        item.key = key
+                        item.values = [value]
+                        item.allow_null = result[i].allow_null == 1? true : false
+                        item.input_type = result[i].attr_type
+                        var index = finalResult.push(item)
+                        keyMap[key] = index - 1
                     }
-                    currentKey = result[i].attr_key
-                    currentValues.push(result[i].attr_value)
-                    currentInputType = result[i].attr_type
-                    currentNullAllow = result[i].allow_null == 1
-                    i++
                 }
-                res.json({attrs: final_result, attrs2: result})
+                
+                res.json({attrs: finalResult})
             }
         })
         .catch(error => {

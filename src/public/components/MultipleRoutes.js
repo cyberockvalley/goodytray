@@ -24,7 +24,7 @@ const MultipleRoutes = (props) => (
     <Route path="/register" 
       render={(propz) => <Register {...propz} user={props.initialData.user} third_party_login_links={props.initialData.third_party_login_links} />}
     />
-    <Route path="/(login|profile|settings|messages|notifications|create-review)" 
+    <Route path="/(login|sell|edit-add|profile|settings|messages|notifications|create-review)" 
       render={(propz) => <Login {...propz} user={props.initialData.user} third_party_login_links={props.initialData.third_party_login_links}/>}
     />
     <Route exact path="/products/:title/:id" 

@@ -21,7 +21,7 @@ cats.get("/", function(req, res) {
         res.json({cats: cats})
     })
     .catch(error => {
-        res.json({cats: null, message: ERROR_DB_OP})
+        res.json({cats: null, message: ERROR_DB_OP, error: error})
     })
 })
 

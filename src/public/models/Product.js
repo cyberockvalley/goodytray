@@ -2,7 +2,7 @@ const Sequelize = require("sequelize")
 const db = require("../database/db")
 
 var product = db.sequelize.define(
-    "product", 
+    "products", 
     {
         id: {
             type: Sequelize.INTEGER,
@@ -126,6 +126,10 @@ var product = db.sequelize.define(
         },
 
         hide_phone_number: {
+            type: Sequelize.INTEGER
+        },
+
+        reviewed: {
             type: Sequelize.INTEGER
         }
     }, 

@@ -64,65 +64,64 @@ onChange(e) {
 }
 
 
-  onSubmit(e) {
-    e.preventDefault()
+onSubmit() {
 
-    this.removeErrors()
-    this.state.hasErrors = false
+  this.removeErrors()
+  this.state.hasErrors = false
 
-    if(this.state.email.length == 0) {
-      this.setError("email", getText("ERROR_ENTER_EMAIL"))
-      this.state.hasErrors = true
-    }
-
-    if(this.state.password.length == 0) {
-      this.setError("password", getText("ERROR_ENTER_PWD"))
-      this.state.hasErrors = true
-    }
-    console.log("state_hasErrors: "+this.state.hasErrors)
-    if(!this.state.hasErrors) {
-      console.log("no error")
-      const user = {
-        email: this.state.email,
-        password: this.state.password
-      }
-  
-      this.setState({posting_form: true})
-      login(user).then(res => {
-         if(res.login_token != null) {console.log("login_token: "+res.login_token, this.state.query_values.next)
-           localStorage.setItem("login_token", res.login_token)
-            //redirect to after after login page
-            
-            if(this.state.query_values.next) {
-              //window.location.href = decodeURI(this.state.query_values.next)
-              this.props.history.replace(this.state.query_values.next)
-
-            } else {console.log("q2")
-              //window.location.href = "/profile"
-              this.props.history.replace("/profile")
-            }
-
-          } else if(res.form_errors != null) {
-            for(var key in res.form_errors) {
-              console.log("error_key: "+ key)
-              if(res.form_errors[key].length > 0) {
-                  var error_name = key.substring(0, key.indexOf("_"));
-                  console.log("error_name: "+ error_name)
-                  this.setError(error_name, res.form_errors[key])
-              }
-            }
-          } else {
-               if(res.message == null) res.message = getText("ERROR_SERVER_RESPONSE")
-               console.log("login_message: "+res.message)
-          }
-          console.log("reg_response_text: "+JSON.stringify(res))
-          this.setState({posting_form: false})
-      })
-      .catch(e => {
-        console.log("login_response_text:", e, JSON.stringify(e))
-      })
-    }
+  if(this.state.email.length == 0) {
+    this.setError("email", getText("ERROR_ENTER_EMAIL"))
+    this.state.hasErrors = true
   }
+
+  if(this.state.password.length == 0) {
+    this.setError("password", getText("ERROR_ENTER_PWD"))
+    this.state.hasErrors = true
+  }
+  console.log("state_hasErrors: "+this.state.hasErrors)
+  if(!this.state.hasErrors) {
+    console.log("no error")
+    const user = {
+      email: this.state.email,
+      password: this.state.password
+    }
+
+    this.setState({posting_form: true})
+    login(user).then(res => {
+        if(res.login_token != null) {console.log("login_token: "+res.login_token, this.state.query_values.next)
+          localStorage.setItem("login_token", res.login_token)
+          //redirect to after after login page
+          
+          if(this.state.query_values.next) {
+            window.location.href = decodeURI(this.state.query_values.next)
+            //this.props.history.replace(this.state.query_values.next)
+
+          } else {console.log("q2")
+            window.location.href = "/profile"
+            //this.props.history.replace("/profile")
+          }
+
+        } else if(res.form_errors != null) {
+          for(var key in res.form_errors) {
+            console.log("error_key: "+ key)
+            if(res.form_errors[key].length > 0) {
+                var error_name = key.substring(0, key.indexOf("_"));
+                console.log("error_name: "+ error_name)
+                this.setError(error_name, res.form_errors[key])
+            }
+          }
+        } else {
+              if(res.message == null) res.message = getText("ERROR_SERVER_RESPONSE")
+              console.log("login_message: "+res.message)
+        }
+        console.log("reg_response_text: "+JSON.stringify(res))
+        this.setState({posting_form: false})
+    })
+    .catch(e => {
+      console.log("login_response_text:", e, JSON.stringify(e))
+    })
+  }
+}
 
   render() {
     return (
@@ -150,7 +149,7 @@ onChange(e) {
                 </div> 
                 <div className="fw-card-content qa-fw-card-content">
                   <div className="row center-xs">
-                    <form noValidate onSubmit={this.onSubmit} className="bc-auth-card__form-holder">
+                    <div noValidate className="bc-auth-card__form-holder">
                       <div className="bc-social-buttons">
                         <div className="row">
                           <div className="col-xs-12">
@@ -223,14 +222,14 @@ onChange(e) {
                           </span>
                         </button>
                         :
-                        <button id="submit" type="submit" className="h-width-100p h-bold fw-button qa-fw-button fw-button--type-success fw-button--size-large">
+                        <button id="submit" onClick={this.onSubmit} type="submit" className="h-width-100p h-bold fw-button qa-fw-button fw-button--type-success fw-button--size-large">
                           <span className="fw-button__content"> 
                             <span className="fw-button__slot-wrapper up-case">{getText("SIGN_IN")}</span>
                           </span>
                         </button>
                       }
                       <span className="bc-auth-card-error"></span>
-                    </form>
+                    </div>
                   </div> 
                   <div className="fw-card-content-icon"></div>
                 </div>

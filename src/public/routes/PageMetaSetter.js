@@ -128,13 +128,18 @@ const getProductPageMeta = async (id) => {
 
     } else {
         var details = data.details
-        pageMeta.title = getText("SITE_TRADE_MARK") + TITLE_DIV + details.title
-        pageMeta.description = details.description
-        pageMeta.keywords = details.cat_name+" "+details.title.toLowerCase()
-        pageMeta.url = getText("SERVER_HOST") +  productLink(details.title, details.id)
-        var image = getText("SERVER_HOST") +   details.photos.split(',')[0];
-        pageMeta.image_type = mimeFromFilename(image);
-        pageMeta.image = image
+        if(details) {
+            pageMeta.title = getText("SITE_TRADE_MARK") + TITLE_DIV + details.title
+            pageMeta.description = details.description
+            pageMeta.keywords = details.cat_name+" "+details.title.toLowerCase()
+            pageMeta.url = getText("SERVER_HOST") +  productLink(details.title, details.id)
+            var image = getText("SERVER_HOST") +   details.photos.split(',')[0];
+            pageMeta.image_type = mimeFromFilename(image);
+            pageMeta.image = image
+
+        } else {
+            pageMeta = getDefaultPageMeta()
+        }
         return pageMeta
     }
     

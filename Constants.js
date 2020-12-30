@@ -7,6 +7,8 @@ const LOCALES = {
     "it": it
 }
 
+export const AD_APPROVAL_RANK = 1
+
 export const PORT = 8080
 export const PORT_SSL = 4433
 
@@ -39,23 +41,9 @@ export const timeAgoText = text => {
     return text
 }
 
-export const translateCat = (component, text) => {
-    return text
-}
-export const translateSubCat = (component, text) => {
-    return text
-}
-export const translateAttrKey = (component, text) => {
-    return text
-}
-export const translateAttrValue = (component, text) => {
-    return text
-}
-
 const aliasOfSite = (alias, siteAliases) => {
     return siteAliases.includes(alias)
 }
-
 export const getTextSource = () => {
     var hostname = hostName()
     //console.log("GLOBAL_HOST_GET", hostname)
@@ -71,6 +59,14 @@ export const getTextSource = () => {
         }
     }
     return textSource
+}
+
+export const getDatabaseTranslatedColumnName = defaultColumnName => {
+    //return defaultColumnName
+    const textSource = getTextSource()
+    console.log("DB_COL", defaultColumnName, textSource? textSource.LOCALE : "textSource is null")
+    if(textSource && textSource.LOCALE != "en") return defaultColumnName + "_" + textSource.LOCALE
+    return defaultColumnName
 }
 
 export const getText = key => {

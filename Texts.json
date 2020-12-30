@@ -3,7 +3,7 @@
     "sites": [
         {
             "name": "goodytray.com",
-            "aliases": "*",
+            "aliases": "",
             "texts": {
                 "LOCALE": "en",
                 "LOCALE_DASH": "en-US",
@@ -17,7 +17,7 @@
                 "SITE_NAME": "GoodyTray",
                 "SITE_TRADE_MARK": "GoodyTray",
                 "SITE_DOT_COM": "goodytray.com",
-                "SERVER_HOST": "https://goodytray.com",
+                "SERVER_HOST": "http://dev.domain.com:8080",
                 "FACEBOOK_PAGE_LINK": "http://facebook.com/goodytray",
                 "INSTAGRAM_PAGE_LINK": "http://instagram.com/goodytray",
                 "TWITTER_PAGE_LINK": "http://twitter.com/goodytray",
@@ -331,6 +331,13 @@
                 "ADD_A_DP": "Add a profile photo",
                 "UPLOAD_UR_DP": "Upload your profile photo.",
                 "DP_RULES": "Must be a .jpg, .gif or .png file smaller than 5MB",
+                "PENDING_ADS": "Pending ads",
+                "VIEW_AD": "View ad",
+                "APPROVE_AD": "Approve ad",
+                "NO_PENDING_AD": "No pending ads yet",
+                "OK": "Ok",
+                "PRODUCT_NOT_FOUND": "Product not found",
+                "PRODUCT_NOT_FOUND_REASON": "This product might have been deleted or it's currently awaiting admins approval",
                 "RATINGS_TEXTS": [
                     "Successful purchase(you bought the product)",
 
@@ -386,18 +393,19 @@
                         "December"
                       ],
                       "timeNames": ["a", "p", "am", "pm", "A", "P", "AM", "PM"]
-                }
+                },
+                "IF_AD_OK": "If everything is ok with your advert, it’ll be on Goodytray in a couple of hours after sending to moderation. We’ll send you a letter and notification when your advert goes live. Check your messages and be ready to earn money!"
             }
         },
         {
-            "name": "cosmosbox.it",
-            "aliases": "cosmosbox.it",
+            "name": "cosmobox.it",
+            "aliases": "* cosmobox.it",
             "texts": {
                 "LOCALE": "it",
                 "LOCALE_DASH": "it-IT",
-                "CURRENCY": "USD",
-                "CURRENCY_SYMBOL": "$",
-                "PRODUCT_CURRENCY_SYMBOL": "$",
+                "CURRENCY": "EUR",
+                "CURRENCY_SYMBOL": "€",
+                "PRODUCT_CURRENCY_SYMBOL": "€",
                 "paid_package_b_price": 6.84,
                 "paid_package_c_price": 24.62,
                 "IS_NOT_GLOBAL": true,
@@ -406,7 +414,7 @@
                 "SITE_NAME": "CosmoBox",
                 "SITE_TRADE_MARK": "CosmoBox",
                 "SITE_DOT_COM": "cosmobox.it",
-                "SERVER_HOST": "https://cosmobox.it",
+                "SERVER_HOST": "http://cosmobox.it",
                 "FACEBOOK_PAGE_LINK": "http://facebook.com/cosmobox.it",
                 "INSTAGRAM_PAGE_LINK": "http://instagram.com/cosmobox.it",
                 "TWITTER_PAGE_LINK": "http://twitter.com/cosmobox.it",
@@ -722,6 +730,13 @@
                 "ADD_A_DP": "Aggiungi una foto del profilo",
                 "UPLOAD_UR_DP": "Carica la tua foto del profilo.",
                 "DP_RULES": "Deve essere un file .jpg, .gif o .png più piccolo di 5MB",
+                "PENDING_ADS": "Annunci in attesa",
+                "VIEW_AD": "Visualizza annuncio",
+                "APPROVE_AD": "Approva annuncio",
+                "NO_PENDING_AD": "Nessun annuncio in attesa ancora",
+                "OK": "Ok",
+                "PRODUCT_NOT_FOUND": "Prodotto non trovato",
+                "PRODUCT_NOT_FOUND_REASON": "Questo prodotto potrebbe essere stato eliminato o è attualmente in attesa di approvazione da parte degli amministratori",
                 "RATINGS_TEXTS": [
                     "Acquisto riuscito (hai acquistato il prodotto)",
                     "L'accordo è fallito (il prodotto non ha soddisfatto le tue aspettative)",
@@ -773,7 +788,8 @@
                         "December"
                     ],
                     "timeNames": ["a", "p", "am", "pm", "A", "P", "AM", "PM"]
-                }
+                },
+                "IF_AD_OK": "If everything is ok with your advert, it’ll be on Goodytray in a couple of hours after sending to moderation. We’ll send you a letter and notification when your advert goes live. Check your messages and be ready to earn money!"
 
                 
             }
