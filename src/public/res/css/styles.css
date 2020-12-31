@@ -728,13 +728,11 @@ a.btn-over-orange:hover {
 }
 .footer-grid img {
 	width: 100%;
-    height: 100px;
-    object-fit: cover;
-    object-position: 10% 5%;
+    height: 75px;
     display: block;
 }
 .footer-grid div {
-	font-size: 26px;
+	font-size: 21px;
     font-weight: 600;
 }
 .home-autopromo {

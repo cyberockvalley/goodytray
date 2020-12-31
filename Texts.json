@@ -399,7 +399,7 @@
         },
         {
             "name": "cosmobox.it",
-            "aliases": "* cosmobox.it",
+            "aliases": "* cosmobox.it dev.domain.com",
             "texts": {
                 "LOCALE": "it",
                 "LOCALE_DASH": "it-IT",
@@ -414,7 +414,7 @@
                 "SITE_NAME": "CosmoBox",
                 "SITE_TRADE_MARK": "CosmoBox",
                 "SITE_DOT_COM": "cosmobox.it",
-                "SERVER_HOST": "http://cosmobox.it",
+                "SERVER_HOST": "http://dev.domain.com:8080",
                 "FACEBOOK_PAGE_LINK": "http://facebook.com/cosmobox.it",
                 "INSTAGRAM_PAGE_LINK": "http://instagram.com/cosmobox.it",
                 "TWITTER_PAGE_LINK": "http://twitter.com/cosmobox.it",

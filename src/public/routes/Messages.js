@@ -73,7 +73,7 @@ messages.get("/threads", (req, res) => {
             }
         })
         .catch(e => {
-            res.status(503).json({success: false, list: [], error: ERROR_DB_OP})
+            res.status(503).json({success: false, list: [], error: e})
         })
     }
 

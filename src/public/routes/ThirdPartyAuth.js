@@ -5,6 +5,8 @@ export const THIRD_PARTY_AUTH_PATH = "/third_party_auth"
 export const GOOGLE_LOGIN_CALL_BACK_PATH = "/google/callback"
 export const FACEBOOK_LOGIN_CALL_BACK_PATH = "/facebook/callback"
 
+///third_party_auth/facebook/callback
+
 const express = require("express")
 const route = express.Router()
 const cors = require("cors")

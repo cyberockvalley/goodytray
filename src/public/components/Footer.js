@@ -11,7 +11,7 @@ class Footer extends Component {
                 <div className="footer-title">{getText("PLACE_AN_ADVERT_ON")} {SITE_NAME}</div>
                 <div className="footer-grids">
                     <div className="footer-grid">
-                        <img className="img-responsive" src="/public/res/images/static/easy.png" style={{objectPosition: "10% -12%"}}/>
+                        <img className="img-responsive" src="/public/res/images/static/easy.png"/>
                         <div style={{marginRight: "10px"}}>{getText("FOOTER_EASY")}</div>
                     </div>
                     <div className="footer-grid">

@@ -39,10 +39,10 @@ class SellEdit extends Component {
     //set arrays
     this.state.cats = props.initialData.cats
     
-
-    this.state.countries = props.initialData.countries
-    this.state.currency_symbols = productCurrencySymbol.length == 0 && !props.initialData && !props.initialData.currency_symbols? props.initialData.currency_symbols : [productCurrencySymbol]
-    this.state.price_currency_symbol = this.state.currency_symbols[0]
+    //this.state.countries = props.initialData.countries
+    
+    this.state.currency_symbols = [productCurrencySymbol]//productCurrencySymbol.length == 0 && !props.initialData && !props.initialData.currency_symbols? props.initialData.currency_symbols : [productCurrencySymbol]
+    this.state.price_currency_symbol = productCurrencySymbol//this.state.currency_symbols[0]
     console.log("PRICE_SYM", 1, this.state.price_currency_symbol)
     
     this.handleChange = this.handleChange.bind(this)
@@ -69,7 +69,7 @@ class SellEdit extends Component {
       product: null,
       cat: -1,
       sub_cat: -1,
-      country: -1,
+      country: 107,
       state: -1,
       city: -1,
       price_currency_symbol: '',
@@ -203,7 +203,7 @@ class SellEdit extends Component {
         {hide_phone_number: 0},
         {cat: -1},
         {sub_cat: -1},
-        {country: -1},
+        {country: 107},
         {state: -1},
         {city: -1},
         {title: ""},
@@ -255,7 +255,7 @@ class SellEdit extends Component {
   
         console.log("FETCHED_CAT", response.data.cats)
       })
-    }
+    }/*
     if(!this.props.countries || this.props.countries.length == 0 && (!this.states.countries || this.states.countries.length == 0)) {
       browser.axios.get(API_ROOT + "countries?include_currency_symbols=1")
         .then(countriesData => {
@@ -269,6 +269,18 @@ class SellEdit extends Component {
         .catch(err => {
          
         })
+    }*/
+    this.state.country = 107, 
+    this.state.currency_symbols = [productCurrencySymbol], 
+    this.state.price_currency_symbol = productCurrencySymbol
+    this.setState({country: 107, currency_symbols: [productCurrencySymbol], price_currency_symbol: productCurrencySymbol})
+    
+    if(!this.state.states || this.state.states.length == 0) {
+      console.log("CountryChangeBefore", this.state.country)
+      this.onCountryChanged()
+
+    } else {
+      console.log("CountryChangeBeforeNone", this.state.country, this.state.states)
     }
     
     console.log("SELL_PROPS", this.props, this.state.queries.id)
@@ -518,6 +530,7 @@ class SellEdit extends Component {
     }
 
     if(!hasError) {
+      console.log("SELL_EDIT", "hasError", false)
       this.onServerRequest()
       if(hasOnlyPhotoUrls) {
         //skip the photo files upload since there is none
@@ -583,6 +596,8 @@ class SellEdit extends Component {
 
       }
 
+    } else {
+      console.log("SELL_EDIT", "hasError", true)
     }
     
   }
@@ -956,6 +971,7 @@ class SellEdit extends Component {
     .then(response => {
       this.setState({states: response.data.states})
       section.classList.remove(["disabled-section"], ["loading-section"])
+      console.log("CountryChange", response)
     })
   }
 
@@ -1496,7 +1512,7 @@ class SellEdit extends Component {
           </label>
           {
             this.state.countries && this.state.countries.length > 0?
-            <div className="form-group">
+            <div className="form-group d-none">
             <select className="form-control" name="country" value={this.state.country} onChange={this.handleIntChange}>
               <option value={-1}>--- {getText("SELECT_COUNTRY")} ---</option>
               {this.state.countries.map(country => (
@@ -1507,7 +1523,7 @@ class SellEdit extends Component {
               {getText("FIELD_REQUIRED_LOWERCASE")}
             </span>
           </div>
-          : <Loading />
+          : null
           }
          </div>
       </div>
