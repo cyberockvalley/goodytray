@@ -18,7 +18,7 @@ const MultipleRoutes = (props) => (
     <Route exact path="/(|index.html|index.php|index.js|test)" 
       render={(propz) => <Landing {...propz} user={props.initialData.user} />}
     />
-    <Route path="/(search|search/:sect/:sub_sect)" 
+    <Route path="/(search|search/:sect/:sub_sect|search/:child)" 
       render={(propz) => <SearchPage {...propz} user={props.initialData.user} />}
     />
     <Route path="/register" 

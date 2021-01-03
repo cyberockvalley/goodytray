@@ -113,7 +113,7 @@ class SellerPage extends Component {
         <div className="b-seller-info-header__wrapper">
          <div className="b-seller-info-header__avatar--wrapper">
           <div className="b-seller-info-header">
-           <div className="b-seller-info-header__avatar box-shadow js-avatar" style={this.state.seller.profile_photo.length > 0?{backgroundImage: 'url('+this.state.seller.profile_photo+')'}:{backgroundImage: 'url('+NO_PROFILE_PHOTO_IMAGE+')'}}>
+           <div className="b-seller-info-header__avatar box-shadow js-avatar" style={this.state.seller.profile_photo.length > 0?{backgroundImage: 'url('+this.state.seller.profile_photo+'?w=120)'}:{backgroundImage: 'url('+NO_PROFILE_PHOTO_IMAGE+')'}}>
            </div>
           </div>
           <div className="b-seller-info__name">
@@ -222,7 +222,7 @@ class SellerPage extends Component {
                     <div className="b-product-plate h-mb-0 js-handle-click-ctr" data-advert_id="16652934" onclick="window.location='https//jiji.ng/garki-ii/furniture/office-chair-in-abuja-zEclayD8cNgYlKxUhBHH1bBV.html?lid=RHfntElwLLexhqQV&amp;cur_pos=1&amp;pos=1&amp;ads_count=240&amp;ads_per_page=24&amp;page=0'">
                      <div className="b-product-plate__img">
                       <a className="img-wrap h-pos-rel" href={productLink(product.title, product.id)}>
-                       <img alt={product.title} className="js-api-lazy-image" src={product.photos.split(",")[0]}/>
+                       <img alt={product.title} className="js-api-lazy-image" src={`${product.photos.split(",")[0]}?w=300`}/>
                       </a>
                       <span className="b-list-advert__item-count-images b-list-advert__item-count-images--gallery">
                        <i>

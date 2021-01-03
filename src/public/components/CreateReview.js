@@ -3,6 +3,7 @@ import Navbar from './Navbar'
 import Footer from "./Footer"
 import { API_ROOT, getText } from "../../../Constants"
 import { intOrMin, queries } from "../utils/Funcs"
+import Swal from "sweetalert2"
 
 const browser = require("../utils/Browser")
 
@@ -85,7 +86,7 @@ class CreateReview extends Component {
         .then(response => {
           console.log("REVIEW_RESPONSE", response.data)
           if(response.data.auth_required) {
-            this.props.history.push("/login")
+            window.location.href = "/login"
 
           } else if(!response.data.success) {
             //show error
@@ -96,6 +97,10 @@ class CreateReview extends Component {
             + this.state.product.id + "?weight=" + this.state.selected_weight)
           }
           this.setState({loading: false})
+        })
+        .catch(e => {
+          this.setState({loading: false})
+          Swal.fire('', e, 'error')
         })
       }
     }

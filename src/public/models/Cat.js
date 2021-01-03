@@ -23,6 +23,13 @@ module.exports = db.sequelize.define(
 
         total_products: {
             type: Sequelize.INTEGER
+        },
+        identifier: {
+            type: Sequelize.STRING
+        },
+
+        weight: {
+            type: Sequelize.INTEGER
         }
 
     }, 

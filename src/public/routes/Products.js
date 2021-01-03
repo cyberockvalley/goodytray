@@ -17,7 +17,7 @@ const fileUploader = require("../utils/FileUploader")
 
 import {checkUserAuth} from "../components/UserFunctions"
 import {truncText, randNum, okResponse} from "../utils/Funcs"
-import { ERROR_DB_OP, MAX_PRODUCT_PHOTOS_SIZE, PRODUCTS_PER_PAGE, PRODUCTS_PHOTOS_CLIENT_DIR, API_ROOT, getText, getDatabaseTranslatedColumnName, AD_APPROVAL_RANK } from "../../../Constants"
+import { ERROR_DB_OP, MAX_PRODUCT_PHOTOS_SIZE, PRODUCTS_PER_PAGE, PRODUCTS_PHOTOS_CLIENT_DIR, API_ROOT, getText, getDatabaseTranslatedColumnName, AD_APPROVAL_RANK, CAT_ID_FLASH_AD, CAT_ID_GROUP_AD, SHOW_DB_ERROR, FLASH_AD_ADMIN } from "../../../Constants"
 const db = require("../database/db")
 const Sequelize = require("sequelize")
 
@@ -44,7 +44,7 @@ products.get("/approve/:id", checkUserAuth, (req, res) => {
 
     } else {
         if(!req.params.id) {
-            okResponse(res.status, {status: 0, message: "Identifier not supplied"})
+            okResponse(res, {status: 0, message: "Identifier not supplied"})
         }
         var id = parseInt(req.params.id)
         Product.update(
@@ -442,8 +442,8 @@ products.get("/", checkUserAuth, async function(req, res) {
 
 //get products counts by category and sub category
 products.get("/cats_and_sub_cats", (req, res) => {
-    var q = `SELECT cats.id, ${getDatabaseTranslatedColumnName("cats.name")}, sub_cats.id as sub_cat_id`
-    db.sequelize.query(`SELECT sub_cats.id, sub_cats.cat_id, sub_cats.total_products, ${getDatabaseTranslatedColumnName("sub_cats.name")} as sub_cat_name, ${getDatabaseTranslatedColumnName("cats.name")} as cat_name, cats.total_products as cat_total_products FROM sub_cats, cats WHERE sub_cats.cat_id = cats.id ORDER BY cat_id ASC`, {
+    //var q = `SELECT cats.id, cats.identifier, ${getDatabaseTranslatedColumnName("cats.name")}, sub_cats.id as sub_cat_id`
+    db.sequelize.query(`SELECT cats.id, sub_cats.id as sub_cat_id, sub_cats.cat_id, sub_cats.total_products, ${getDatabaseTranslatedColumnName("sub_cats.name")} as sub_cat_name, ${getDatabaseTranslatedColumnName("cats.name")} as cat_name, cats.total_products as cat_total_products, cats.identifier, cats.weight FROM sub_cats RIGHT JOIN cats ON sub_cats.cat_id=cats.id ORDER BY cats.weight DESC, cat_id ASC`, {
         replacements: [],
         raw: false, 
         type: Sequelize.QueryTypes.SELECT
@@ -458,14 +458,17 @@ products.get("/cats_and_sub_cats", (req, res) => {
                     catsAndSubCats.push(current)
                 }
                 current = {}
-                current.id = cats[i].cat_id
+                current.id = cats[i].id
                 current.name = cats[i].cat_name
+                current.indentifier = cats[i].identifier
                 current.total_products = cats[i].cat_total_products
                 current.sub_cats = []
-                current.sub_cats.push({id: cats[i].id, name: cats[i].sub_cat_name, total_products: cats[i].total_products})
-                lastCatId = cats[i].cat_id
+                if(cats[i].sub_cat_name) {
+                    current.sub_cats.push({id: cats[i].sub_cat_id, name: cats[i].sub_cat_name, total_products: cats[i].total_products})
+                }
+                lastCatId = cats[i].id
             } else {
-                current.sub_cats.push({id: cats[i].id, name: cats[i].sub_cat_name, total_products: cats[i].total_products})
+                current.sub_cats.push({id: cats[i].sub_cat_id, name: cats[i].sub_cat_name, total_products: cats[i].total_products})
             }
         }
         if(current) {
@@ -484,7 +487,7 @@ products.get("/details", checkUserAuth, function(req, res) {
     const id = req.query.id
     const forceShow = intOrMin(req.query.force_show, -1)
     var viewsSize = randNum(1, 10)
-    if(viewsSize > 1) {
+    if(viewsSize < 6) {
         viewsSize = 0;
     }
     if(!id) {
@@ -552,38 +555,62 @@ products.get("/details", checkUserAuth, function(req, res) {
                             //increase the views if the vi query string is 1
                             if(viewsSize > 0 && req.query.vi && parseInt(req.query.vi) == 1) {
                                 var v = product.views + viewsSize
-                                db.sequelize.query("UPDATE products SET views = ? WHERE id = ?", {
+                                return db.sequelize.query("UPDATE products SET views = ? WHERE id = ?", {
                                     replacements: [v, product.id],
                                     raw: false, 
                                     type: Sequelize.QueryTypes.UPDATE
                                 })
                                 .then((r) => {
                                     product.views = product.views + viewsSize
-                                    res.json({details: product})
+                                    return product
                                 })
                                 .catch(e => {
-                                    product.views = e
-                                    res.json({details: product})
+                                    return product
                                 })
 
                             } else {
-                                res.json({details: product})
+                                return product
                             }
                         })
+                        .then(details => {
+                            Product.findOne({
+                                where: {
+                                    flash_creation_time: {[Sequelize.Op.gt]: 0}
+                                },
+                                order: [
+                                    ['flash_creation_time', 'DESC']
+                                ]
+                            })
+                            .then(p => {
+                                console.log("FLASH_I", details.flash_creation_time, p.flash_creation_time)
+                                if(JSON.stringify(details.flash_creation_time) == JSON.stringify(p.flash_creation_time)) {
+                                    console.log("FLASH_I2", true)
+                                    details = JSON.parse(JSON.stringify(details))
+                                    details.isFlash = true
+
+                                } else {
+                                    console.log("FLASH_I2", false)
+                                }
+                                okResponse(res, {code: 100, details: details})
+                            })
+                            .catch(e => {
+                                okResponse(res, {details: details, err: {code: 101, e: SHOW_DB_ERROR? e : ""}})
+                            })
+                        })
                         .catch(e => {
-                            res.json({details: product})
+                            okResponse(res, {details: product, err: {code: 102, e: SHOW_DB_ERROR? e : ""}})
                         })
                     })
                     .catch(e => {
-                        res.json({details: product})
+                        okResponse(res, {details: product, err: {code: 103, e: SHOW_DB_ERROR? e : ""}})
                     })
                 })
                 .catch(e => {
-                    res.json({details: product})
+                    okResponse(res, {details: product, err: {code: 104, e: SHOW_DB_ERROR? e : ""}})
                 })
             })
             .catch(e => {
-                res.json({details: product})
+                okResponse(res, {details: product, err: {code: 105, e: SHOW_DB_ERROR? e : ""}})
             })
         })
         .catch((error) => {
@@ -592,38 +619,6 @@ products.get("/details", checkUserAuth, function(req, res) {
     }
 })
 
-const waterMark = async function(FILENAME) {
-    /*
-    console.log("Watermark 1");
-const LOGO = SERVER_ADDR + "/public/static/logo.png";
-
-const LOGO_MARGIN_PERCENTAGE = 5;
-
-  const [image, logo] = await Promise.all([
-    Jimp.read(FILENAME),
-    Jimp.read(LOGO)
-  ]);
-
-  logo.resize(image.bitmap.width / 10, Jimp.AUTO);
-
-  const xMargin = (image.bitmap.width * LOGO_MARGIN_PERCENTAGE) / 100;
-  const yMargin = (image.bitmap.width * LOGO_MARGIN_PERCENTAGE) / 100;
-
-  const X = image.bitmap.width - logo.bitmap.width - xMargin;
-  const Y = image.bitmap.height - logo.bitmap.height - yMargin;
-
-  image.composite(logo, X, Y, [
-    {
-      mode: Jimp.BLEND_SCREEN,
-      opacitySource: 1,
-      opacityDest: 1
-    }
-  ]).image.write(SERVER_ADDR + "/public/products/jimp_1.jpg");
-  return true;
-//var imageFromMain = main();
-//return main().then(image => image.write(FILENAME)).catch(e => console.log("Jinmp upload error: "));
-*/
-}
 
 products.post("/upload/photos", checkUserAuth, (req, res) => {
     if(!res.locals.token_user) {
@@ -646,7 +641,7 @@ products.post("/upload/photos", checkUserAuth, (req, res) => {
             
             while(i < req.files.length) {
                 if(totalFileSize + req.files[i].size <= MAX_PRODUCT_PHOTOS_SIZE) {
-                    //var wm = await waterMark(PRODUCTS_PHOTOS_SERVER_DIR + req.files[i].filename);
+                    
                     fileNames.push(PRODUCTS_PHOTOS_CLIENT_DIR + req.files[i].filename)
                     filePaths.push(req.files[i].path)
                 } else {
@@ -675,6 +670,143 @@ products.post("/upload/photos", checkUserAuth, (req, res) => {
     }
 })
 
+const handleFlashCount = (res, filter) => {
+    Product.count(filter)
+    .then(list => {
+        okResponse(res, {counts: list})
+
+    })
+    .catch(e => {
+        okResponse(res, {counts: 0, err: SHOW_DB_ERROR? e : ""})
+    })
+}
+
+const handleFlashList = (res, filter) => {
+    Product.findAll(filter)
+    .then(list => {
+        okResponse(res, {list: list})
+
+    })
+    .catch(e => {
+        okResponse(res, {list: [], err: SHOW_DB_ERROR? e : ""})
+    })
+}
+
+products.get("/flash", (req, res) => {
+    Product.findOne({
+        where: {
+            flash_creation_time: {[Sequelize.Op.gt]: 0}
+        },
+        order: [
+            ['flash_creation_time', 'DESC']
+        ]
+    })
+    .then(p => {
+        const filter = {
+            where: {
+                flash_creation_time: {[Sequelize.Op.eq]: null}
+            },
+            order: [
+                ['id', 'ASC']
+            ]
+        }
+        if(p && req.query.count_only) {
+            filter.where.flash_creation_time = p.flash_creation_time
+            handleFlashCount(res, filter)
+
+        } else if(p && !req.query.count_only) {
+            filter.where.flash_creation_time = p.flash_creation_time
+            handleFlashList(res, filter)
+            
+        } else if(!p && req.query.count_only) {
+            okResponse(res, {counts: 0})
+            
+        } else {
+            okResponse(res, {list: []})
+        }
+    })
+    .catch(e => {
+        okResponse(res, {counts: 0, list: [], err: SHOW_DB_ERROR? e : ""})
+    })
+})
+
+products.post("/flash/add", checkUserAuth,  (req, res) => {
+    const productId = req.body.product_id
+    if(!res.locals.token_user) {
+        okResponse(res, {status: 5, message: "Login required", auth_required: true})
+
+    } else if(res.locals.token_user.rank < FLASH_AD_ADMIN) {
+        okResponse(res, {status: 4, message: getText("PERMIT_NEEDED")})
+
+    } else if(productId < 0) {
+        okResponse(res, {status: -1, message: getText("INVALID_ITEM")})
+
+    } else {
+        Product.findOne({
+            where: {
+                id: {[Sequelize.Op.eq]: productId}
+            }
+        })
+        .then(p => {
+            if(!p) {
+                okResponse(res, {status: -2, message: getText("INVALID_ITEM")})
+
+            } else {
+                var date = new Date()
+                date.setUTCHours(0, 0, 0, 0)
+                p.update({flash_creation_time: date})
+                .then(prod => {
+                    okResponse(res, {status: 1, message: getText("OK"), success: true})
+
+                })
+                .catch(err => {
+                    okResponse(res, {status: -4, message: getText("INVALID_ITEM"), err: SHOW_DB_ERROR? err : ""})
+                })
+            }
+        })
+        .catch(err => {
+            okResponse(res, {status: -44, message: getText("INVALID_ITEM"), err: SHOW_DB_ERROR? err : ""})
+        })
+    }
+})
+products.post("/flash/remove", checkUserAuth,  (req, res) => {
+    const productId = req.body.product_id
+    if(!res.locals.token_user) {
+        okResponse(res, {status: 5, message: "Login required", auth_required: true})
+
+    } else if(res.locals.token_user.rank < FLASH_AD_ADMIN) {
+        okResponse(res, {status: 4, message: getText("PERMIT_NEEDED")})
+
+    } else if(productId < 0) {
+        okResponse(res, {status: -1, message: getText("INVALID_ITEM")})
+
+    } else {
+        Product.findOne({
+            where: {
+                id: {[Sequelize.Op.eq]: productId}
+            }
+        })
+        .then(p => {
+            if(!p) {
+                okResponse(res, {status: -2, message: getText("INVALID_ITEM")})
+
+            } else {
+                p.update({flash_creation_time: null})
+                .then(prod => {
+                    okResponse(res, {status: 1, message: getText("OK"), success: true})
+
+                })
+                .catch(err => {
+                    okResponse(res, {status: -4, message: getText("INVALID_ITEM"), err: SHOW_DB_ERROR? err : ""})
+                })
+            }
+        })
+        .catch(err => {
+            okResponse(res, {status: -44, message: getText("INVALID_ITEM"), err: SHOW_DB_ERROR? err : ""})
+        })
+    }
+})
+
 
 //upload products
 products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
@@ -682,155 +814,184 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
     if(!res.locals.token_user) {
         res.json({status: 5, message: "Login required", auth_required: true})
 
-    } else if(req.originalUrl.includes("edit") && res.locals.token_user.id != product.user_id) {
-        res.json({status: 4, message: getText("PERMIT_NEEDED")})
+    } else if(req.originalUrl.includes("edit")) {
+        Product.findOne({
+            where: {
+                id: {[Sequelize.Op.eq]: product.id}
+            }
+        })
+        .then(p => {
+            if(!p) {
+                okResponse(res, {status: 4, message: getText("INVALID_ITEM")})
+
+            } else if(p.user_id != res.locals.token_user.id) {
+                res.json({status: 4, message: getText("PERMIT_NEEDED")})
+
+            } else {
+                handleProduct(product, res)
+            }
+        })
+        .catch(err => {
+            okResponse(res, {status: -4, message: getText("INVALID_ITEM"), err: SHOW_DB_ERROR? err : ""})
+        })
 
     } else {
-        const today = new Date()
-        const form_errors = []
-        const productData = {}
-        if(product.id) {
-            productData.id = product.id
-        }
-        productData.hide_phone_number = product.hide_phone_number == 1?1:0
+        handleProduct(product, res)
+    }
+})
 
-        productData.user_id = res.locals.token_user.id
-        if(!product.cat || isNaN(parseInt(product.cat)) || parseInt(product.cat) < 0) {
-            form_errors.push({key: "cat", value: getText("PLS_SELECT_A_CAT")})
+const handleProduct = (product, res) => {
+    const today = new Date()
+    const form_errors = []
+    const productData = {}
+    if(product.id) {
+        productData.id = product.id
+    }
+    productData.hide_phone_number = product.hide_phone_number == 1?1:0
 
-        } else {
-            productData.cat_id = parseInt(product.cat)
-        }
-        
+    productData.user_id = res.locals.token_user.id
+    if(!product.cat || isNaN(parseInt(product.cat)) || parseInt(product.cat) < 0) {
+        form_errors.push({key: "cat", value: getText("PLS_SELECT_A_CAT")})
+
+    } else {
+        productData.cat_id = parseInt(product.cat)
+    }
     
-        if(!product.sub_cat || isNaN(parseInt(product.sub_cat)) || parseInt(product.sub_cat) < 0) {
-            form_errors.push({key: "sub_cat", value: getText("PLS_SELECT_A_SUB_CAT")})
+    if(productData.cat_id == CAT_ID_FLASH_AD || productData.cat_id == CAT_ID_GROUP_AD) {
+        productData.sub_cat_id = -1
 
-        } else {
-            productData.sub_cat_id = parseInt(product.sub_cat)
+    } else if(!product.sub_cat || isNaN(parseInt(product.sub_cat)) || parseInt(product.sub_cat) < 0) {
+        form_errors.push({key: "sub_cat", value: getText("PLS_SELECT_A_SUB_CAT")})
+
+    } else {
+        productData.sub_cat_id = parseInt(product.sub_cat)
+    }
+
+    if(product.attrs && product.attrs.length > 0) {
+        var attrs = "_"
+        for(var a = 0; a < product.attrs.length; a++) {
+            console.log(product.attrs[a])
+            attrs += truncText(product.attrs[a], 70, null) + ","
         }
+        attrs = attrs.substring(0, attrs.length - 1) + "_"
+        productData.attrs = attrs
 
-        if(product.attrs && product.attrs.length > 0) {
-            var attrs = "_"
-            for(var a = 0; a < product.attrs.length; a++) {
-                console.log(product.attrs[a])
-                attrs += truncText(product.attrs[a], 70, null) + ","
+    } else {
+        productData.attrs = ""
+    }
+
+    if(!product.title || product.title.length == 0) {
+        form_errors.push({key: "title", value: getText("PLS_ENTER_TITLE")})
+
+    } else {
+        productData.title = truncText(product.title, 70, null)
+    }
+
+    if(!product.desc || product.desc.length == 0) {
+        form_errors.push({key: "desc", value: getText("PLS_ENTER_DESC")})
+
+    } else {
+        productData.description = truncText(product.desc, 1000, null)
+    }
+
+    if(!product.price_currency_symbol || product.price_currency_symbol.length == 0) {
+        form_errors.push({key: "price", value: getText("PLS_SELECT_YOUR_CURRENCY")})
+
+    } else {
+        productData.currency_symbol = truncText(product.price_currency_symbol, 30, null)
+    }
+
+    if(!product.price || isNaN(parseInt(product.price)) || parseInt(product.price) < 0) {
+        form_errors.push({key: "price", value: getText("PLS_ENTER_PRICE")})
+
+    } else {
+        productData.price = parseInt(truncText(product.price, 30, null))
+    }
+
+    if(productData.currency_symbol && productData.price) {
+        productData.global_price = EXCHANGE_RATE[[productData.currency_symbol]] * productData.price
+    }
+
+    if(!product.country || isNaN(parseInt(product.country)) || parseInt(product.country) < 0) {
+        form_errors.push({key: "country", value: getText("PLS_SELECT_YOUR_COUNTRY")})
+
+    } else {
+        productData.country_id = parseInt(product.country)
+    }
+
+    if(!product.state || isNaN(parseInt(product.state)) || parseInt(product.state) < 0) {
+        form_errors.push({key: "state", value: getText("PLS_SELECT_YOUR_STATE")})
+
+    } else {
+        productData.state_id = parseInt(product.state)
+    }
+
+    if(!product.city || isNaN(parseInt(product.city)) || parseInt(product.city) < 0) {
+        form_errors.push({key: "city", value: getText("PLS_SELECT_YOUR_CITY")})
+
+    } else {
+        productData.city_id = parseInt(product.city)
+    }
+
+    if(form_errors.length > 0) {
+        if(product.photos && product.photos.length > 0) {
+            var i = 0
+            while(i < product.photos.length) {
+                try {
+                    fs.unlinkSync("dist" + product.photos[i])
+                } catch(e) {
+                    res.json({status: 0, message: getText("FILE_DEL_FAILED")})
+                }
+                i++
             }
-            attrs = attrs.substring(0, attrs.length - 1) + "_"
-            productData.attrs = attrs
-
-        } else {
-            productData.attrs = ""
         }
+        res.json({status: 0, message: null, form_errors: form_errors})
 
-        if(!product.title || product.title.length == 0) {
-            form_errors.push({key: "title", value: getText("PLS_ENTER_TITLE")})
-
-        } else {
-            productData.title = truncText(product.title, 70, null)
+    } else {
+        //delete photos deleted on client on server
+        console.log("DelPhotoZ", product.del_photos)
+        if(product.del_photos && product.del_photos.length > 0) {
+            var i = 0
+            while(i < product.del_photos.length) {
+                fs.unlink("dist" + product.del_photos[i])
+                .then(r => {
+                    console.log("DelPhotoz", "ok", product.del_photos[i])
+                }).catch(e => {
+                    console.log("DelPhotoZ", "notOk", product.del_photos[i])
+                })
+                i++
+            }
         }
-
-        if(!product.desc || product.desc.length == 0) {
-            form_errors.push({key: "desc", value: getText("PLS_ENTER_DESC")})
-
-        } else {
-            productData.description = truncText(product.desc, 1000, null)
+        productData.created = today
+        productData.last_update = today
+        var photos = ""
+        if(product.photos && product.photos.length > 0) {
+            var i = 0
+            while(i < product.photos.length) {
+                photos += product.photos[i] + ","
+                i++
+            }
+            photos = photos.substring(0, photos.length - 1)
         }
-
-        if(!product.price_currency_symbol || product.price_currency_symbol.length == 0) {
-            form_errors.push({key: "price", value: getText("PLS_SELECT_YOUR_CURRENCY")})
-
-        } else {
-            productData.currency_symbol = truncText(product.price_currency_symbol, 30, null)
-        }
-
-        if(!product.price || isNaN(parseInt(product.sub_cat)) || parseInt(product.sub_cat) < 0) {
-            form_errors.push({key: "price", value: getText("PLS_ENTER_PRICE")})
-
-        } else {
-            productData.price = parseInt(truncText(product.price, 30, null))
-        }
-
-        if(productData.currency_symbol && productData.price) {
-            productData.global_price = EXCHANGE_RATE[[productData.currency_symbol]] * productData.price
-        }
-
-        if(!product.country || isNaN(parseInt(product.country)) || parseInt(product.country) < 0) {
-            form_errors.push({key: "country", value: getText("PLS_SELECT_YOUR_COUNTRY")})
-
-        } else {
-            productData.country_id = parseInt(product.country)
-        }
-
-        if(!product.state || isNaN(parseInt(product.state)) || parseInt(product.state) < 0) {
-            form_errors.push({key: "state", value: getText("PLS_SELECT_YOUR_STATE")})
-
-        } else {
-            productData.state_id = parseInt(product.state)
-        }
-
-        if(!product.city || isNaN(parseInt(product.city)) || parseInt(product.city) < 0) {
-            form_errors.push({key: "city", value: getText("PLS_SELECT_YOUR_CITY")})
-
-        } else {
-            productData.city_id = parseInt(product.city)
-        }
-
-        if(form_errors.length > 0) {
-            if(product.photos && product.photos.length > 0) {
-                var i = 0
-                while(i < product.photos.length) {
-                    try {
-                        fs.unlinkSync("dist" + product.photos[i])
-                    } catch(e) {
-                        res.json({status: 0, message: getText("FILE_DEL_FAILED")})
+        productData.photos = photos
+        if(req.originalUrl.includes("upload")) {
+            console.log("c-a-t", 77)
+            productData.reviewed = 0
+            Product.create(productData)
+            .then(prod => {
+                Cat.findOne({
+                    where: {
+                        id: prod.cat_id
                     }
-                    i++
-                }
-            }
-            res.json({status: 0, message: null, form_errors: form_errors})
+                })
+                .then(cat => {
+                    if(cat) {
+                        const newCat = {total_products: cat.total_products + 1};
+                        cat.update(newCat)
+                        if(productData.cat_id == CAT_ID_FLASH_AD || productData.cat_id == CAT_ID_GROUP_AD) {
+                            return res.status(200).json({status: 1, message: getText("AD_POSTED"), product_id: prod.id})
 
-        } else {
-            //delete photos deleted on client on server
-            console.log("DelPhotoZ", product.del_photos)
-            if(product.del_photos && product.del_photos.length > 0) {
-                var i = 0
-                while(i < product.del_photos.length) {
-                    try {
-                        fs.unlinkSync("dist" + product.del_photos[i])
-                        console.log("DelPhotoz", "ok", product.del_photos[i])
-                    } catch(e) {
-                        console.log("DelPhotoZ", "notOk", product.del_photos[i])
-                    }
-                    i++
-                }
-            }
-            productData.created = today
-            productData.last_update = today
-            var photos = ""
-            if(product.photos && product.photos.length > 0) {
-                var i = 0
-                while(i < product.photos.length) {
-                    photos += product.photos[i] + ","
-                    i++
-                }
-                photos = photos.substring(0, photos.length - 1)
-            }
-            productData.photos = photos
-            if(req.originalUrl.includes("upload")) {
-                console.log("c-a-t", 77)
-                productData.reviewed = 0
-                Product.create(productData)
-                .then(prod => {
-                    Cat.findOne({
-                        where: {
-                            id: prod.cat_id
-                        }
-                    })
-                    .then(cat => {
-                        if(cat) {
-                            const newCat = {total_products: cat.total_products + 1};
-                            cat.update(newCat)
+                        } else {
                             SubCat.findOne({
                                 where: {
                                     id: productData.sub_cat_id
@@ -847,128 +1008,131 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
                                 }
                             })
                             .catch(err => {
-                                return res.status(200).json({status: -1, message: ERROR_DB_OPrr})
+                                return res.status(200).json({status: -1, message: ERROR_DB_OP, err: SHOW_DB_ERROR? {id: 1, e: err} : {}})
                             })
-            
-                        } else {
-                            return res.status(200).json({status: -1, message: ERROR_DB_OP})
                         }
-                    })
-                    .catch(err => {
-                        return res.status(200).json({status: -1, message: ERROR_DB_OPrr})
-                    })
-                })
-                .catch(e => {
-                    return res.status(200).json({status: -1, message: ERROR_DB_OP, c: productData.currency_symbol})
-                })
-
-            } else {
-                console.log("c-a-t= cat", 1)
-                Product.update(productData, {
-                    where: {
-                        id: productData.id
+        
+                    } else {
+                        return res.status(200).json({status: -1, message: ERROR_DB_OP})
                     }
                 })
-                .then(prod => {
-                    const cats_and_sub_cats_updates = []
-                    console.log("c-a-t= cat")
-                    console.log("cats_and_sub_cats_updatesData", {
-                        cat_id: productData.cat_id,
-                        prev_cat: product.prev_cat,
-                        sub_cat_id: productData.sub_cat_id,
-                        prev_sub_cat: product.prev_sub_cat
-                    })
-                    //if the category was changed
-                    if(productData.cat_id != product.prev_cat) {
-                        //then we reduce the product count under the previous
-                        // category, and increase it under the category changed to.
-                        cats_and_sub_cats_updates.push(
-                            new Promise(resolve => {
+                .catch(err => {
+                    return res.status(200).json({status: -1, message: ERROR_DB_OP, err: {id: 2, e: SHOW_DB_ERROR}? err : {}})
+                })
+            })
+            .catch(e => {
+                return res.status(200).json({status: -1, message: ERROR_DB_OP, err: SHOW_DB_ERROR? {id: 3, e: e} : {}})
+            })
+
+        } else {
+            console.log("c-a-t= cat", 1)
+            Product.update(productData, {
+                where: {
+                    id: productData.id
+                }
+            })
+            .then(prod => {
+                const cats_and_sub_cats_updates = []
+                console.log("c-a-t= cat")
+                console.log("cats_and_sub_cats_updatesData", {
+                    cat_id: productData.cat_id,
+                    prev_cat: product.prev_cat,
+                    sub_cat_id: productData.sub_cat_id,
+                    prev_sub_cat: product.prev_sub_cat
+                })
+                //if the category was changed
+                if(productData.cat_id != product.prev_cat) {
+                    //then we reduce the product count under the previous
+                    // category, and increase it under the category changed to.
+                    cats_and_sub_cats_updates.push(
+                        new Promise(resolve => {
+                            Cat.findOne({
+                                where: {
+                                    id: product.prev_cat
+                                }
+                            })
+                            .then(cat => {
+                                var newCat = {total_products: cat.total_products - 1}
+                                cat.update(newCat)
                                 Cat.findOne({
                                     where: {
-                                        id: product.prev_cat
+                                        id: productData.cat_id
                                     }
                                 })
-                                .then(cat => {
-                                    var newCat = {total_products: cat.total_products - 1}
-                                    cat.update(newCat)
-                                    Cat.findOne({
-                                        where: {
-                                            id: productData.cat_id
-                                        }
-                                    })
-                                    .then(cat2 => {
-                                        var newCat2 = {total_products: cat2.total_products + 1}
-                                        cat2.update(newCat2)
-                                        resolve({cats: "Success 1 2"})
-                                    })
-                                    .catch(e => {
-                                        resolve({cats: "Success 1 Failed 2", e: ""/*e*/})
-                                    })
+                                .then(cat2 => {
+                                    var newCat2 = {total_products: cat2.total_products + 1}
+                                    cat2.update(newCat2)
+                                    resolve({cats: "Success 1 2"})
                                 })
-                                .catch(e => {
-                                    resolve({cats: "Failed 1", e: ""/*e*/})
+                                .catch(err => {
+                                    resolve({cats: "Success 1 Failed 2", err: SHOW_DB_ERROR? {id: 101, e: err} : {}})
                                 })
                             })
-                        )
-                    }
-                    //if the sub category was changed
-                    if(productData.sub_cat_id != product.prev_sub_cat) {
-                        //then we reduce the product count under the previous
-                        // sub category, and increase it under the sub category changed to.
-                        cats_and_sub_cats_updates.push(
-                            new Promise(resolve => {
+                            .catch(err => {
+                                resolve({cats: "Failed 1", err: SHOW_DB_ERROR? {id: 201, e: err} : {}})
+                            })
+                        })
+                    )
+                }
+                //if the sub category was changed
+                if(productData.cat_id != CAT_ID_FLASH_AD && productData.cat_id != CAT_ID_GROUP_AD && productData.sub_cat_id != product.prev_sub_cat) {
+                    //then we reduce the product count under the previous
+                    // sub category, and increase it under the sub category changed to.
+                    cats_and_sub_cats_updates.push(
+                        new Promise(resolve => {
+                            SubCat.findOne({
+                                where: {
+                                    id: product.prev_sub_cat
+                                }
+                            })
+                            .then(cat => {
+                                var newCat = {total_products: cat.total_products - 1}
+                                cat.update(newCat)
                                 SubCat.findOne({
                                     where: {
-                                        id: product.prev_sub_cat
+                                        id: productData.sub_cat_id
                                     }
                                 })
-                                .then(cat => {
-                                    var newCat = {total_products: cat.total_products - 1}
-                                    cat.update(newCat)
-                                    SubCat.findOne({
-                                        where: {
-                                            id: productData.sub_cat_id
-                                        }
-                                    })
-                                    .then(cat2 => {
-                                        var newCat2 = {total_products: cat2.total_products + 1}
-                                        cat2.update(newCat2)
-                                        resolve({sub_cats: "Success 1 2"})
-                                    })
-                                    .catch(e => {
-                                        resolve({sub_cats: "Success 1 Failed 2", e: ""/*e*/})
-                                    })
+                                .then(cat2 => {
+                                    var newCat2 = {total_products: cat2.total_products + 1}
+                                    cat2.update(newCat2)
+                                    resolve({sub_cats: "Success 1 2"})
                                 })
-                                .catch(e => {
-                                    resolve({sub_cats: "Failed 1", e: ""/*e*/})
+                                .catch(err => {
+                                    resolve({sub_cats: "Success 1 Failed 2", err: SHOW_DB_ERROR? {id: 11, e: err} : {}})
                                 })
                             })
-                        )
-                    }
-
-                    //if the category and sub category wasn't changed
-                    if(cats_and_sub_cats_updates.length == 0) {
-                        console.log("c-a-t", 99)
-                        return res.status(200).json({status: 1, message: getText("AD_POSTED"), product_id: productData.id})
-
-                    } else {
-                        console.log("c-a-t", 88)
-                        Promise.all(cats_and_sub_cats_updates)
-                        .then(results => {
-                            console.log("cats_and_sub_cats_updatesResult", results)
-                            return res.status(200).json({status: 1, message: getText("AD_POSTED"), product_id: productData.id})
+                            .catch(err => {
+                                resolve({sub_cats: "Failed 1", err: SHOW_DB_ERROR? {id: 22, e: err} : {}})
+                            })
                         })
-                    }
-                    
-                })
-                .catch(e => {
-                    return res.status(200).json({status: -1, message: ERROR_DB_OP, c: productData.currency_symbol})
-                })
-            }
-            
+                    )
+                }
+
+                //if the category and sub category wasn't changed
+                if(cats_and_sub_cats_updates.length == 0) {
+                    console.log("c-a-t", 99)
+                    return res.status(200).json({status: 1, message: getText("AD_POSTED"), product_id: productData.id})
+
+                } else {
+                    console.log("c-a-t", 88)
+                    Promise.all(cats_and_sub_cats_updates)
+                    .then(results => {
+                        console.log("cats_and_sub_cats_updatesResult", results)
+                        return res.status(200).json({status: 1, message: getText("AD_POSTED"), product_id: productData.id})
+                    })
+                    .catch(err => {
+                        return res.status(200).json({status: -1, message: ERROR_DB_OP, err: SHOW_DB_ERROR? {id: 222, e: err} : {}})
+                    })
+                }
+                
+            })
+            .catch(err => {
+                return res.status(200).json({status: -1, message: ERROR_DB_OP, c: productData.currency_symbol, err: SHOW_DB_ERROR? {id: 33, e: err} : {}})
+            })
         }
+        
     }
-})
+}
 
 module.exports = products

@@ -13,7 +13,11 @@ import {ERROR_DB_OP, getText} from "../../../Constants"
 //get cats
 cats.get("/", function(req, res) {
     Cat.findAll({
+        where: {
+            weight: {[Op.lt]: 2}
+        },
         order: [
+            ['weight', 'DESC'],
             ['name', 'ASC']
         ]
     })

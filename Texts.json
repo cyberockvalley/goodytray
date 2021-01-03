@@ -336,6 +336,7 @@
                 "APPROVE_AD": "Approve ad",
                 "NO_PENDING_AD": "No pending ads yet",
                 "OK": "Ok",
+                "CANCEL": "Cancel",
                 "PRODUCT_NOT_FOUND": "Product not found",
                 "PRODUCT_NOT_FOUND_REASON": "This product might have been deleted or it's currently awaiting admins approval",
                 "RATINGS_TEXTS": [
@@ -349,6 +350,14 @@
 
                     "My experience is not listed(Let us know in the feedback)"
                 ],
+                "FLASH_AD": "Flash Ad",
+                "GROUP_AD": "Group Ad",
+                "GROUP_AD_DESC": "In group ad, you upload the photos of different items you're selling, enter the price you're selling them all together, and the description of each item.",
+                "FLASH_AD_UPGRADE_WARNING": "Are you sure you want to upgrade this ad to Flash?",
+                "UPGRADE_TO_FLASH": "Upgrade to flash",
+                "REMOVE_FROM_FLASH": "Remove from flash",
+                "ACTION_OK": "Action successfull",
+                "INVALID_ITEM": "Invalid item",
                 "DATE_AND_TIME": {
                     "dayNames": [
                         "Sun",
@@ -735,6 +744,7 @@
                 "APPROVE_AD": "Approva annuncio",
                 "NO_PENDING_AD": "Nessun annuncio in attesa ancora",
                 "OK": "Ok",
+                "CANCEL": "Annulla",
                 "PRODUCT_NOT_FOUND": "Prodotto non trovato",
                 "PRODUCT_NOT_FOUND_REASON": "Questo prodotto potrebbe essere stato eliminato o è attualmente in attesa di approvazione da parte degli amministratori",
                 "RATINGS_TEXTS": [
@@ -744,6 +754,14 @@
                     "Acquisto riuscito (hai acquistato il prodotto)",
                     "La mia esperienza non è elencata (faccelo sapere nel feedback)"
                 ],
+                "FLASH_AD": "Offerte flash",
+                "GROUP_AD": "Annunci di gruppo",
+                "GROUP_AD_DESC": "Nell'annuncio di gruppo, carichi le foto dei diversi articoli che vendi, inserisci il prezzo che stai vendendo tutti insieme e la descrizione di ogni articolo.",
+                "FLASH_AD_UPGRADE_WARNING": "Sei sicuro di voler aggiornare questo annuncio a Flash?",
+                "UPGRADE_TO_FLASH": "Aggiorna a flash",
+                "REMOVE_FROM_FLASH": "Rimuovi dal flash",
+                "ACTION_OK": "Azione riuscita",
+                "INVALID_ITEM": "Articolo non valido",
                 "DATE_AND_TIME": {
                     "dayNames": [
                         "Sun",

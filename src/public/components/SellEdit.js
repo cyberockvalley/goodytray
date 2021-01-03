@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { SITE_NAME, API_ROOT, AD_PACKAGES, MAX_PRODUCT_PHOTO_WIDTH, getText } from '../../../Constants'
+import { SITE_NAME, API_ROOT, AD_PACKAGES, MAX_PRODUCT_PHOTO_WIDTH, getText, CAT_ID_FLASH_AD, CAT_ID_GROUP_AD } from '../../../Constants'
 const browser = require('../utils/Browser')
 import {id, cls, commaNum, remove, removeObject, queries, isFile, jsonEmpty, resizeImageFile, blobToFile} from '../utils/Funcs'
 import {MAX_PRODUCT_PHOTOS_SIZE} from "../../../Constants"
@@ -8,6 +8,7 @@ const StripeView = require("../components/third_party/stripe/StripeView")
 import TextView from "./widgets/TextView"
 import Loading from './widgets/Loading'
 import { Link } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 var productCurrencySymbol = getText("PRODUCT_CURRENCY_SYMBOL")
 class SellEdit extends Component {
@@ -300,8 +301,11 @@ class SellEdit extends Component {
             if(response.data.details) {
                 const product = response.data.details
                 if(!this.props.initialData.user || this.props.initialData.user.id != product.user_id) {
-                  alert(getText("ERROR_ADVERT_EDIT_PERMISSION"))
-                  window.location.href = productLink(product.title, id)
+                  Swal.fire('', getText("ERROR_ADVERT_EDIT_PERMISSION"), 'error')
+                  .then(() => {
+                    window.location.href = productLink(product.title, id)
+                  })
+                  
                 }
                 //set attributes
                 var attrs = response.data.details.attrs
@@ -402,7 +406,7 @@ class SellEdit extends Component {
       }catch(e) {}
     }
 
-    if(this.state.sub_cat == -1) {
+    if(this.state.sub_cat == -1 && this.state.sub_cats.length > 0) {
       this.setError("sub_cat", getText("PLS_SELECT_A__SUB_CAT"))
       hasError = true
 
@@ -622,7 +626,7 @@ class SellEdit extends Component {
       if(respData.status == 1) {
         const productId = respData.product_id
         console.log("pid", productId)
-        //alert("Success")
+        
         this.state.product = product
         this.setState({product: product})
         this.sponsorAd(this.state.title, productId)
@@ -636,11 +640,11 @@ class SellEdit extends Component {
 
         } else if(respData.error || respData.message) {
           this.onServerResponse()
-          alert(respData.error || respData.message)
+          Swal.fire('', respData.error || respData.message, 'error')
 
         } else {
           this.onServerResponse()
-          alert(getText("ERROR_SERVER_RESPONSE"))
+          Swal.fire('', getText("ERROR_SERVER_RESPONSE"), 'error')
         }
         
       }
@@ -656,10 +660,13 @@ class SellEdit extends Component {
     const msg = message.message
     const paymentSuccessfull = message.payment_successfull
     if(paymentSuccessfull) {
-      alert(getText("BOOSTED_UPLOAD_OK"))
-      window.location.href = productLink(this.state.title, this.state.product_id)
+      Swal.fire('', getText("BOOSTED_UPLOAD_OK"), 'success')
+      .then(() => {
+        window.location.href = productLink(this.state.title, this.state.product_id)
+      })
+
     } else {
-      alert(msg)
+      Swal.fire('', msg, 'error')
     }
     this.hidePaymentForm()
   }
@@ -1159,13 +1166,16 @@ class SellEdit extends Component {
               <span id="cat-error" className="fw-field__error qa-fw-field__error hide">
                 {getText("FIELD_REQUIRED_LOWERCASE")}
               </span>
+              <span className={`${this.state.cat == CAT_ID_GROUP_AD? "" : "d-none"}`}>
+                {getText("GROUP_AD_DESC")}
+              </span>
             </div>
             : <Loading text={getText("CAT")} />
           }
          </div>
         </div>
 
-        <div id="sub_cat-section" data-v-2f9b1610="" className={parseInt(this.state.cat) == -1? "disabled-section":""}>
+        <div id="sub_cat-section" data-v-2f9b1610="" dataCat={this.state.cat} className={`${this.state.cat == CAT_ID_FLASH_AD || this.state.cat == CAT_ID_GROUP_AD? "d-none " : ""}${parseInt(this.state.cat) == -1? "disabled-section":""}`}>
          <div className="b-form-section h-mb-15 qa-choose-category b-form-section--required">
           <label className="b-form-section__title cap-case">
           {getText("SUB_CAT")}

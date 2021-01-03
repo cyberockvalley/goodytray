@@ -131,6 +131,11 @@ var product = db.sequelize.define(
 
         reviewed: {
             type: Sequelize.INTEGER
+        },
+        flash_creation_time: {
+            type: 'TIMESTAMP',
+            /*defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),*/
+            allowNull: true
         }
     }, 
     {

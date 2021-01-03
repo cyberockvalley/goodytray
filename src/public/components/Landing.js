@@ -1,6 +1,6 @@
 import React, { Component } from "react"
-import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME, getText } from "../../../Constants"
-import { productLink, catLink, catIconName, countryLink, subCatLink, stateLink } from "../utils/LinkBuilder"
+import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME, getText, CAT_ID_FLASH_AD, CAT_ID_GROUP_AD } from "../../../Constants"
+import { productLink, catLink, flashLink, countryLink, subCatLink, stateLink } from "../utils/LinkBuilder"
 import { commaNum, id, overflows, truncText} from "../utils/Funcs"
 import { Link } from "react-router-dom"
 import Navbar from './Navbar'
@@ -20,6 +20,8 @@ class Landing extends Component {
           carousel_images: ["/public/res/images/static/how-to-buy.jpg", "/public/res/images/static/premium-services.jpg"],
           products: [],
           loading_products: false,
+          flashProducts: [],
+          totalFlashProducts: 0,
           cats: [],
           sub_cats: [],
           countries: [],
@@ -180,6 +182,14 @@ class Landing extends Component {
         
         this.setState({loading_products: true})
 
+        //get flash ads count
+        browser.axios.get(API_ROOT + "products/flash?count_only=1")
+        .then(resp => {
+            if(resp && resp.data) {
+                this.setState({totalFlashProducts: resp.data.counts})
+            }
+        })
+
         //get cats & sub cats
         browser.axios.get(API_ROOT + "products/cats_and_sub_cats")
         .then(resp => {
@@ -188,6 +198,15 @@ class Landing extends Component {
                 
             }
         })
+
+        //get flash ads
+        browser.axios.get(API_ROOT + "products/flash")
+        .then(resp => {
+            if(resp && resp.data && resp.data.list) {
+                this.setState({flashProducts: resp.data.list})
+            }
+        })
+
         //get products
         browser.axios.get(API_ROOT + "products?update_order=1&views_order=1")
         .then(resp => {
@@ -383,8 +402,8 @@ class Landing extends Component {
                                 {
                                     this.state.cats.slice(0, 3).map((cat, index) => (
                                         <Link className="mobile-cats-tab-link" key={index} to={catLink(cat.name)}>
-                                            <svg className={"cat-"+catIconName(cat.name)} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
-                                                <use xlinkHref={"#cat-"+catIconName(cat.name)} data-index={index} data-id={cat.id}></use>
+                                            <svg className={cat.indentifier} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
+                                                <use xlinkHref={`#${cat.indentifier}`} data-index={index} data-id={cat.id}></use>
                                             </svg>
                                             <span className="">
                                                 {truncText(cat.name, 10)}
@@ -417,27 +436,15 @@ class Landing extends Component {
                                                                                 </svg>
                                                                             </div>
                                                                             <div className="categories-innermost-wrapper">
-
+                                                                                {
+                                                                                    this.state.cats && this.state.cats.length > 0 && this.state.cats[0].id == CAT_ID_FLASH_AD? 
+                                                                                    this.buildCat(this.state.cats[0], 0, this.state.totalFlashProducts, flashLink())
+                                                                                : null
+                                                                                }
                                                                                 {
                                                                                     this.state.cats.map((cat, index) => (
-                                                                                    <Link onMouseEnter={this.setSubCat} key={index} to={catLink(cat.name)} className={"b-categories-item h-ph-10 b-categories-item--item-alt qa-category-parent-item cat_and_sub_"+cat.id} data-index={index} data-id={cat.id}>
-                                                                                        <span className="b-categories-item--outer" data-index={index} data-id={cat.id}>
-                                                                                            <span className="h-flex-center" data-index={index} data-id={cat.id}>
-                                                                                                <svg className={"cat-"+catIconName(cat.name)} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
-                                                                                                    <use xlinkHref={"#cat-"+catIconName(cat.name)} data-index={index} data-id={cat.id}></use>
-                                                                                                </svg>
-                                                                                                <span className="b-categories-item--inner" data-index={index} data-id={cat.id}>
-                                                                                                    <span className="qa-category-parent-name b-category-parent-name" data-index={index} data-id={cat.id}>{cat.name}</span>
-                                                                                                    <span className="b-list-category-stack__item-link--found b-black" data-index={index} data-id={cat.id}>
-                                                                                                    <span data-index={index} data-id={cat.id}>{commaNum(cat.total_products) + " " + getText("ADVERTS_LOWERCASE")}</span>
-                                                                                                    </span>
-                                                                                                </span>
-                                                                                            </span>
-                                                                                            <svg className="sm-hide-down next" style={{ width: "10px", height: "10px", maxWidth: "10px", maxHeight: "10px", fill: "rgb(48, 58, 75)", stroke: "inherit" }}>
-                                                                                                <use xlinkHref="#next"></use>
-                                                                                            </svg>
-                                                                                        </span>
-                                                                                    </Link>
+                                                                                        cat.id == CAT_ID_FLASH_AD? null :
+                                                                                        this.buildCat(cat, index, cat.total_products, catLink(cat.name))
                                                                                     ))
                                                                                 }
 
@@ -575,35 +582,13 @@ class Landing extends Component {
                                                 <h3 className="sm-hide-down b-listing-cards-title">{getText("TRENDING_ADS")}</h3>
                                                 <div className="row">
                                                     {
+                                                        this.state.flashProducts.map((product, index) => (
+                                                            this.buildProduct(product, index, true)
+                                                        ))
+                                                    }
+                                                    {
                                                         this.state.products.map((product, index) => (
-                                                            <div key={index} className="col-xs-6 col-sm-3 h-mb-15">
-                                                            <div className="fw-card qa-fw-card b-trending-card h-height-100p">
-                                                                <Link to={productLink(product.title, product.id)} className="">
-                                                                    <div className="fw-card-media qa-fw-card-media" style={{ backgroundColor: "rgb(255, 255, 255)", backgroundImage: 'url('+product.photos.split(",")[0]+')' }}>
-                                                                        {
-                                                                            product.sponsored?
-                                                                            <div className="b-trending-card__boosted-label h-flex-center">{PAID_AD_NAME}</div>
-                                                                            :
-                                                                            ""
-                                                                        }
-                                                                        <div className="b-trending-card__counter">{product.photos.split(",").length}</div>
-                                                                    </div>
-                                                                    <div className="fw-card-content qa-fw-card-content">
-                                                                        <div className="b-trending-card__title">{product.title}</div>
-                                                                        <div className="b-trending-card__price" dangerouslySetInnerHTML={{__html: product.currency_symbol + " " + commaNum(product.price)}}></div>
-                                                                        <div className="fw-card-content-icon">
-                                                                            <button type="button" className="hide fw-button qa-fw-button fw-button--type-success fw-button--size-little fw-button--circle fw-button--has-icon">
-                                                                                <span className="fw-button__content">
-                                                                                    <svg strokeWidth="0" className="favorite-stroke" style={{ width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(112, 185, 63)", stroke: "inherit" }}>
-                                                                                        <use xlinkHref="#favorite-stroke"></use>
-                                                                                    </svg>
-                                                                                </span>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </Link>
-                                                            </div>
-                                                        </div>
+                                                            this.buildProduct(product, index)
                                                         ))
                                                     }
                                                 </div>
@@ -621,6 +606,82 @@ class Landing extends Component {
                     <div onClick={this.toggleCountries} className={this.state.countries_visible?"fw-fixed-background":"fw-fixed-background hide"}></div>
                 </div>
                 <Footer />
+            </div>
+        )
+    }
+
+    buildCat = (cat, index, totalProducts, link) => {
+        return (
+            <Link onMouseEnter={this.setSubCat} key={index} to={link} className={"b-categories-item h-ph-10 b-categories-item--item-alt qa-category-parent-item cat_and_sub_"+cat.id} data-index={index} data-id={cat.id}>
+                <span className="b-categories-item--outer" data-index={index} data-id={cat.id}>
+                    <span className="h-flex-center" data-index={index} data-id={cat.id}>
+                        {
+                            cat.id == CAT_ID_FLASH_AD || cat.id == CAT_ID_GROUP_AD?
+                            <svg style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>       
+                                <image style={{width: "100%", height: "100%"}} xlinkHref={`/public/res/images/static/${cat.id == CAT_ID_FLASH_AD? "flash" : "cubes"}.svg`} data-index={index} data-id={cat.id} />    
+                            </svg>
+                            :
+                            <svg className={cat.indentifier} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
+                                <use xlinkHref={`#${cat.indentifier}`} data-index={index} data-id={cat.id}></use>
+                            </svg>
+                        }
+                        <span className="b-categories-item--inner" data-index={index} data-id={cat.id}>
+                            <span className="qa-category-parent-name b-category-parent-name" data-index={index} data-id={cat.id}>{cat.name}</span>
+                            <span className="b-list-category-stack__item-link--found b-black" data-index={index} data-id={cat.id}>
+                            <span data-index={index} data-id={cat.id}>{commaNum(totalProducts) + " " + getText("ADVERTS_LOWERCASE")}</span>
+                            </span>
+                        </span>
+                    </span>
+                    <svg className="sm-hide-down next" style={{ width: "10px", height: "10px", maxWidth: "10px", maxHeight: "10px", fill: "rgb(48, 58, 75)", stroke: "inherit" }}>
+                        <use xlinkHref="#next"></use>
+                    </svg>
+                </span>
+            </Link>
+        )
+    }
+
+    buildProduct = (product, index, isFlash) => {
+        return (
+            <div key={index} className="col-xs-6 col-sm-3 h-mb-15">
+                <div className="fw-card qa-fw-card b-trending-card h-height-100p">
+                    <Link to={productLink(product.title, product.id)} className="">
+                        <div className="fw-card-media qa-fw-card-media" style={{ backgroundColor: "rgb(255, 255, 255)", backgroundImage: 'url('+product.photos.split(",")[0]+'?w=300)' }}>
+                            {
+                                product.sponsored?
+                                <div className="b-trending-card__boosted-label h-flex-center">{PAID_AD_NAME}</div>
+                                :
+                                ""
+                            }
+                            <div className="b-trending-card__counter">{product.photos.split(",").length}</div>
+                        </div>
+                        <div className="fw-card-content qa-fw-card-content">
+                            <div className="b-trending-card__title">{product.title}</div>
+                            <div style={{display: "flex", justifyContent: "space-between"}}>
+                                <div className="b-trending-card__price" dangerouslySetInnerHTML={{__html: product.currency_symbol + " " + commaNum(product.price)}}></div>
+                                {
+                                    !isFlash && product.cat != CAT_ID_GROUP_AD? null : 
+                                        isFlash?
+                                            <div className="cat-label flash-ad">
+                                                {getText("FLASH_AD")}
+                                            </div>
+                                        :
+                                            <div className="cat-label group-ad">
+                                                <span className="fa fa-cubes"></span> {getText("GROUP_AD")}
+                                            </div>
+                                }
+                            </div>
+                            <div className="fw-card-content-icon">
+                                <button type="button" className="hide fw-button qa-fw-button fw-button--type-success fw-button--size-little fw-button--circle fw-button--has-icon">
+                                    <span className="fw-button__content">
+                                        <svg strokeWidth="0" className="favorite-stroke" style={{ width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(112, 185, 63)", stroke: "inherit" }}>
+                                            <use xlinkHref="#favorite-stroke"></use>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </Link>
+                </div>
             </div>
         )
     }

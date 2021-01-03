@@ -12,6 +12,14 @@ export const catLink = (name) => {
     return "/search/cat/"+encodeURIComponent(name)
 }
 
+export const flashLink = () => {
+    return "/search/flash/"
+}
+
+export const groupLink = () => {
+    return "/search/group/"
+}
+
 export const subCatLink = (name) => {
     return "/search/sub_cat/"+encodeURIComponent(name)
 }
@@ -26,28 +34,4 @@ export const stateLink = (name) => {
 
 export const cityLink = (name) => {
     return "/search/city/"+encodeURIComponent(name)
-}
-
-export const catIconName = (cat_name) => {
-    var name = "";
-    if(cat_name.toLowerCase().includes("beauty")) {
-        name = "beauty"
-
-    } else if(cat_name.toLowerCase().includes("equipment")) {
-        name = "equipment"
-
-    } else if(cat_name.toLowerCase().includes("seeking")) {
-        name = "jobseekers"
-
-    } else if(cat_name.toLowerCase().includes("sports")) {
-        name = "hobbies"
-
-    } else {
-        name = cat_name.split(" ")[0].toLowerCase().split(",")[0]
-        if(name == "property") {
-            name = "real-estate"
-    
-        }
-    }
-    return name;
 }

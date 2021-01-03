@@ -122,7 +122,7 @@ const getProductPageMeta = async (id) => {
     var data = await getProduct(id)
     console.log("getProductPageMeta", "222", data)
     var pageMeta = {}
-    if(data == null) {
+    if(data == null || data.details == null) {
         pageMeta.title = getText("SITE_TRADE_MARK")
         return pageMeta;
 

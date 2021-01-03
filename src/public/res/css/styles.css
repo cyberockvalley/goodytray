@@ -1282,3 +1282,36 @@ a.btn-over-orange:hover {
 	position: relative;
 	z-index: 1;
   }
+
+.cat-label.flash-ad {
+	background: #d76739;
+	padding: 2px 10px;
+	color: #fff;
+	text-transform: uppercase;
+	clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
+	text-decoration: none;
+}
+.flash-ad-upgrade, .flash-ad-degrade {
+    padding: 5px;
+    text-transform: capitalize;
+    border-radius: 5px;
+	font-size: 1.2em;
+	color: #fff;
+}
+.flash-ad-upgrade {
+    background: #a7a7a7;
+}
+.flash-ad-degrade {
+    background: #d76739;
+}
+.cat-label.group-ad {
+	background: #555;
+	color: #fff;
+	padding: 5px;
+	border-radius: 3px;
+}
+.b-trending-card.fw-card a:hover {
+	text-decoration: none !important;
+}
+.d-none {display: none !important;}
+.action {cursor: pointer;}

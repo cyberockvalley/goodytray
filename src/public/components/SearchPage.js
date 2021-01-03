@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { SITE_TITLE, API_ROOT, PAID_AD_NAME, STATIC_IMAGES_CLIENT_DIR, getText } from "../../../Constants"
-import { productLink, catLink, catIconName, countryLink } from "../utils/LinkBuilder"
+import { productLink, catLink, countryLink } from "../utils/LinkBuilder"
 import { commaNum, id, remove } from "../utils/Funcs"
 import queryString from 'querystring'
 import { Link } from "react-router-dom"
@@ -260,7 +260,7 @@ class SearchPage extends Component {
         console.log("mounted")
         var pathname = this.props.location.pathname;
         var sect, sub_sect = null
-        console.log("pathname: ", pathname)
+        console.log("pathname: ", pathname, this.props)
         var sectMatches = pathname.match(/\/search\/(cat|sub_cat|state|city)\/([^\/]+)/i)
         console.log("sectMatches: ", sectMatches)
         //check country
@@ -268,7 +268,10 @@ class SearchPage extends Component {
         console.log("countryMatches: ", countryMatches)
 
         var apiPath = "products/?"
-        if(sectMatches != null) {
+        if(countryMatches.includes("flash")) {
+          apiPath = "products/flash"
+
+        } else if(sectMatches != null) {
             apiPath += sectMatches[1].toLowerCase()+"_name="+sectMatches[2].toLowerCase();
 
         } else if(countryMatches) {
@@ -296,13 +299,21 @@ class SearchPage extends Component {
             }
         })
         
-        //get countries
-        browser.axios.get(API_ROOT + "countries")
-        .then(resp => {
-            if(resp && resp.data && resp.data.countries) {
-                this.setState({countries: resp.data.countries})
-            }
-        })
+        
+        if(getText("IS_NOT_GLOBAL")) {
+          this.state.country = getText("COUNTRY_ID")
+          this.setState({country: getText("COUNTRY_ID")})
+
+        } else {
+          //get countries
+          browser.axios.get(API_ROOT + "countries")
+          .then(resp => {
+              if(resp && resp.data && resp.data.countries) {
+                  this.setState({countries: resp.data.countries})
+              }
+          })
+        }
+        
 
         //get products
         browser.axios.get(API_ROOT + apiPath)
@@ -362,8 +373,8 @@ class SearchPage extends Component {
                                     {
                                         this.state.cats.slice(0, 3).map((cat, index) => (
                                             <a className="mobile-cats-tab-link" key={index} onClick={this.catSelected} data-id={cat.id}>
-                                                <svg className={"cat-"+catIconName(cat.name)} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
-                                                    <use xlinkHref={"#cat-"+catIconName(cat.name)} data-index={index} data-id={cat.id}></use>
+                                                <svg className={cat.indentifier} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
+                                                    <use xlinkHref={`#${cat.indentifier}`} data-index={index} data-id={cat.id}></use>
                                                 </svg>
                                                 <span className="">
                                                     {truncText(cat.name, 10)}
@@ -627,7 +638,7 @@ class SearchPage extends Component {
                                                             <div key={index} className="col-xs-6 col-sm-3 h-mb-15">
                                                             <div className="fw-card qa-fw-card b-trending-card h-height-100p">
                                                                 <Link to={productLink(product.title, product.id)} className="">
-                                                                    <div className="fw-card-media qa-fw-card-media" style={{ backgroundColor: "rgb(255, 255, 255)", backgroundImage: 'url('+product.photos.split(",")[0]+')' }}>
+                                                                    <div className="fw-card-media qa-fw-card-media" style={{ backgroundColor: "rgb(255, 255, 255)", backgroundImage: 'url('+product.photos.split(",")[0]+'?w=300)' }}>
                                                                         {
                                                                             product.sponsored?
                                                                             <div className="b-trending-card__boosted-label h-flex-center">{PAID_AD_NAME}</div>

@@ -26,6 +26,7 @@ import SingleRoute from './public/components/SingleRoute'
 import template from "./public/views/template"
 import templateSell from "./public/views/template-sell"
 
+import FileRoute from "./public/routes/FileRoute"
 import ThirdPartyAuth from "./public/routes/ThirdPartyAuth"
 import Users from "./public/routes/Users";
 import Products from "./public/routes/Products";
@@ -63,6 +64,7 @@ app.use("*", (req, res, next) => {
   //console.log("H_HOST", req.headers)
   next()
 })
+
 
 if(process.env.SSL_KEY && process.env.SSL_CHAIN) {
   const helmet = require("helmet");
@@ -113,7 +115,14 @@ app.use(API_ROOT + "notifications", Notifications)
 const Stripe = require('./public/routes/Stripe')
 app.use(API_ROOT + "stripe", Stripe)
 
-app.use('/public', express.static(path.resolve(__dirname, 'public')))
+
+//app.get("/public/res/images", FileRoute)
+//app.use('/public', express.static(path.resolve(__dirname, 'public')))
+
+const MAX_AGE = 31557600
+app.use('/public', FileRoute.handler(path.resolve(__dirname, 'public'), (res, found) => {
+  res.set('Cache-Control', `public, max-age=${ MAX_AGE }`)
+}))
 
 
 app.use("*", checkUserAuth);

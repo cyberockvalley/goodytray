@@ -7,7 +7,7 @@ import {LOGO_ADDR} from "../../../Constants"
 import { getRandomInt } from "./Funcs";
 
 const resize = (w, h, nw) => {
-    return [nw, (h / w) * nw]
+    return [nw, Math.round((h / w) * nw)]
 }
 module.exports = {
     async waterMark(files) {

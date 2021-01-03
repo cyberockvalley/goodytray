@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { Link } from "react-router-dom"
-import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS, getText, timeAgoText, getTimeLocale } from "../../../Constants"
+import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS, getText, timeAgoText, getTimeLocale, FLASH_AD_ADMIN } from "../../../Constants"
 import { commaNum, truncText, cls } from "../utils/Funcs"
 const browser = require("../utils/Browser")
 var dateFormat = require('dateformat')
@@ -44,9 +44,11 @@ class ProductPage extends Component {
             carousel_index: 0,
             carousel_transform: "0px",
             carousel_flex_basis: "917px",
-            max_thumb_count: 5
+            max_thumb_count: 5,
+            user: this.props.user
             
         }
+        
         this.startMessage = this.startMessage.bind(this)
         this.sendMessage = this.sendMessage.bind(this)
         this.handleChange = this.handleChange.bind(this)
@@ -264,6 +266,56 @@ class ProductPage extends Component {
         this.setState({[e.target.name]: e.target.value})
     }
 
+    upgradeToFlash = () => {
+        if(this.state.flashing) return
+        Swal.fire({
+            text: getText("FLASH_AD_UPGRADE_WARNING"), 
+            icon: 'warning',
+            allowOutsideClick: false,
+            showCancelButton: true,
+            confirmButtonText: getText("OK"),
+            cancelButtonText: getText("CANCEL")
+        })
+        .then(r => {
+            if(r.isConfirmed) {
+                this.flash("products/flash/add", getText("ACTION_OK"))
+            }
+        })
+    }
+
+    removeFromFlash = () => {
+        if(this.state.flashing) return
+        this.flash("products/flash/remove", getText("ACTION_OK"))
+    }
+
+    flash = (endpoint, okMessage) => {
+        this.setState({flashing: true})
+        browser.axios.post(API_ROOT + endpoint, {
+            product_id: this.state.product.id
+        })
+        .then(response => {
+            console.log("FLASH_RESPONSE", response.data)
+            if(response.data.success) {
+                var p = this.state.product
+                p.isFlash = !p.isFlash
+                this.setState({product: p})
+                Swal.fire('', okMessage, 'success')
+
+            } else if(response.data.auth_required) {
+                window.location.href = "/login"
+
+            } else if(!response.data.success) {
+                Swal.fire('', response.data.message, 'error')
+
+            }
+            this.setState({flashing: false})
+        })
+        .catch(e => {
+            this.setState({flashing: false})
+            Swal.fire('', JSON.stringify(e), 'error')
+        })
+    }
+
     render () {
         return (
             <div>
@@ -429,7 +481,7 @@ class ProductPage extends Component {
                               i == this.state.max_thumb_count - 1?
                               <li key={i} style={{width: "20%"}} data-target=".productCarousel" data-slide-to={i} onClick={this.expandPhoto} className={i == 0?" active":""}>
                               <div className={"b-carousel-thumbnails qa-carousel-thumbnail-4 qa-carousel-thumbnail"} style={{margin: "5px"}}>
-                               <img className="b-carousel-thumbnails--image" src={photo}/>
+                               <img className="b-carousel-thumbnails--image" src={`${photo}?w=150`}/>
                                <div className="b-carousel-thumbnails-limit" style={{fontSize: "35px"}}>
                                 <div className="b-carousel-thumbnail-title">
                                  <span className="b-carousel-thumbnail-title-plus">
@@ -446,7 +498,7 @@ class ProductPage extends Component {
                              :
                              <li data-target=".productCarousel" data-slide-to={i} data-index={i} key={i} style={{width: "20%"}} className={i == 0?" active":""}>
                              <div data-index={i} className={"b-carousel-thumbnails qa-carousel-thumbnail-0 qa-carousel-thumbnail"} style={{margin: "5px"}}>
-                              <img data-index={i} className="b-carousel-thumbnails--image" src={photo}/>
+                              <img data-index={i} className="b-carousel-thumbnails--image" src={`${photo}?w=150`}/>
                              </div>
                             </li>
                           ))
@@ -523,10 +575,18 @@ class ProductPage extends Component {
                    }
                    <div className="b-advert-title-outer">
                     <h1 className="qa-advert-title b-advert-title" data-v-55e8c8c5="">
-                     <div className="b-advert-title-inner" data-v-55e8c8c5="">
+                     <div className="b-advert-title-inner" data-v-55e8c8c5="" dataUserRank={this.state.user? this.state.user.rank : "No User"}>
                       {this.state.product.title}
                      </div>
                     </h1>
+                    {
+                        this.state.product && this.state.user && this.state.user.rank >= FLASH_AD_ADMIN?
+                        <div onClick={this.state.product.isFlash? this.removeFromFlash : this.upgradeToFlash} className={`${this.state.product.isFlash? "flash-ad-degrade " : "flash-ad-upgrade "}${this.state.flashing? "i " : ""}action`}>
+                            <span className="fa fa-bolt"> </span>&nbsp;{this.state.flashing? `${getText("PLS_WAIT")}...` : getText(this.state.product.isFlash? "REMOVE_FROM_FLASH" : "UPGRADE_TO_FLASH")}
+                        </div>
+                        :
+                        null
+                    }
                     <span className="hide qa-like-button b-like-button b-mobile-button-increase-square h-pt-0">
                      <svg className="fav-icon favorite" style={{width: "16px", height: "16px", maxWidth: "16px", maxHeight: "16px", fill: "rgb(170, 170, 170)", stroke: "inherit"}}>
                       <use xlinkHref="#favorite">
@@ -715,7 +775,7 @@ class ProductPage extends Component {
                        <div className="h-pos-rel">
                         <div className="b-seller-online-status">
                         </div>
-                        <Link className="b-seller-info-image" to={"/seller/"+this.state.product.user_id} style={{backgroundImage: 'url('+this.state.poster.profile_photo+')'}}>
+                        <Link className="b-seller-info-image" to={"/seller/"+this.state.product.user_id} style={{backgroundImage: 'url('+this.state.poster.profile_photo+'?w=120)'}}>
                         </Link>
                        </div>
                        <div className="b-seller-info-outer">

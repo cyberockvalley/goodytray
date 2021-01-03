@@ -8,6 +8,7 @@ const LOCALES = {
 }
 
 export const AD_APPROVAL_RANK = 1
+export const FLASH_AD_ADMIN = 2
 
 export const PORT = 8080
 export const PORT_SSL = 4433
@@ -41,10 +42,15 @@ export const timeAgoText = text => {
     return text
 }
 
+export const SHOW_DB_ERROR = true
+
 const aliasOfSite = (alias, siteAliases) => {
     return siteAliases.includes(alias)
 }
+export const CAT_ID_FLASH_AD = 16
+export const CAT_ID_GROUP_AD = 17
 export const getTextSource = () => {
+    //return Texts.sites[0].texts
     var hostname = hostName()
     //console.log("GLOBAL_HOST_GET", hostname)
     let textSource

@@ -322,7 +322,7 @@ class Profile extends Component {
     <div className="h-dflex h-mt-20 row">
      <div className="col-sm-12 col-md-3">
       <div action="" className="b-user-settings__avatarblock">
-       <div className="js-avatar b-user-settings__avatarblock__avatar" style={{backgroundImage: this.state.user.profile_photo.length > 0?'url('+this.state.user.profile_photo+')':'url('+NO_PROFILE_PHOTO_IMAGE+')'}}>
+       <div className="js-avatar b-user-settings__avatarblock__avatar" style={{backgroundImage: this.state.user.profile_photo.length > 0?'url('+this.state.user.profile_photo+'?w=120)':'url('+NO_PROFILE_PHOTO_IMAGE+')'}}>
         <button className="b-user-settings__avatarblock__upload-foto" data-target="#add_profile_photo" data-toggle="modal" type="button">
          <i className="h-icon icon-profile-settings-upload">
          </i>
@@ -453,7 +453,7 @@ class Profile extends Component {
         this.state.products.map((product, index) => (
           <div key={index} className="b-profile-advert box-shadow h-mb-10 h-pos-rel">
           <Link to={productLink(product.title, product.id)} className="b-profile-advert__img">
-           <img alt={product.title} src={product.photos.split(",")[0]}/>
+           <img alt={product.title} src={`${product.photos.split(",")[0]}?w=300`}/>
           </Link>
           <div className="b-profile-advert__body">
            <div className="b-profile-advert__title">

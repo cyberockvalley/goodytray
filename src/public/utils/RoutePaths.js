@@ -15,7 +15,7 @@ export const PRODUCT = [
 ]
 
 export const SEARCH_PATHS = [
-    '/search/*', '/search?'
+    'search/:child', '/search/*', '/search?'
 ]
 
 export const CREATE_TIPS_PATHS = [
