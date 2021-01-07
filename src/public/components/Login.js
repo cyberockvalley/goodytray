@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import {Link} from "react-router-dom"
 import { login } from './UserFunctions'
-import {id, cls, addQueryParam} from '../utils/Funcs'
+import {id, cls, addQueryParam, isValidEmail, nullOrEmpty, clearErrors} from '../utils/Funcs'
 import queryString from 'querystring'
 import Navbar from './Navbar'
 import Footer from "./Footer"
-import { getText } from '../../../Constants'
+import { ALLOWED_MAIL_TYPES, API_ROOT, getText } from '../../../Constants'
+import Swal from 'sweetalert2'
+
+const browser = require("../utils/Browser")
 
 class Login extends Component {
   constructor(props) {
@@ -35,48 +38,23 @@ componentDidMount() {
   console.log("LINKS", "lll", this.state.third_party_login_links)
 }
 
-setError(elId, error) {
-    var err = id(elId + "-error")
-    err.innerHTML = error
-    err.classList.remove(["hide"])
-}
-
-
-removeErrors() {
-    var errs = cls("fw-field__error");
-    var groups = cls("has-error");
-    if(groups.length > 0) {
-        for(var i = 0; i < groups.length; i++) {
-            groups[i].classList.remove(["has-error"], ["has-feedback"])
-        }
-    }
-
-    if(errs.length > 0) {
-        for(var j = 0; j < errs.length; j++) {
-            errs[j].classList.add(["hide"])
-        }
-    }
-}
-
 onChange(e) {
   this.setState({ [e.target.name]: e.target.value })
-  //console.log([e.target.name] +": "+e.target.value)
 }
 
 
 onSubmit() {
 
-  this.removeErrors()
+  //this.removeErrors()
+  //clearErrors(this)
   this.state.hasErrors = false
 
   if(this.state.email.length == 0) {
-    this.setError("email", getText("ERROR_ENTER_EMAIL"))
-    this.state.hasErrors = true
+    this.setState({email_error: getText("ERROR_ENTER_EMAIL")})
   }
 
   if(this.state.password.length == 0) {
-    this.setError("password", getText("ERROR_ENTER_PWD"))
-    this.state.hasErrors = true
+    this.setState({password_error: getText("ERROR_ENTER_PWD")})
   }
   console.log("state_hasErrors: "+this.state.hasErrors)
   if(!this.state.hasErrors) {
@@ -107,7 +85,7 @@ onSubmit() {
             if(res.form_errors[key].length > 0) {
                 var error_name = key.substring(0, key.indexOf("_"));
                 console.log("error_name: "+ error_name)
-                this.setError(error_name, res.form_errors[key])
+                this.setState({[error_name + "_error"]: res.form_errors[key]})
             }
           }
         } else {
@@ -119,6 +97,32 @@ onSubmit() {
     })
     .catch(e => {
       console.log("login_response_text:", e, JSON.stringify(e))
+    })
+  }
+}
+
+restorePass = () => {
+  if(this.state.password_restoring) return
+  if(!isValidEmail(this.state.email)) {
+    Swal.fire({
+      icon: 'error',
+      text: getText(nullOrEmpty(this.state.email)? "ERROR_ENTER_EMAIL" : "INVALID_EMAIL")
+    })
+
+  } else {
+    this.setState({password_restoring: true})
+    browser.axios.post(API_ROOT + `users/mail-key?type=${ALLOWED_MAIL_TYPES.password_reset}`, {
+      email: this.state.email
+    })
+    .then(response => {
+      this.setState({password_restoring: false})
+      console.log("RestorePass", "response", JSON.stringify(response))
+      Swal.fire('', response.data.message, response.data.status == 1? 'success' : 'error')
+    })
+    .catch(e => {
+      this.setState({password_restoring: false})
+      console.log("RestorePass", "catch", e)
+      Swal.fire('', e.message, 'error')
     })
   }
 }
@@ -177,7 +181,7 @@ onSubmit() {
                             </a>
                           </div>
                         </div>
-                      </div> 
+                      </div>
                       <div className="bc-auth-card__form-separator hide"></div> 
                       <div className="text-left">
                         <div id="email-group" className="form-group input-group-lg">
@@ -188,8 +192,7 @@ onSubmit() {
                             id="email"
                             value={this.state.email}
                             onChange={this.onChange}/>
-                          <span id="email-error" className="fw-field__error qa-fw-field__error hide">
-                            {getText("FIELD_REQUIRED_LOWERCASE")}
+                          <span id="email_error" className="fw-field__error qa-fw-field__error" dangerouslySetInnerHTML={{__html: this.state.email_error}}>
                           </span>
                         </div>
 
@@ -201,8 +204,7 @@ onSubmit() {
                             id="password"
                             value={this.state.password}
                             onChange={this.onChange}/>
-                          <span id="password-error" className="fw-field__error qa-fw-field__error hide">
-                            {getText("FIELD_REQUIRED_LOWERCASE")}
+                          <span id="password_error" className="fw-field__error qa-fw-field__error" dangerouslySetInnerHTML={{__html: this.state.password_error}}>
                           </span>
                         </div>                          
                       </div>
@@ -211,7 +213,7 @@ onSubmit() {
                       <div className="bc-auth-card__remember-block row between-xs">
                         <div className="col-xs-3"></div> 
                         <div className="col-xs-9 h-text-right">
-                          <a href="/forgot-password.html" className="h-base-link">{getText("PWD_RECOVERY_LINK_TEXT")}</a>
+                          <span onClick={this.restorePass} className="h-base-link action i">{this.state.password_restoring? getText("PLS_WAIT") + "..." : getText("PWD_RECOVERY_LINK_TEXT")}</span>
                         </div>
                       </div> 
                       {
@@ -234,6 +236,7 @@ onSubmit() {
                   <div className="fw-card-content-icon"></div>
                 </div>
               </div> 
+              
               <div className="bc-social-buttons-container col-xs">
                 <div className="h-font-12 row center-xs">
                   <div className="bc-auth-card__form-holder">

@@ -4,7 +4,7 @@ const metaSetter = express.Router()
 const cors = require("cors")
 metaSetter.use(cors())
 
-import { SELL_PATHS, LOGIN_PATHS, REGISTER_PATHS, HOME_PATHS, PRODUCT_PATHS, SEARCH_PATHS, PRODUCTS_PATHS, CREATE_TIPS_PATHS } from "../utils/RoutePaths";
+import { SELL_PATHS, LOGIN_PATHS, REGISTER_PATHS, HOME_PATHS, PRODUCT_PATHS, SEARCH_PATHS, PRODUCTS_PATHS, CREATE_TIPS_PATHS, EMAIL_VERIFICATION_PATHS } from "../utils/RoutePaths";
 import { SITE_TITLE, SITE_NAME, getText, TITLE_DIV, DESCRIPTION_DIV } from "../../../Constants";
 import { getProduct } from "../components/UserFunctions";
 import { productLink } from "../utils/LinkBuilder";
@@ -50,6 +50,22 @@ metaSetter.get(SEARCH_PATHS, (req, res, next) => {
 
 metaSetter.get(CREATE_TIPS_PATHS, (req, res, next) => {
     res.locals.pageMeta = getAdsTipsPageMeta()
+    next()
+})
+
+metaSetter.get(EMAIL_VERIFICATION_PATHS[0], (req, res, next) => {
+    var meta = getDefaultPageMeta()
+    meta.title = getText("SITE_TRADE_MARK") + TITLE_DIV + getText("ACC_VERIFY_TITLE")
+    meta.description = SITE_NAME + DESCRIPTION_DIV + getText("ACC_VERIFY_TITLE")
+    res.locals.pageMeta = meta
+    next()
+})
+
+metaSetter.get(EMAIL_VERIFICATION_PATHS[1], (req, res, next) => {
+    var meta = getDefaultPageMeta()
+    meta.title = getText("SITE_TRADE_MARK") + TITLE_DIV + getText("PASS_RESET_TITLE")
+    meta.description = SITE_NAME + DESCRIPTION_DIV + getText("PASS_RESET_TITLE")
+    res.locals.pageMeta = meta
     next()
 })
 

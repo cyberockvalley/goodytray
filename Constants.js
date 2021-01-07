@@ -1,6 +1,7 @@
 import Texts from './Texts.json'
 import en from 'javascript-time-ago/locale/en'
 import it from 'javascript-time-ago/locale/it'
+import { nullOrEmpty } from './src/public/utils/Funcs'
 
 const LOCALES = {
     "en": en,
@@ -9,6 +10,102 @@ const LOCALES = {
 
 export const AD_APPROVAL_RANK = 1
 export const FLASH_AD_ADMIN = 2
+
+export const EMAIL_KEY_LENGTH = 32
+export const PASSWORD_VALIDITY_TYPES_USED = [
+    'minLength8', 'noCharRepeat3', 'maxLength16'
+]
+export const PASSWORD_VALIDITY_TYPES = {
+    minLength6: {
+        reg: /^.{6,}$/,
+        invalidBool: false,
+        error: "PASS_ERROR_MIN_LEN_6"
+    },
+    minLength8: {
+        reg: /^.{8,}$/,
+        invalidBool: false,
+        error: "PASS_ERROR_MIN_LEN_8"
+    },
+    minLength16: {
+        reg: /^.{16,}$/,
+        invalidBool: false,
+        error: "PASS_ERROR_MIN_LEN_16"
+    },
+    maxLength16: {
+        reg: /^.{16,}$/,
+        invalidBool: true,
+        error: "PASS_ERROR_MAX_LEN_16"
+    },
+    maxLength32: {
+        reg: /^.{32,}$/,
+        invalidBool: true,
+        error: "PASS_ERROR_MAX_LEN_32"
+    },
+    noCharRepeat3: {
+        reg: /(.)\1{2,}/,
+        invalidBool: true,
+        error: "PASS_ERROR_REPEAT_3"
+    },
+    noCharRepeat5: {
+        reg: /(.)\1{4,}/,
+        invalidBool: true,
+        error: "PASS_ERROR_REPEAT_5"
+    },
+    noCharRepeat8: {
+        reg: /(.)\1{7,}/,
+        invalidBool: true,
+        error: "PASS_ERROR_REPEAT_8"
+    },
+    alphaNumeric: {
+        reg: /^[^\p{L}\p{Nd}]+$/,
+        invalidBool: true,
+        error: "PASS_ERROR_A_Z_NUM"
+    },
+    alphaNumericBothCase: {
+        reg: /^[^\p{Ll}\p{Lu}\p{N}]+$/,
+        invalidBool: true,
+        error: "PASS_ERROR_A_Z_NUM_BOTH_CASE"
+    },
+    specialChars: {
+        reg: /[!@#$%^&*~()_+\-=\[\]{};':"\\|,.<>\/?]+/,
+        invalidBool: false,
+        error: "PASS_ERROR_SPECIAL_CHARS"
+    },
+
+}
+
+
+export const ALLOWED_MAIL_TYPES = {
+    email_ver: "email_ver",
+    password_reset: "password_reset"
+}
+
+export const getMailerTexts = (type, key) => {
+    let body;
+    if(nullOrEmpty(type)) return body
+    if(type == ALLOWED_MAIL_TYPES.email_ver) {
+        body = {
+            keyCol: "email_verification_key",
+            successMsg: getText("AFTER_MAILER_ACC_VERIFY"),
+            mailSubject: getText("SITE_NAME") + " " + getText("MAILER_ACC_VERIFY_SUBJECT"),
+            mailMsg: getText("MAILER_ACC_VERIFY_MSG") + `<a href="${getText("SERVER_HOST")}/email_verify/${key}">${getText("SERVER_HOST")}/email_verify/${key}</a>`,
+            verifyOk: getText("EMAIL_ACC_VERIFY_OK"),
+            verifyNotOk: getText("EMAIL_ACC_VERIFY_NOT_OK")
+        }
+
+    } else if(type == ALLOWED_MAIL_TYPES.password_reset) {
+        body = {
+            keyCol: "password_reset_key",
+            successMsg: getText("AFTER_MAILER_PASS_RESET"),
+            mailSubject: getText("SITE_NAME") + " " + getText("MAILER_PASS_RESET_SUBJECT"),
+            mailMsg: getText("MAILER_PASS_RESET_MSG") + `<a href="${getText("SERVER_HOST")}/password_reset/${key}">${getText("SERVER_HOST")}/password_reset/${key}</a>`,
+            verifyOk: getText("RESET_PASS_OK"),
+            verifyNotOk: getText("RESET_PASS_NOT_OK")
+        }
+
+    }
+    return body
+}
 
 export const PORT = 8080
 export const PORT_SSL = 4433
@@ -49,6 +146,7 @@ const aliasOfSite = (alias, siteAliases) => {
 }
 export const CAT_ID_FLASH_AD = 16
 export const CAT_ID_GROUP_AD = 17
+export const CAT_ID_UNKNOWN = 18
 export const getTextSource = () => {
     //return Texts.sites[0].texts
     var hostname = hostName()

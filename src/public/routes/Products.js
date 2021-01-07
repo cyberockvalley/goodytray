@@ -828,7 +828,7 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
                 res.json({status: 4, message: getText("PERMIT_NEEDED")})
 
             } else {
-                handleProduct(product, res)
+                handleProduct(product, req, res)
             }
         })
         .catch(err => {
@@ -836,11 +836,11 @@ products.post(["/upload", "/edit"], checkUserAuth,  (req, res) => {
         })
 
     } else {
-        handleProduct(product, res)
+        handleProduct(product, req, res)
     }
 })
 
-const handleProduct = (product, res) => {
+const handleProduct = (product, req, res) => {
     const today = new Date()
     const form_errors = []
     const productData = {}
@@ -973,10 +973,11 @@ const handleProduct = (product, res) => {
             }
             photos = photos.substring(0, photos.length - 1)
         }
+
         productData.photos = photos
+        productData.reviewed = 0
         if(req.originalUrl.includes("upload")) {
             console.log("c-a-t", 77)
-            productData.reviewed = 0
             Product.create(productData)
             .then(prod => {
                 Cat.findOne({

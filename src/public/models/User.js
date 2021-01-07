@@ -48,7 +48,11 @@ var user = db.sequelize.define(
             type: Sequelize.INTEGER,
         },
 
-        ver_key: {
+        email_verification_key: {
+            type: Sequelize.STRING,
+        },
+
+        password_reset_key: {
             type: Sequelize.STRING,
         },
 

@@ -100,6 +100,35 @@ export const returnNotFound = (res, data) => {
     res.status(404).json(data)
 }
 
+export const getParam = ($this, key) => {
+    console.log("getParam", "funcp", $this.props)
+    var params = $this.props.match.params
+    console.log("getParam", "func1", params)
+    if(params) {
+        console.log("getParam", "func2", params[key])
+        return params[key]
+    }
+    return null
+}
+
+export const getQuery = ($this, key) => {
+    console.log("getQuery", "funcp", $this.props)
+    var queries = qs.parse($this.props.location.search)
+    console.log("getQuery", "func1", queries)
+    if(queries) {
+        console.log("getQuery", "func2", queries[key])
+        return queries[key]
+    }
+    return null
+}
+
+export const clearErrors = ($this, errorClass) => {
+    var groups = cls(errorClass);
+    for(var i = 0; i < groups.length; i++) {
+        $this.setState({[groups[i].id]: ""})
+    }
+}
+
 export const overflows = (el) => {
        var curOverflow = el.style.overflowY;
        console.log("curOverflow", curOverflow, el, el.style)
@@ -305,12 +334,33 @@ const formatPhoneNumber = (num) => {
 export const isValidNumber = function(number) {
     return (number != null && number.length > 0)
 }
+
+export const nullOrEmpty = v => {
+    return !v || String(v).length == 0
+}
 export const isValidEmail = function(email) {
-    return (email != null && email.length > 0)
+    if(nullOrEmpty(email)) return false
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
 }
 
 export const isClientSide = function() {
     return (typeof window !== 'undefined')
+}
+
+export const regexValidation = (valueToCheck, validationListKeysToCheck, allValidationList) => {
+    var isValid = true
+    var validationErrors = []
+    validationListKeysToCheck.forEach(validationKey => {
+        var validation = allValidationList[validationKey]
+        if(!validation || validation.reg.test(valueToCheck) == validation.invalidBool) {
+            isValid = false
+            var error = validation && validation.error? validation.error : validationKey
+            console.log("regexValidation", validationKey, validation, error)
+            validationErrors.push(error)
+        }
+    });
+    return {isValid: isValid, errors: validationErrors}
 }
 
 export const sqlTimeStampToJsDate = (timeStamp) => {

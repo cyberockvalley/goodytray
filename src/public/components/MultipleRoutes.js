@@ -12,13 +12,15 @@ import About from './About'
 import Contact from './Contact'
 import Privacy from './Privacy'
 import Tos from './Tos'
+import EmailAccountVerification from './EmailAccountVerification'
+import EmailPasswordReset from './EmailPasswordReset'
 
 const MultipleRoutes = (props) => (
   <div className="App">
     <Route exact path="/(|index.html|index.php|index.js|test)" 
       render={(propz) => <Landing {...propz} user={props.initialData.user} />}
     />
-    <Route path="/(search|search/:sect/:sub_sect|search/:child)" 
+    <Route path="/search" 
       render={(propz) => <SearchPage {...propz} user={props.initialData.user} />}
     />
     <Route path="/register" 
@@ -30,6 +32,9 @@ const MultipleRoutes = (props) => (
     <Route exact path="/products/:title/:id" 
       render={(propz) => <ProductPage {...propz} user={props.initialData.user} />}
     />
+    <Route exact path="/products/:title/:preview/:id" 
+      render={(propz) => <ProductPage {...propz} user={props.initialData.user} />}
+    />
     <Route exact path="/reviews/:id" 
       render={(propz) => <ProductReviews {...propz} user={props.initialData.user} />}
     />
@@ -38,6 +43,12 @@ const MultipleRoutes = (props) => (
     />
     <Route exact path="/create-ad-tips" 
       render={(propz) => <CreateTips {...propz} user={props.initialData.user} />}
+    />
+    <Route exact path="/email-verify/:key" 
+      render={(propz) => <EmailAccountVerification {...propz} user={props.initialData.user} />}
+    />
+    <Route exact path="/password_reset/:key" 
+      render={(propz) => <EmailPasswordReset {...propz} user={props.initialData.user} />}
     />
     <Route path="/about" component={About} />
     <Route path="/contact" component={Contact} />

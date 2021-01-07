@@ -318,7 +318,7 @@ class Messages extends Component {
          :
          this.state.messages.map((message, index) => (
             <div onClick={this.handleMessageView} data-index={index} key={message.id} className={"qa-room-label-link b-room-label-wrapper"+((this.state.selected && this.state.selected.id == message.id)?" b-room-label-wrapper--active":"")}>
-            <div className="b-user-avatar-icon h-flex-center h-flex-center" style={{flex: "0 0 48px", height: "48px", width: "48px", backgroundImage: "url("+profilePhoto(message.user_photo)+")"}}>
+            <div className="b-user-avatar-icon h-flex-center h-flex-center" style={{flex: "0 0 48px", height: "48px", width: "48px", backgroundImage: "url("+profilePhoto(message.user_photo)+"?w=120)"}}>
             </div>
             <div data-index={index} className="b-room-label">
              <header data-index={index}>
@@ -387,7 +387,7 @@ class Messages extends Component {
          <div onClick={this.handleBackPressed} style={{color: "#fff"}} className="md-hide-up b-messenger-room-header-icon-wrapper fa fa-arrow-left">
          </div>
          <Link className="qa-messenger-room-avatar" to={"/"}>
-          <div className="b-user-avatar-icon h-flex-center" style={{flex: "0 0 40px", height: "40px", width: "40px", backgroundImage: "url("+this.state.selected.user_photo+")", transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
+          <div className="b-user-avatar-icon h-flex-center" style={{flex: "0 0 40px", height: "40px", width: "40px", backgroundImage: "url("+this.state.selected.user_photo+"?w=120)", transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
           </div>
          </Link>
         </div>
@@ -430,7 +430,7 @@ class Messages extends Component {
        <div className={"b-messenger-room-advert-info" + (this.state.selected_messages.length > 0? " hide" : "")}>
            <Link className="b-messenger-room-advert-info-link" to={productLink(this.state.selected.product_title, this.state.selected.product_id)}>
          <div className="b-messenger-room-advert-info-image-wrapper h-a-without-underline" style={{transition: "all 0.3s ease 0s", filter: "blur(0px)", opacity: "1"}}>
-          <div className="b-messenger-room-advert-info-image" style={{backgroundImage: "url("+this.state.selected.product_photos.split(",")[0]+")"}}>
+          <div className="b-messenger-room-advert-info-image" style={{backgroundImage: "url("+this.state.selected.product_photos.split(",")[0]+"?w=120)"}}>
           </div>
          </div>
          <div className="b-messenger-room-advert-info-title">
@@ -449,9 +449,12 @@ class Messages extends Component {
              <use xlinkHref="#phone2">
              </use>
             </svg>
-            <button onClick={this.dataCall} data-call-class="fa fa-phone-square" data-call={this.state.recipient.message.user_number} className="b-btn b-btn--main h-ml-10 text-uppercase">
+            {
+             this.state.recipient && this.state.recipient.message && this.state.recipient.message.user_number?
+             <button onClick={this.dataCall} data-call-class="fa fa-phone-square" data-call={this.state.recipient.message.user_number} className="b-btn b-btn--main h-ml-10 text-uppercase">
              {getText("CALL_SELLER")}
-            </button>
+            </button> : null
+            }
            </div>
           </span>
          </a>

@@ -1,7 +1,7 @@
 import React, { Component } from "react"
-import { SITE_TITLE, API_ROOT, PAID_AD_NAME, STATIC_IMAGES_CLIENT_DIR, getText } from "../../../Constants"
+import { SITE_TITLE, API_ROOT, PAID_AD_NAME, STATIC_IMAGES_CLIENT_DIR, getText, CAT_ID_FLASH_AD, CAT_ID_GROUP_AD, CAT_ID_UNKNOWN } from "../../../Constants"
 import { productLink, catLink, countryLink } from "../utils/LinkBuilder"
-import { commaNum, id, remove } from "../utils/Funcs"
+import { commaNum, getQuery, id, remove } from "../utils/Funcs"
 import queryString from 'querystring'
 import { Link } from "react-router-dom"
 import Navbar from './Navbar'
@@ -58,12 +58,15 @@ class SearchPage extends Component {
     handleChange = e => {
         const target = e.target;
         var value = target.value
+        
         if(e.target.getAttribute("data-type") && e.target.getAttribute("data-type") == "number") {
             value = commaNum(value)
             target.value = value;
         }
         this.state[e.target.name] = value
-        this.setState({[e.target.name]: value})
+        this.setState({[e.target.name]: value, flash: 0})
+        
+        
         if(target.getAttribute("data-attr")) {
             console.log("handleChange", "data-attr", target.getAttribute("data-attr"))
             if(target.type != "checkbox" || target.checked) {
@@ -107,29 +110,36 @@ class SearchPage extends Component {
 
     getEndPoint = () => {
         var endpoint = API_ROOT + "products?views_order=1"
-        if(this.state.cat > -1)endpoint+="&cat_id="+this.state.cat
-        if(this.state.sub_cat > -1)endpoint+="&sub_cat_id="+this.state.sub_cat
-        if(this.state.country > -1)endpoint+="&country_id="+this.state.country
-        if(this.state.state > -1)endpoint+="&state_id="+this.state.state
-        if(this.state.city > -1)endpoint+="&city_id="+this.state.city
+        if(this.state.flash && parseInt(this.state.flash) == 1) {
+          endpoint == API_ROOT + "products/flash"
 
-        var priceMin = parseInt(remove([",", "."], this.state.price_min))
-        var priceMax = parseInt(remove([",", "."], this.state.price_max))
-        if(priceMin > 0)endpoint+="&price_min="+priceMin
-        if(priceMax > 0)endpoint+="&price_max="+priceMax
+        } else {
+          if(this.state.cat > -1)endpoint+="&cat_id="+this.state.cat
+          if(this.state.sub_cat > -1)endpoint+="&sub_cat_id="+this.state.sub_cat
+          if(this.state.country > -1)endpoint+="&country_id="+this.state.country
+          if(this.state.state > -1)endpoint+="&state_id="+this.state.state
+          if(this.state.city > -1)endpoint+="&city_id="+this.state.city
+          if(this.state.q && String(this.state.q).length > 0) endpoint += "&q=" + encodeURIComponent(this.state.q)
 
-        if(this.state.attrs != null && this.state.attrs.length > 0) {
-            var attrs = this.state.attrs.split(",")
-            for(var i = 0; i < attrs.length; i++) {
-                if(attrs[i].trim().length > 0) {
-                    endpoint+="&attr="+encodeURIComponent(attrs[i].trim())
-                }
-            }
+          var priceMin = parseInt(remove([",", "."], this.state.price_min))
+          var priceMax = parseInt(remove([",", "."], this.state.price_max))
+          if(priceMin > 0)endpoint+="&price_min="+priceMin
+          if(priceMax > 0)endpoint+="&price_max="+priceMax
+
+          if(this.state.attrs != null && this.state.attrs.length > 0) {
+              var attrs = this.state.attrs.split(",")
+              for(var i = 0; i < attrs.length; i++) {
+                  if(attrs[i].trim().length > 0) {
+                      endpoint+="&attr="+encodeURIComponent(attrs[i].trim())
+                  }
+              }
+          }
         }
+        
         return endpoint
     }
 
-    checkResultCount = () => {
+    checkResultCount = (onCount) => {
         var endpoint = this.getEndPoint()+"&count_only=1"
         console.log("Endpoint", endpoint)
         this.setState({checking_products: true})
@@ -137,9 +147,11 @@ class SearchPage extends Component {
         .then(res => {
             if(res.data && res.data.counts) {
                 this.setState({result_count: res.data.counts})
+                if(onCount) onCount(res.data.counts)
 
             } else {
                 this.setState({result_count: 0})
+                if(onCount) onCount(0)
             }
             this.setState({checking_products: false})
         })
@@ -207,7 +219,8 @@ class SearchPage extends Component {
     onCatChanged () {
         this.resetCustomInputs()
         this.setState({sub_cat_loading: true})
-        var list = this.state.cats[this.state.cat].sub_cats
+        var index = this.state.cat_id_to_cay_index[this.state.cat]
+        var list = this.state.cats[index].sub_cats
         this.state.sub_cats = list
         this.setState({sub_cats: list})
         this.setState({sub_cat_loading: false})
@@ -255,46 +268,50 @@ class SearchPage extends Component {
             id("side_bar_scroll").scroll()
         }
     }
+
+    mapCatIdToIndex = data => {
+      var map = {}
+      for (let index = 0; index < data.length; index++) {
+        const element = data[index];
+        map[element.id] = index
+      }
+      this.setState({cat_id_to_cay_index: map})
+      
+    }
     
     componentDidMount() {
-        console.log("mounted")
-        var pathname = this.props.location.pathname;
-        var sect, sub_sect = null
-        console.log("pathname: ", pathname, this.props)
-        var sectMatches = pathname.match(/\/search\/(cat|sub_cat|state|city)\/([^\/]+)/i)
-        console.log("sectMatches: ", sectMatches)
-        //check country
-        var countryMatches = pathname.match(/\/search\/([A-Z-a-z]+)/i)
-        console.log("countryMatches: ", countryMatches)
+        console.log("ATTR", getQuery(this, "attr"))
+        this.setState({flash: getQuery(this, "flash")})
+        this.setState({cat_id: getQuery(this, "cat")})
+        this.setState({sub_cat_id: getQuery(this, "sub_cat")})
+        this.setState({country_id: getQuery(this, "country")})
+        this.setState({state_id: getQuery(this, "state")})
+        this.setState({city_id: getQuery(this, "city")})
+        this.setState({q: getQuery(this, "q")})
+        this.setState({attr: getQuery(this, "attr")})
 
-        var apiPath = "products/?"
-        if(countryMatches.includes("flash")) {
+        this.checkResultCount(count => {
+          if(count > 0) {
+            this.applyFilter({preventDefault: () => {}})
+          }
+        })
+/*
+        let apiPath
+        if(flash && !isNaN(flash) && parseInt(flash) == 1) {
           apiPath = "products/flash"
 
-        } else if(sectMatches != null) {
-            apiPath += sectMatches[1].toLowerCase()+"_name="+sectMatches[2].toLowerCase();
-
-        } else if(countryMatches) {
-          apiPath += "country_name="+countryMatches[1].toLowerCase();
-
         } else {
-            const queryValues = queryString.parse(this.props.location.search.substring(1))
-            console.log("SearchPage Queries", queryValues)
-            var t = {d: "lll", p: 9}
-            var i = 0;
-            if(queryValues.q) {
-              apiPath += "q=" + queryValues.q
-            }
+          apiPath = `products/?cat=${catId}&sub_cat=${subCatId}&country=${country}&state=${state}&city=${city}&title=${title}&city=${city}&attr=${attr}`
+
         }
-        //document.title = SITE_TITLE
-        
-        
+*/
         this.setState({loading_products: true})
 
         //get cats & sub cats
         browser.axios.get(API_ROOT + "products/cats_and_sub_cats")
         .then(resp => {
             if(resp && resp.data) {
+                this.mapCatIdToIndex(resp.data)
                 this.setState({cats: resp.data})
             }
         })
@@ -303,6 +320,7 @@ class SearchPage extends Component {
         if(getText("IS_NOT_GLOBAL")) {
           this.state.country = getText("COUNTRY_ID")
           this.setState({country: getText("COUNTRY_ID")})
+          this.onCountryChanged()
 
         } else {
           //get countries
@@ -313,8 +331,7 @@ class SearchPage extends Component {
               }
           })
         }
-        
-
+/*
         //get products
         browser.axios.get(API_ROOT + apiPath)
         .then(resp => {
@@ -324,22 +341,14 @@ class SearchPage extends Component {
             }
             this.setState({loading_products: false})
         })
-
-        /*const countryId = getText("COUNTRY_ID")
-        console.log("CCID", countryId)
-        if(countryId && countryId > 0) {
-          //this.setState({country: countryId})
-          this.onCountryChanged()
-          this.checkResultCount()
-
-        }*/
-        this.onCountryChanged()
-        this.checkResultCount()
+*/
+        //this.onCountryChanged(false)
+        //this.checkResultCount()
     }
 
     hideMobileCatsTab = () => {
-      $("#mobile-cats-tab").hide();
-      $("#categories").show();
+    $("#mobile-cats-tab").hide();
+    $("#categories").show();
   }
   showMobileCatsTab = () => {
       $("#mobile-cats-tab").show();
@@ -372,14 +381,21 @@ class SearchPage extends Component {
                                     </a>
                                     {
                                         this.state.cats.slice(0, 3).map((cat, index) => (
-                                            <a className="mobile-cats-tab-link" key={index} onClick={this.catSelected} data-id={cat.id}>
-                                                <svg className={cat.indentifier} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
-                                                    <use xlinkHref={`#${cat.indentifier}`} data-index={index} data-id={cat.id}></use>
-                                                </svg>
+                                            <span className="mobile-cats-tab-link" key={index} onClick={this.catSelected} data-id={cat.id}>
+                                                {
+                                                  cat.id == CAT_ID_FLASH_AD || cat.id == CAT_ID_GROUP_AD || cat.id == CAT_ID_UNKNOWN?
+                                                  <svg style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>       
+                                                      <image style={{width: "100%", height: "100%"}} xlinkHref={`/public/res/images/static/${cat.id == CAT_ID_FLASH_AD? "flash" : cat.id == CAT_ID_GROUP_AD? "cubes" : "unknown"}.svg`} data-index={index} data-id={cat.id} />    
+                                                  </svg>
+                                                  :
+                                                  <svg className={cat.indentifier} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
+                                                      <use xlinkHref={`#${cat.indentifier}`} data-index={index} data-id={cat.id}></use>
+                                                  </svg>
+                                                }
                                                 <span className="">
                                                     {truncText(cat.name, 10)}
                                                 </span>
-                                            </a>
+                                            </span>
                                         ))
                                     }
                                 </div>
@@ -479,8 +495,8 @@ class SearchPage extends Component {
           <div className="form-group">
             <select className="form-control" name="city" value={this.state.city} onChange={this.handleChange}>
               <option value="-1">--- {getText("SELECT_CITY")} ---</option>
-              {this.state.states.map(state => (
-                <option key={state.id} value={state.id}>{state.name}</option>
+              {this.state.cities.map(city => (
+                <option key={city.id} value={city.id}>{city.name}</option>
               ))}
             </select>
           </div>
@@ -497,7 +513,7 @@ class SearchPage extends Component {
           <div className="form-group">
             <select className="form-control" name="cat" value={this.state.cat} onChange={this.handleChange}>
               <option value="-1">--- {getText("CHOOSE_CAT")} ---</option>
-              {this.state.cats.map(cat => (
+              {this.state.cats.map((cat, index) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
@@ -509,7 +525,7 @@ class SearchPage extends Component {
     <div className="b-form-section">
         <div id="state-section" data-v-2f9b1610="" 
         className={this.state.sub_cat_loading?
-            "hide loading-section":this.state.cat == -1?
+            "hide loading-section":this.state.cat == -1 || this.state.sub_cats.length == 0?
             "hide":""}>
          <div className=" b-form-section h-mb-15 qa-choose-category">
           <label className="b-form-section__title">
@@ -526,7 +542,7 @@ class SearchPage extends Component {
          </div>
         </div>
     </div>
-
+{/*
     <div className="b-form-section">
         <div id="custom-section" data-v-2f9b1610=""className={this.state.sub_cat_loading || this.state.attrs_loading?
             "hide loading-section":this.state.cat == -1 || this.state.sub_cat == -1 || 
@@ -580,19 +596,19 @@ class SearchPage extends Component {
           
         </div>
     </div>
-    
+                */}
     <div className="b-form-section b-input-range h-mb-15 qa-range-filter">
      <label className="b-form-section__title" for="price">
       {getText("PRICE_RANGE")} ({getText("CURRENCY")})
      </label>
      <div className="h-hflex h-overflow-inherit-f">
       <div className="b-input-range__item-wrap">
-       <input onKeyUp={this.handleKeyUp} onChange={this.handleChange} data-type="number" className="h-ph-10 qa-range-filter-price-min" id="price" name="price_min" placeholder="Price min " type="text"/>
+       <input onKeyUp={this.handleKeyUp} onChange={this.handleChange} data-type="number" className="h-ph-10 qa-range-filter-price-min" id="price" name="price_min" placeholder={getText("PRICE_MIN")} type="text"/>
       </div>
       <div className="b-input-range__separ">
       </div>
       <div className="b-input-range__item-wrap">
-       <input onKeyUp={this.handleKeyUp} onChange={this.handleChange} data-type="number" className="h-ph-10 qa-range-filter-price-max" name="price_max" placeholder="Price max " type="text"/>
+       <input onKeyUp={this.handleKeyUp} onChange={this.handleChange} data-type="number" className="h-ph-10 qa-range-filter-price-max" name="price_max" placeholder={getText("PRICE_MAX")} type="text"/>
       </div>
      </div>
     </div>

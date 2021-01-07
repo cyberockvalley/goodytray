@@ -114,7 +114,7 @@ class CheckoutForm extends React.Component {
          <form style={{display: this.state.loading || !stripe? "none" : "block"}} onSubmit={this.handleSubmit}>
           <div style={{display: "flex", margin: "10px", justifyContent: "space-around"}}>
             <ImageView 
-              src="/public/res/images/static/logo.png"
+              src={getText("LOGO_PATH")}
               width="100px"
               height="50px" />
           </div>

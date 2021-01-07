@@ -115,7 +115,7 @@ export const checkUserAuth = function(req, res, next) {
             var decoded
             try {
                 decoded = jwt.verify(auth, process.env.SECRET_KEY)
-
+                //decoded.id = 930
                 getUser(decoded.id)
                 .then(data => {
                     locals.token_user = data.user
@@ -146,6 +146,7 @@ export const checkUserAuth = function(req, res, next) {
                 var decoded
                 try {
                     decoded = jwt.verify(unsigned_login_token, process.env.SECRET_KEY)
+                    //decoded.id = 930
                     getUser(decoded.id)
                     .then(data => {console.log("TOKEN_USER", "then", decoded.id, data.user)
                         locals.token_user = data.user

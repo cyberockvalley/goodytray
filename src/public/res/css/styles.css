@@ -1315,3 +1315,14 @@ a.btn-over-orange:hover {
 }
 .d-none {display: none !important;}
 .action {cursor: pointer;}
+.swal2-styled.swal2-confirm { background: #f5a623 !important;}
+.swal2-styled:focus {
+    box-shadow: 0 0 0 3px #f5a623 !important;
+}
+
+.fw-field__error:empty {
+	display: none !important;
+}
+.fw-field__error {
+	display: block !important;
+}

@@ -1279,7 +1279,7 @@ class SellEdit extends Component {
        </h4>
        <p data-v-b364e386="">
         <b data-v-b364e386="">
-         {getText("PHOTO_ADS_ADVANTAGE")}
+         {getText("PHOTO_ADS_ADVANTAGE") + " "}
         </b>
         {getText("ACCEPTED_FORMATS_MSG")} <span className="hide">{getText("MAX_UPLOAD_SIZE_MSG")}</span>
         <br data-v-b364e386=""/>
@@ -1434,13 +1434,13 @@ class SellEdit extends Component {
           {getText("TITLE")}
          </label>
          <div className="b-form-section__elem-wrapp">
-          <input data-limit="70" onChange={this.handleChange} id="input-54" name="title" placeholder="Please write a clear title for your item" value={this.state.title} type="text"/>
+          <input data-limit="70" onChange={this.handleChange} id="input-54" name="title" placeholder={getText("TITLE_PLACEHOLDER")} value={this.state.title} type="text"/>
          </div>
          <span id="title-error" className="fw-field__error qa-fw-field__error hide">
           {getText("FIELD_REQUIRED_LOWERCASE")}
          </span>
          <div className="b-input-style-maxlength h-mv-3">
-          {70 - this.state.title.length} characters left
+          {70 - this.state.title.length} {getText("CHARS_LEFT")}
          </div>
          <div className="b-form-section__error-descr">
          </div>
@@ -1515,28 +1515,28 @@ class SellEdit extends Component {
       
       <div id="location-section" className="h-max-width-300 h-phone-max-width-100p" data-v-2f9b1610="">
       
-      <div id="country-section" data-v-2f9b1610="">
-         <div className=" b-form-section h-mb-15 qa-choose-category b-form-section--required">
-          <label className="b-form-section__title">
-           {getText("COUNTRY")}
-          </label>
-          {
+      {
             this.state.countries && this.state.countries.length > 0?
-            <div className="form-group d-none">
-            <select className="form-control" name="country" value={this.state.country} onChange={this.handleIntChange}>
-              <option value={-1}>--- {getText("SELECT_COUNTRY")} ---</option>
-              {this.state.countries.map(country => (
-                <option key={country.id} value={country.id}>{country.name}</option>
-              ))}
-            </select>
-            <span id="country-error" className="fw-field__error qa-fw-field__error hide">
-              {getText("FIELD_REQUIRED_LOWERCASE")}
-            </span>
-          </div>
-          : null
-          }
-         </div>
-      </div>
+            <div id="country-section" data-v-2f9b1610="">
+              <div className=" b-form-section h-mb-15 qa-choose-category b-form-section--required">
+                <label className="b-form-section__title">
+                {getText("COUNTRY")}
+                </label>
+                <div className="form-group d-none">
+                  <select className="form-control" name="country" value={this.state.country} onChange={this.handleIntChange}>
+                    <option value={-1}>--- {getText("SELECT_COUNTRY")} ---</option>
+                    {this.state.countries.map(country => (
+                      <option key={country.id} value={country.id}>{country.name}</option>
+                    ))}
+                  </select>
+                  <span id="country-error" className="fw-field__error qa-fw-field__error hide">
+                    {getText("FIELD_REQUIRED_LOWERCASE")}
+                  </span>
+                </div>
+              </div>
+            </div> : null
+      }
+      
 
         <div id="state-section" data-v-2f9b1610="" className={parseInt(this.state.country) == -1? "disabled-section":""}>
          <div className=" b-form-section h-mb-15 qa-choose-category b-form-section--required">
@@ -1634,7 +1634,7 @@ class SellEdit extends Component {
        </b>
       </button>
       <p className="h-pt-10">
-       <a href="/rules.html" target="_blank">
+       <a href="/tos" target="_blank">
         {getText("AD_POST_DESCLAIMER")}
        </a>
       </p>

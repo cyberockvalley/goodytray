@@ -10,16 +10,27 @@ const Op = Sequelize.Op
 
 const fileUploader = require("../utils/FileUploader")
 
+const nodemailer = require("nodemailer");
+export const mailer = nodemailer.createTransport({
+    host: process.env.MAILER_HOST,
+    port: process.env.MAILER_PORT,
+    secure: process.env.MAILER_SECURE, // true for 465, false for other ports
+    auth: {
+      user: process.env.MAILER_USER, // generated ethereal user
+      pass: process.env.MAILER_PASS, // generated ethereal password
+    }
+});
+
 users.use(cors())
-import {isValidEmail, isValidNumber, jsonEmpty} from "../utils/Funcs"
-import {ERROR_DB_OP, getText, LOGIN_SPAN_IN_SECONDS, USERS_PHOTOS_CLIENT_DIR, USERS_PHOTOS_SERVER_DIR} from "../../../Constants"
+import {isValidEmail, isValidNumber, jsonEmpty, okResponse, regexValidation} from "../utils/Funcs"
+import {ALLOWED_MAIL_TYPES, ERROR_DB_OP, getMailerTexts, getText, LOGIN_SPAN_IN_SECONDS, PASSWORD_VALIDITY_TYPES_USED, PASSWORD_VALIDITY_TYPES, SHOW_DB_ERROR, USERS_PHOTOS_CLIENT_DIR, USERS_PHOTOS_SERVER_DIR, EMAIL_KEY_LENGTH} from "../../../Constants"
 import {checkUserAuth} from "../components/UserFunctions"
 
 import fs from "fs"
 
-//import { constants } from "fs"
+import crypto from 'crypto-random-string'
 
-const validOnReg = 0
+
 //register
 users.post("/register", function(req, res) {
     const today = new Date()
@@ -29,8 +40,8 @@ users.post("/register", function(req, res) {
         number: req.body.number == null? "" : req.body.number.trim(),
         fullname: req.body.fullname == null? "" : req.body.fullname.trim(),
         created: today,
-        var_key: "verkey",
-        validated: validOnReg
+        email_verification_key: "",
+        validated: 0
     }
 
     const form_errors = {}
@@ -43,11 +54,15 @@ users.post("/register", function(req, res) {
     if(userData.fullname.length < 2) {
         form_errors.fullname_error = getText("PLS_ENTER_FULLNAME")
     }
-    if(userData.password.length == 0) {
-        form_errors.password_error = getText("ERROR_ENTER_PWD")
-
-    } else if(userData.password.length < 6) {
-        form_errors.password_error = getText("SHORT_PWD")
+    var pass = userData.password || ""
+    var passwordVerification = regexValidation(pass.trim(), PASSWORD_VALIDITY_TYPES_USED, PASSWORD_VALIDITY_TYPES)
+    if(!passwordVerification.isValid) {
+        var errorKeys = passwordVerification.errors
+        var errors = ""
+        errorKeys.forEach(error => {
+            errors += `<p>${getText(error)}</p>`
+        })
+        form_errors.password_error = errors
     }
 
     
@@ -112,7 +127,7 @@ users.post("/login", function(req, res) {
     }
     const form_errors = {}
     if(userData.email.length == 0) {
-        form_errors.email_error = getText("ENTER_EMAIL")
+        form_errors.email_error = getText("ERROR_ENTER_EMAIL")
     }
     if(userData.password.length == 0) {
         form_errors.password_error = getText("ERROR_ENTER_PWD")
@@ -268,7 +283,7 @@ users.get("/", (req, res) => {
                 [Op.or]: [{id: {[Op.eq]: id}}, {email: {[Op.eq]: id}}]
             }, 
             attributes: {
-                exclude: ['password', 'cookie', 'cookie_exp', 'validated', 'ver_key']
+                exclude: ['password', 'cookie', 'cookie_exp', 'validated', 'email_verification_key', 'password_reset_keyy']
             }
         })
         .then(user => {
@@ -286,15 +301,116 @@ users.get("/", (req, res) => {
     }
 })
 
-users.post("/mail-key", (req, res) => {
-    const allowed_type = ["email_ver", "password_reset"]
+users.post("/verify-mail-key", (req, res) => {
+    //okResponse(res, {message: getText("INVALID_TYPE"), status: 0})
     const type = req.query.type
-    const email = req.body.email
-    if(allowed_type.includes(type)) {
-        res.status(400).json({message: getText("INVALID_TYPE"), status: 0})
+    const key = req.body.key || ""
+    const password = req.body.password || ""
+    var mailerTexts = getMailerTexts(type, key)
+    if(!mailerTexts) {
+        okResponse(res, {message: getText("INVALID_TYPE"), status: 0})
+
+    } else if(type == ALLOWED_MAIL_TYPES.password_reset && !regexValidation(password.trim(), PASSWORD_VALIDITY_TYPES_USED, PASSWORD_VALIDITY_TYPES).isValid) {
+        var errorKeys = regexValidation(password.trim(), PASSWORD_VALIDITY_TYPES_USED, PASSWORD_VALIDITY_TYPES).errors
+        var errors = ""
+        errorKeys.forEach(error => {
+            errors += `<p>${getText(error)}</p>`
+        })
+        okResponse(res, {message: errors, status: 0})
 
     } else {
+        User.findOne({
+            where: {[mailerTexts.keyCol]: key.trim()}
+        })
+        .then(u => {
+            if(!u) {
+                okResponse(res, {status: 0, message: mailerTexts.verifyNotOk})
 
+            } else {
+                var update = {[mailerTexts.keyCol]: ""}
+                if(type == ALLOWED_MAIL_TYPES.password_reset) {
+                    update.password = password
+                   
+                    bcrypt.hash(password, 10, function(err, hash) { 
+                        if(err) {
+                            okResponse(res, {status: 0, message: getText("PLS_TRY_AGAIN"), errLevel: 3, err: SHOW_DB_ERROR? err : ""})
+
+                        } else {
+                            update.password = hash
+                            updateOnEmailKey(res, u, update, mailerTexts)
+                        }
+                    })
+
+                } else if(type == ALLOWED_MAIL_TYPES.email_ver) {
+                    update.validated = 1
+                    updateOnEmailKey(res, u, update, mailerTexts)
+                }
+            }
+        })
+        .catch(e => {
+            okResponse(res, {status: 0, message: getText("PLS_TRY_AGAIN"), errLevel: 2, err: SHOW_DB_ERROR? e : ""})
+        })
+    }
+
+})
+
+const updateOnEmailKey = (res, user, update, mailerTexts) => {
+    user.update(update)
+    .then(u => {
+        okResponse(res, {status: 1, message: mailerTexts.verifyOk})
+    })
+    .catch(e => {
+        okResponse(res, {status: 0, message: getText("PLS_TRY_AGAIN"), errLevel: 1, err: SHOW_DB_ERROR? e : ""})
+    })
+}
+
+users.post("/mail-key", (req, res) => {
+    const type = req.query.type
+    const email = req.body.email
+
+    if(!isValidEmail(email)) {
+        okResponse(res, {message: getText("ERROR_ENTER_EMAIL"), status: 0})
+
+    } else {
+        var key = crypto({length: EMAIL_KEY_LENGTH, type: 'url-safe'})
+        var mailerTexts = getMailerTexts(type, key)
+        if(!mailerTexts) {
+            okResponse(res, {message: getText("INVALID_TYPE"), status: 0})
+    
+        } else {
+            User.findOne({
+                where: {email: email.trim().toLowerCase()}
+            })
+            .then(u => {
+                if(!u) {//don't give the user a clue that the account does not exist
+                    okResponse(res, {status: 1, message: mailerTexts.successMsg, info: ""})
+
+                } else {
+                    u.update({[mailerTexts.keyCol]: key})
+                    .then(u => {
+                        mailer.sendMail({
+                            from: `"${getText("SITE_TRADE_MARK")}" <${process.env.MAILER_USER}>`, // sender address
+                            to: `${email.trim().toLowerCase()}`, // list of receivers separated with commas
+                            subject: mailerTexts.mailSubject, // Subject line
+                            html: mailerTexts.mailMsg, // html body
+                        })
+                        .then(info => {
+                            okResponse(res, {status: 1, message: mailerTexts.successMsg, info: SHOW_DB_ERROR? info : ""})
+                
+                        })
+                        .catch(e => {
+                            okResponse(res, {status: 0, message: getText("PLS_TRY_AGAIN"), errLevel: 1, err: SHOW_DB_ERROR? e : ""})
+                        })
+                    })
+                    .catch(e => {
+                        okResponse(res, {status: 0, message: getText("PLS_TRY_AGAIN"), errLevel: 3, err: SHOW_DB_ERROR? e : ""})
+                    })
+                }
+            })
+            .catch(e => {
+                okResponse(res, {status: 0, message: getText("PLS_TRY_AGAIN"), errLevel: 2, err: SHOW_DB_ERROR? e : ""})
+            })
+        }
     }
 })
 

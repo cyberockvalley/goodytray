@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom"
-import { SITE_NAME } from '../../../Constants'
+import { getText, SITE_NAME } from '../../../Constants'
 import Navbar from './Navbar'
 import Footer from "./Footer"
 
@@ -22,11 +22,11 @@ class CreateTips extends Component {
       <use xlinkHref="#light-bulb">
       </use>
      </svg>
-        7 Tips how to create an effective ad
+        {getText("TIPS_HOW_TO_POST")}
     </h1>
     <div className="b-tips__list">
      <p className="h-mt-20 h-mb-30 h-text-center h-font-16">
-      If you really want to create an effective ad, it is highly recommended to follow our top <span className="h-bold b-tips__green-color">7 expert’s instructions below:</span>
+      {getText("TIPS_HOW_TO_POST2")} <span className="h-bold b-tips__green-color">{getText("TIPS_HOW_TO_POST3")}:</span>
      </p>
      <div className="h-hflex b-tip__wrapper">
       <div className="b-tip__content-wrapper">
@@ -34,10 +34,10 @@ class CreateTips extends Component {
       </div>
       <div className="b-tip__content-wrapper">
        <div className="h-bold h-font-16 h-mb-5">
-        Attention-grabbing title
+        {getText("TIPS_HOW_TO_POST4")}
        </div>
        <div className="h-font-14">
-        Use a clear title which includes the name of the item you sell.
+        {getText("TIPS_HOW_TO_POST5")}
        </div>
       </div>
      </div>
@@ -47,10 +47,10 @@ class CreateTips extends Component {
       </div>
       <div className="b-tip__content-wrapper">
        <div className="h-bold h-font-16 h-mb-5">
-        Relevant price
+        {getText("TIPS_HOW_TO_POST6")}
        </div>
        <div className="h-font-14">
-        Set an appropriate price for your item so that the advert is approved. Comparing price on {SITE_NAME} can help you ensure your item is in line with the current market.
+        {getText("TIPS_HOW_TO_POST7")}
        </div>
       </div>
      </div>
@@ -60,10 +60,10 @@ class CreateTips extends Component {
       </div>
       <div className="b-tip__content-wrapper">
        <div className="h-bold h-font-16 h-mb-5">
-        Detailed description
+        {getText("TIPS_HOW_TO_POST8")}
        </div>
        <div className="h-font-14">
-        The description of your product must be informative enough and mustn’t contain any false information regarding your product or service.
+        {getText("TIPS_HOW_TO_POST9")}
        </div>
       </div>
      </div>
@@ -73,10 +73,10 @@ class CreateTips extends Component {
       </div>
       <div className="b-tip__content-wrapper">
        <div className="h-bold h-font-16 h-mb-5">
-        A picture says a thousand words
+        {getText("TIPS_HOW_TO_POST10")}
        </div>
        <div className="h-font-14">
-        The better photos you add, the more attractive your ad looks to the potential buyers and the more calls you receive.
+        {getText("TIPS_HOW_TO_POST11")}
        </div>
       </div>
      </div>
@@ -86,10 +86,10 @@ class CreateTips extends Component {
       </div>
       <div className="b-tip__content-wrapper">
        <div className="h-bold h-font-16 h-mb-5">
-        Answer your calls and chats
+        {getText("TIPS_HOW_TO_POST12")}
        </div>
        <div className="h-font-14">
-        Indicate correct contact details. Try to respond all the incoming calls or to call back your customers once available.
+        {getText("TIPS_HOW_TO_POST13")}
        </div>
       </div>
      </div>
@@ -99,10 +99,10 @@ class CreateTips extends Component {
       </div>
       <div className="b-tip__content-wrapper">
        <div className="h-bold h-font-16 h-mb-5">
-        Double-check your location and category
+        {getText("TIPS_HOW_TO_POST14")}
        </div>
        <div className="h-font-14">
-        It is important to ensure that you post your ad in the right location and category.
+        {getText("TIPS_HOW_TO_POST15")}
        </div>
       </div>
      </div>
@@ -112,10 +112,10 @@ class CreateTips extends Component {
       </div>
       <div className="b-tip__content-wrapper">
        <div className="h-bold h-font-16 h-mb-5">
-        Pay a little, get a lot
+        {getText("TIPS_HOW_TO_POST16")}
        </div>
        <div className="h-font-14">
-        Sometimes, an ad might just need a little boost to receive the exposure it deserves. Free classifieds are a great start, but if you are motivated towards increasing exposure, consider upgrading your free advertisement with premium services.
+        {getText("TIPS_HOW_TO_POST17")}
        </div>
       </div>
      </div>
@@ -123,7 +123,7 @@ class CreateTips extends Component {
    </div>
    <div className="b-tips__button-wrapper">
     <a className="b-button b-button--primary b-button--border-radius" href="/sell">
-     Sell now
+     {getText("SELL_NOW")}
     </a>
    </div>
   </div>

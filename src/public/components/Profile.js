@@ -474,16 +474,16 @@ class Profile extends Component {
             {
               this.state.products_type != "pending"?
               <div>
-                <Link to={"/edit-ad?id="+product.id} className="b-profile-advert__go-to-edit fa fa-pencil">
-                {getText("EDIT")}
+                <Link to={"/edit-ad?id="+product.id} className="b-profile-advert__go-to-edit cap-case">
+                <span data-index={index} data-id={product.id}>{getText("EDIT")}&nbsp;<i className="fa fa-pencil"></i></span>
                 </Link>
                 <a onClick={this.showStats} href="javascript:void(0)" data-index={index} data-id={product.id} style={{paddingLeft: "5px", paddingRight: "5px"}} className="cap-case qa-fw-field__error b-profile-advert__go-to-publish qa-btn-owner-publish-draft">
                   {getText("SHOW_STATS")}&nbsp;<i className="fa fa-bar-chart"></i>
                 </a>
               </div> : 
               <div>
-                <Link to={productLink(product.title, product.id)} target="_blank" className="b-profile-advert__go-to-edit fa fa-eye">
-                {getText("VIEW_AD")}
+                <Link to={productLink(product.title, product.id, true)} target="_blank" className="b-profile-advert__go-to-edit cap-case">
+                <span data-index={index} data-id={product.id}>{getText("VIEW_AD")}&nbsp;<i className="fa fa-eye"></i></span>
                 </Link>
                 <a onClick={this.approveAd} href="javascript:void(0)" data-index={index} data-id={product.id} style={{paddingLeft: "5px", paddingRight: "5px"}} className="cap-case qa-fw-field__error b-profile-advert__go-to-publish qa-btn-owner-publish-draft">
                   {

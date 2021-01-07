@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME, getText, CAT_ID_FLASH_AD, CAT_ID_GROUP_AD } from "../../../Constants"
+import { SITE_TITLE, API_ROOT, PAID_AD_NAME, SITE_NAME, getText, CAT_ID_FLASH_AD, CAT_ID_GROUP_AD, CAT_ID_UNKNOWN } from "../../../Constants"
 import { productLink, catLink, flashLink, countryLink, subCatLink, stateLink } from "../utils/LinkBuilder"
 import { commaNum, id, overflows, truncText} from "../utils/Funcs"
 import { Link } from "react-router-dom"
@@ -347,7 +347,7 @@ class Landing extends Component {
                                                                 {
                                                                     this.state.countries.map((country, index) => (
                                                                         <div key={country.id} className="b-region-item">
-                                                                        <Link to={this.state.isNotGlobal? stateLink(country.name) : countryLink(country.name)} className="b-region-item__name qa-b-region-item__name" tabindex="0">
+                                                                        <Link to={this.state.isNotGlobal? stateLink(country.name, country.id) : countryLink(country.name, country.id)} className="b-region-item__name qa-b-region-item__name" tabindex="0">
                                                                          {country.name}
                                                                         </Link>
                                                                         <span className="hide b-region-item__adv-count qa-b-region-item__adv-count low-case">
@@ -401,10 +401,17 @@ class Landing extends Component {
                                 </a>
                                 {
                                     this.state.cats.slice(0, 3).map((cat, index) => (
-                                        <Link className="mobile-cats-tab-link" key={index} to={catLink(cat.name)}>
-                                            <svg className={cat.indentifier} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
-                                                <use xlinkHref={`#${cat.indentifier}`} data-index={index} data-id={cat.id}></use>
-                                            </svg>
+                                        <Link className="mobile-cats-tab-link" key={index} to={this.state.cats && this.state.cats.length > 0 && this.state.cats[0].id == CAT_ID_FLASH_AD? flashLink() : catLink(cat.name, cat.id)}>
+                                            {
+                                                cat.id == CAT_ID_FLASH_AD || cat.id == CAT_ID_GROUP_AD || cat.id == CAT_ID_UNKNOWN?
+                                                <svg style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>       
+                                                    <image style={{width: "100%", height: "100%"}} xlinkHref={`/public/res/images/static/${cat.id == CAT_ID_FLASH_AD? "flash" : cat.id == CAT_ID_GROUP_AD? "cubes" : "unknown"}.svg`} data-index={index} data-id={cat.id} />    
+                                                </svg>
+                                                :
+                                                <svg className={cat.indentifier} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
+                                                    <use xlinkHref={`#${cat.indentifier}`} data-index={index} data-id={cat.id}></use>
+                                                </svg>
+                                            }
                                             <span className="">
                                                 {truncText(cat.name, 10)}
                                             </span>
@@ -444,7 +451,7 @@ class Landing extends Component {
                                                                                 {
                                                                                     this.state.cats.map((cat, index) => (
                                                                                         cat.id == CAT_ID_FLASH_AD? null :
-                                                                                        this.buildCat(cat, index, cat.total_products, catLink(cat.name))
+                                                                                        this.buildCat(cat, index, cat.total_products, catLink(cat.name, cat.id))
                                                                                     ))
                                                                                 }
 
@@ -470,7 +477,7 @@ class Landing extends Component {
                                                                                 <div className="b-categories-listing__item__inner">
                                                                                     {
                                                                                         this.state.sub_cats.map((sCat, index) => (
-                                                                                            <Link to={subCatLink(sCat.name)} key={"sub_cat_"+index} className={"b-categories-item h-ph-10 b-categories-item--item-alt qa-category-sub-item cat_and_sub_"+this.state.cat_id} data-index={index} data-id={this.state.cat_id}>
+                                                                                            <Link to={subCatLink(sCat.name, sCat.id)} key={"sub_cat_"+index} className={"b-categories-item h-ph-10 b-categories-item--item-alt qa-category-sub-item cat_and_sub_"+this.state.cat_id} data-index={index} data-id={this.state.cat_id}>
                                                                                                 <span className="b-categories-item--outer" data-index={index} data-id={this.state.cat_id}>
                                                                                                     <span className="h-flex-center" data-index={index} data-id={this.state.cat_id}>
                                                                                                         <span className="b-categories-item--inner" data-index={index} data-id={this.state.cat_id}>
@@ -616,9 +623,9 @@ class Landing extends Component {
                 <span className="b-categories-item--outer" data-index={index} data-id={cat.id}>
                     <span className="h-flex-center" data-index={index} data-id={cat.id}>
                         {
-                            cat.id == CAT_ID_FLASH_AD || cat.id == CAT_ID_GROUP_AD?
+                            cat.id == CAT_ID_FLASH_AD || cat.id == CAT_ID_GROUP_AD || cat.id == CAT_ID_UNKNOWN?
                             <svg style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>       
-                                <image style={{width: "100%", height: "100%"}} xlinkHref={`/public/res/images/static/${cat.id == CAT_ID_FLASH_AD? "flash" : "cubes"}.svg`} data-index={index} data-id={cat.id} />    
+                                <image style={{width: "100%", height: "100%"}} xlinkHref={`/public/res/images/static/${cat.id == CAT_ID_FLASH_AD? "flash" : cat.id == CAT_ID_GROUP_AD? "cubes" : "unknown"}.svg`} data-index={index} data-id={cat.id} />    
                             </svg>
                             :
                             <svg className={cat.indentifier} style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>
