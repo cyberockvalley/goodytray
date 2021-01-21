@@ -160,7 +160,7 @@ class Profile extends Component {
       ["approving_ad_"+product.id]: true
     })
     //approve product
-    browser.axios.get(API_ROOT + "products/approve/"+product.id)
+    browser.axios.post(API_ROOT + "products/approve/"+product.id)
     .then(resp => {
       console.log("ApprovaleResponse", resp.data)
       if(resp.data && resp.data.status == 1) {
@@ -612,18 +612,18 @@ class Profile extends Component {
             <TextView  
               text_size="18px"
               margin_right="5px"
-              text="Currently Boosted:" />
+              text={`${getText("STATS_BOOSTED")}`} />
             <TextView  
               text_size="18px"
               font_weight="bold"
-              text={this.state.shown_stats.sponsored?"Yes":"No"} />
+              text={this.state.shown_stats.sponsored?getText("YES"):getText("NO")} />
           </div>
 
           <div style={{marginBottom: "10px", display: "flex", flexDirection: "row"}}>
             <TextView  
               text_size="18px"
               margin_right="5px"
-              text="Total Views:" />
+              text={`${getText("STATS_TOTAL_VIEWS")}:`} />
             <TextView  
               text_size="18px"
               font_weight="bold"
@@ -634,7 +634,7 @@ class Profile extends Component {
             <TextView  
               text_size="18px"
               margin_right="5px"
-              text="Total Boosted packages views:" />
+              text={`${getText("STATS_TOTAL_BOOSTED_VIEWS")}:`} />
             <TextView  
               text_size="18px"
               font_weight="bold"
@@ -645,11 +645,11 @@ class Profile extends Component {
             <TextView  
               text_size="18px"
               margin_right="5px"
-              text="Total Boosted packages ends/ended on:" />
+              text={`${getText("STATS_TOTAL_BOOSTED_ENDS")}`} />
             <TextView  
               text_size="18px"
               font_weight="bold"
-              text={this.state.shown_stats.sponsored_end_time == 0?"This ad has no boosted package"
+              text={this.state.shown_stats.sponsored_end_time == 0? getText("STATS_NO_BOOSTED")
               :dateFormat(new Date(this.state.shown_stats.sponsored_end_time), "d mmm yyyy")} />
           </div>
         </div>

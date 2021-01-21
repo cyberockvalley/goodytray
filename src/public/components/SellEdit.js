@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { SITE_NAME, API_ROOT, AD_PACKAGES, MAX_PRODUCT_PHOTO_WIDTH, getText, CAT_ID_FLASH_AD, CAT_ID_GROUP_AD } from '../../../Constants'
+import { SITE_NAME, API_ROOT, AD_PACKAGES, MAX_PRODUCT_PHOTO_WIDTH, getText, CAT_ID_FLASH_AD, CAT_ID_GROUP_AD, CAT_ID_UNKNOWN } from '../../../Constants'
 const browser = require('../utils/Browser')
 import {id, cls, commaNum, remove, removeObject, queries, isFile, jsonEmpty, resizeImageFile, blobToFile} from '../utils/Funcs'
 import {MAX_PRODUCT_PHOTOS_SIZE} from "../../../Constants"
@@ -78,6 +78,7 @@ class SellEdit extends Component {
       desc: '',
       price: '',
       photos: [],
+      photosLinks: [],
       photo_size: 0,
       loaded: 0,
       attrs: [],
@@ -197,7 +198,8 @@ class SellEdit extends Component {
       const files = product.photos? product.photos.split(",") : []
       this.setState({next_photo_index: files.length -1})
       
-      this.setState({photos: files})
+      console.log("photosLinks", 'fff', files)
+      this.setState({photos: files, photosLinks: JSON.parse(JSON.stringify(files))})
 
     } else {
       const states = [
@@ -212,6 +214,7 @@ class SellEdit extends Component {
         {price_currency_symbol: this.state.currency_symbols[0]},
         {price: ""},
         {photos: []},
+        {photosLinks: []},
         {photo_size: 0},
         {loaded: 0},
         {attrs: []},
@@ -243,7 +246,7 @@ class SellEdit extends Component {
         //files.push(null)
         i++
       }*/
-      this.setState({photos: files})
+      this.setState({photos: files, photosLinks: []})
     }
     
   }
@@ -847,34 +850,47 @@ class SellEdit extends Component {
     console.log("this.drop 2", e.dataTransfer.files)
     this.addPhotos(e.dataTransfer.files)
   }
+  
 
   addPhotos = async files => {
     this.setState({loaded: 0})
     const photos = this.state.photos
+    const photosLinks = this.state.photosLinks
+
+    console.log("photosLinksAdd", "addPhotos", photosLinks)
+
     for(var i = 0; i < files.length; i++) {
       console.log("photos.length: "+photos.length)
       if(this.state.photo_size + files[i].size > MAX_PRODUCT_PHOTOS_SIZE) {
         console.log("max reached")
         this.setError("photo", getText("MAX_FILE_SIZE_ERROR"))
 
-      } else {
+      } else {/*
         var file = blobToFile(files[i].name, await resizeImageFile({
           file: files[i],
           maxSize: MAX_PRODUCT_PHOTO_WIDTH
-        }))
+        }))*/
+        var file = files[i]
         photos.push(file)
+        console.log("photosLinksAdd", "photosLinksBeforeAdd", photosLinks)
+        photosLinks.push(await this.photoUrl(file))
+        console.log("photosLinksAdd", "file", file, this.photoUrl(file), photosLinks)
+        console.log("photosLinksAdd", "url", this.photoUrl(file), photosLinks)
+        console.log("photosLinksAdd", "photosLinksAfterAdd", photosLinks)
+
         this.state.photo_size += file.size
         
       console.log("photo-size-new:", file.size, "totalSize:", this.state.photo_size)
       }
       console.log("photo-size:", files[i].size, "totalSize:", this.state.photo_size, "maxSize:", MAX_PRODUCT_PHOTOS_SIZE)
     }
-    this.setState({photos: photos})
-    console.log("photos", this.state.photos)
+    this.setState({photos: photos, photosLinks: photosLinks})
+    console.log("photos", this.state.photos, this.state.photosLinks)
   }
 
   removePhoto = e => {
     const photos = this.state.photos
+    const photosLinks = this.state.photosLinks
     console.log("removeTarget", e.target)
     const index = parseInt(e.target.getAttribute("data-photo-index"))
     console.log("photoIndex", index)
@@ -883,8 +899,10 @@ class SellEdit extends Component {
       this.state.photo_size -= photo.size
     }
     photos.splice(index, 1)
+    photosLinks.splice(index, 1)
     this.state.photos = photos
-    this.setState({photos: photos})
+    this.state.photosLinks = photosLinks
+    this.setState({photos: photos, photosLinks: photosLinks})
     const delPhotos = this.state.del_photos
     if(!isFile(photo) && !delPhotos.includes(photo)) {
       delPhotos.push(photo)
@@ -895,13 +913,15 @@ class SellEdit extends Component {
   arrangePhotos = (oldPosition, newPosition) => {
     console.log("arrangePhotos", oldPosition, newPosition)
     const photos = this.state.photos
+    const photosLinks = this.state.photosLinks
     if(newPosition < 0) newPosition = 0
     if(newPosition >= photos.length) newPosition = photos.length - 1
     console.log("arrangePhotosAdjust", oldPosition, newPosition)
     console.log("arrangePhotos", 2, photos)
     photos.splice(newPosition, 0, photos.splice(oldPosition, 1)[0])
+    photosLinks.splice(newPosition, 0, photos.splice(oldPosition, 1)[0])
     //this.state.photos = photos
-    this.setState({photos: photos})
+    this.setState({photos: photos, photosLinks: photosLinks})
     console.log("arrangePhotos", 3, this.state.photos)
   }
 
@@ -1065,7 +1085,7 @@ class SellEdit extends Component {
     return isFile(photo)?URL.createObjectURL(photo) : photo
   }
 
-  render() {
+  render() {console.log("photosLinks:", JSON.stringify(this.state.photosLinks), this.state.photosLinks)
     const allow_null_class = "b-form-section h-mb-15"
     const no_null_class = allow_null_class + " b-form-section--required"
     
@@ -1175,7 +1195,7 @@ class SellEdit extends Component {
          </div>
         </div>
 
-        <div id="sub_cat-section" data-v-2f9b1610="" dataCat={this.state.cat} className={`${this.state.cat == CAT_ID_FLASH_AD || this.state.cat == CAT_ID_GROUP_AD? "d-none " : ""}${parseInt(this.state.cat) == -1? "disabled-section":""}`}>
+        <div id="sub_cat-section" data-v-2f9b1610="" dataCat={this.state.cat} className={`${this.state.cat == CAT_ID_FLASH_AD || this.state.cat == CAT_ID_GROUP_AD || this.state.cat == CAT_ID_UNKNOWN? "d-none " : ""}${parseInt(this.state.cat) == -1? "disabled-section":""}`}>
          <div className="b-form-section h-mb-15 qa-choose-category b-form-section--required">
           <label className="b-form-section__title cap-case">
           {getText("SUB_CAT")}
@@ -1309,9 +1329,9 @@ class SellEdit extends Component {
          <div id="draggable" className="draggable" data-v-61d25a85="">
            
           {
-            this.state.photos.map((photo, index) => (
+            this.state.photosLinks.map((photo, index) => (
               photo != null?
-              <div id={"product_photo_" + index} data-photo-index={index} onMouseDown={this.startMovingPhoto} onMouseUp={this.stopMovingPhoto} className="item" data-v-61d25a85="" key={"photo-"+index}>
+              <div key={`product-photo-div-${index}`} id={"product_photo_" + index} data-photo-index={index} onMouseDown={this.startMovingPhoto} onMouseUp={this.stopMovingPhoto} className="item" data-v-61d25a85="" key={"photo-"+index}>
               <div className="qa-add-photo photo-block" data-v-61d25a85="" data-v-6ea5e880="" style={{height: "136px", width: "136px"}}>
                 {
                   photo == ""?
@@ -1369,7 +1389,8 @@ class SellEdit extends Component {
                     </div>
                     :
                     <div data-photo-index={index} data-v-6ea5e880="" className="preview">
-                    <div data-photo-index={index} data-v-6ea5e880="" className="preview__img" style={{backgroundImage: "url("+ this.photoUrl(photo)+")", transform: "rotate(0deg)"}}></div> 
+                    <div data-photo-index={index} data-v-6ea5e880="" className="preview__img" style={{backgroundImage: "url("+
+                    photo+")", transform: "rotate(0deg)"}}></div> 
                     <div data-photo-index={index} data-v-6ea5e880="" className="preview__bar">
                       <div data-v-6ea5e880="" className="preview__bar-button" style={{display: "none"}}>
                         <i data-v-6ea5e880="" className="glyphicon glyphicon-repeat icon icon-rotate">

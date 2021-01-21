@@ -18,7 +18,7 @@ class About extends Component {
 
     render() {
         return (
-<div className="h-bg-grey h-pb-15">
+<div className="h-bg-grey h-pb-15 about-page">
  <div>
   <div firstLoad="true">
    <div className="b-tips__wrapper">

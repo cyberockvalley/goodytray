@@ -32,488 +32,459 @@ class About extends Component {
 <div className="b-about-wrapper container">
  <div className="h-bg-white h-pv-15 h-ph-15">
      
-<h1>
+ <h1>
 {getText("RULES_OF_USE")}
 </h1>
 <p>
-{" If you browse or otherwise access any content or data on the " + SITE_DOT_COM + " website where this Terms and Condition appears in the footer, and to any " + SITE_DOT_COM + " application, service, or tool (collectively"}
+{"Se navighi o accedi in altro modo a qualsiasi contenuto o dato sul sito web cosmobox.it in cui i presenti Termini e condizioni compaiono a piè di pagina e a qualsiasi applicazione, servizio o strumento di cosmobox.it (collettivamente"}
  <b>
-  "Resource"
+  "Risorsa"
  </b>
- or
+ o
  <b>
-  "Service"
+  "Servizio"
  </b>
- ) you agree to be bound by these terms. If you do not agree to these terms, please do not use this Resource.
+ ) accetti di essere vincolato da questi termini. Se non accetti questi termini, ti preghiamo di non utilizzare questa risorsa.
 </p>
 <p>
- By using the Resource with or without Registered account, regardless of how you access or use it, including through mobile devices you are accepting the terms of this Terms of Conditions and any applicable posted guidelines for the Service.
+ Utilizzando la Risorsa con o senza account registrato, indipendentemente da come la si accede o la si utilizza, anche tramite dispositivi mobili, si accettano i termini dei presenti Termini di condizioni e le linee guida pubblicate applicabili per il Servizio.
 </p>
 <p>
- These Terms of Conditions shall be a legally binding agreement between the User and Administrator, which subject is a provision of access to use of the Resource and to its functionality to the User. Among these Terms of Conditions, the agreement between the User and the Administrator comprises also all specific documents, by which a provision of access to use of the Resource is regulated, including
- <Link to="/privacy"> Privacy Policy</Link>
- , and other documents as well being developed by the Administrator from time to time.
+ I presenti Termini di Condizioni saranno un accordo legalmente vincolante tra l'Utente e l'Amministratore, il cui soggetto è una fornitura di accesso all'uso della Risorsa e alla sua funzionalità per l'Utente. Tra i presenti Termini di Condizioni, l'accordo tra l'Utente e l'Amministratore comprende anche tutti i documenti specifici, in base ai quali è regolata una fornitura di accesso all'uso della Risorsa, tra cui
+ <Link to = "/ privacy"> Norme sulla privacy </Link>
+ , e altri documenti che vengono sviluppati di volta in volta dall'amministratore.
 </p>
 <p>
- Administrator reserve the right to change Terms and Condition at any time by publishing the new Terms and Conditions on the Resource. By continuing to use the Service you are indicating your acceptance to be bound by the amended Terms and Conditions.
+ L'amministratore si riserva il diritto di modificare i termini e le condizioni in qualsiasi momento pubblicando i nuovi termini e condizioni sulla risorsa. Continuando a utilizzare il Servizio, accetti di essere vincolato dai Termini e condizioni modificati.
 </p>
 <p>
  <b>
-  "Administrator"
+  "Amministratore"
  </b>
  ,
  <b>
-  "we"
+  "noi"
  </b>
- or
+ o
  <b>
-  "us"
+  "noi"
  </b>
- - Local Content Administrator or other entity that exercise control over the Local Content Administrator, which renders the Services to the Users.
+ - Amministratore del contenuto locale o altra entità che esercita il controllo sull'amministratore del contenuto locale, che fornisce i servizi agli utenti.
 </p>
 <p>
  <b>
-  "Local Content Administrator"
+  "Amministratore dei contenuti locali"
  </b>
-{" — " + SITE_DOT_COM}
+{"- cosmobox.it"}
 </p>
 <p>
  <b>
-  "User"
+  "Utente"
  </b>
  ,
  <b>
-  "you"
+  "tu"
  </b>
  ,
  <b>
-  "your"
+  "il tuo"
  </b>
- – means any natural person eligible to conclude an agreement under the applicable law with Administrator and using any of Services with or without a Registered account. The Users may also act on behalf of the company that provides goods and services and intends to post announcements to the Resource. In this case, Users shall be empowered for such representation in a written form.
+ - indica qualsiasi persona fisica idonea a concludere un contratto ai sensi della legge applicabile con l'Amministratore e che utilizza uno qualsiasi dei Servizi con o senza un account registrato. Gli Utenti possono anche agire per conto della società che fornisce beni e servizi e che intende pubblicare annunci nella Risorsa. In questo caso, gli utenti avranno il potere di tale rappresentazione in forma scritta.
 </p>
 <p>
  <b>
-  "Register entry/account"
+  "Registrazione / account"
  </b>
- — an electronic User area within functional system of the Resource, with a help of which he/she is able to manage his/her announcements on the Resource.
+ - un'area Utente elettronica all'interno del sistema funzionale della Risorsa, con l'ausilio della quale è in grado di gestire i propri annunci sulla Risorsa.
 </p>
 <h2>
- 1. General provisions
+ 1. Disposizioni generali
 </h2>
 <p>
- 1.1. For the registration of an account, you shall provide necessary veridical and current information for the purpose of generation of a User account, which includes User’s unique login (email address), and a Resource password, as well as his/her surname and name. Resource Registration Form may require the User to provide more detailed information.
+ 1.1. Per la registrazione di un account, è necessario fornire le informazioni veridiche e aggiornate necessarie allo scopo di generare un account utente, che include il login univoco dell'utente (indirizzo e-mail) e una password per la risorsa, nonché il suo cognome e nome. Il modulo di registrazione delle risorse potrebbe richiedere all'utente di fornire informazioni più dettagliate.
 </p>
 <p>
- 1.2. The resource is a marketplace that allows users to offer, sell by posting an announcement and buy just about anything in a variety of pricing formats and locations. The actual contract for sale is directly between Users. In such a manner the Administrator is not a party of the transaction, but it only provides a communication trade platform for the posting of announcements. We also have no control over and do not guarantee the existence, quality, safety or legality of items advertised", the truth or accuracy of users' content or listings; the ability of sellers to sell items; the ability of buyers to pay for items; or that a buyer or seller will actually complete a transaction or return an item.
+ 1.2. La risorsa è un mercato che consente agli utenti di offrire, vendere pubblicando un annuncio e acquistare praticamente qualsiasi cosa in una varietà di formati di prezzo e posizioni. Il contratto di vendita effettivo è direttamente tra gli Utenti. In tal modo l'Amministratore non è una parte della transazione, ma fornisce solo una piattaforma di scambio di comunicazione per la pubblicazione di annunci. Inoltre, non abbiamo alcun controllo e non garantiamo l'esistenza, la qualità, la sicurezza o la legalità degli articoli pubblicizzati ", la verità o l'accuratezza dei contenuti o degli elenchi degli utenti; la capacità dei venditori di vendere articoli; la capacità degli acquirenti di pagare gli articoli o che un acquirente o un venditore completerà effettivamente una transazione o restituirà un articolo.
 </p>
 <p>
- 1.3. Administrator does not pursue actions focused on checking of materials posted by Users and expressly disclaims all responsibilities in relation to materials posted by Users.
+ 1.3. L'amministratore non persegue azioni incentrate sul controllo dei materiali pubblicati dagli utenti e declina espressamente ogni responsabilità in relazione ai materiali pubblicati dagli utenti.
 </p>
 <p>
- 1.4. Administrator prevents infringement of copyright and intellectual property right infringement in the course of using of the Resource and can delete any User material, which infringes intellectual property rights, at its own discretion without prior notice. We also may terminate Users’ access to the Resource, in the event that such Users repeatedly infringe rights or commit any actions in contrast to these Terms and Conditions.
+ 1.4. L'Amministratore previene la violazione del copyright e dei diritti di proprietà intellettuale durante l'utilizzo della Risorsa e può eliminare qualsiasi materiale dell'Utente, che viola i diritti di proprietà intellettuale, a propria discrezione senza preavviso. Potremmo anche interrompere l'accesso degli utenti alla risorsa, nel caso in cui tali utenti violino ripetutamente i diritti o commettano azioni in contrasto con i presenti Termini e condizioni.
 </p>
 <p>
- 1.5. We may set limits of active announcements for appropriate columns. The Resource Administrator can render additional services of increasing of a column limit by means of sales of an announcements package.
+ 1.5. Possiamo impostare limiti di annunci attivi per colonne appropriate. L'amministratore delle risorse può fornire servizi aggiuntivi di aumento del limite di una colonna mediante la vendita di un pacchetto di annunci.
 </p>
 <p>
- 1.6. The fees we charge for using our Services are listed on the Resource.
+ 1.6. Le tariffe che addebitiamo per l'utilizzo dei nostri Servizi sono elencate nella Risorsa.
 </p>
 <h2>
- 2. Using Resource
+ 2. Utilizzo della risorsa
 </h2>
 <h4>
- 2.1. Using the Resource, the User shall: "</h4>
-<ul className="h-ml-10" style={{listStyleType: "none"}}>
+ 2.1. Utilizzando la risorsa, l'utente deve: "</h4>
+<ul className = "h-ml-10" style = {{listStyleType: "none"}}>
  <li>
-  2.1.1. provide veridical, complete and current data during registration, ensure them being updated;
+  2.1.1. fornire dati veritieri, completi e attuali durante la registrazione, assicurarne l'aggiornamento;
  </li>
  <li>
-  2.1.2. The User shall immediately change data for accessing to the Resource, if he/she has a suspicion that his/her email address and password used for entering to the Resource were disclosed or probably used by the third parties.
+  2.1.2. L'Utente dovrà modificare immediatamente i dati per l'accesso alla Risorsa, qualora abbia il sospetto che il proprio indirizzo di posta elettronica e la password utilizzati per l'accesso alla Risorsa siano stati divulgati o probabilmente utilizzati da terzi.
  </li>
  <li>
-  2.1.3. notify the Administrator of unauthorized access to the personal account and/or of unauthorized access to and/or use of User’s login and password;
+  2.1.3. notificare all'amministratore l'accesso non autorizzato all'account personale e / o l'accesso non autorizzato e / o l'utilizzo del login e della password dell'utente;
  </li>
  <li>
-  2.1.4. prevent other Users’ getting access to the personal account or any specific information contained on it, if this can lead to violation of the laws of Nigeria and/or these Terms and Conditions;
+  2.1.4. impedire ad altri Utenti l'accesso all'account personale oa qualsiasi informazione specifica in esso contenuta, se ciò può portare alla violazione delle leggi della Nigeria e / o dei presenti Termini e condizioni;
  </li>
  <li>
-  2.1.5. avoid posting of information and objects (including references hereto) to the Resource, which can infringe other persons’ rights and interests;
+  2.1.5. evitare la pubblicazione di informazioni e oggetti (inclusi i riferimenti al presente documento) nella Risorsa, che può violare i diritti e gli interessi di altre persone;
  </li>
  <li>
-  2.1.6. avoid posting of information and objects (including references hereto) to the Resource prohibited by these Terms and Conditions and by applicable law.
+  2.1.6. evitare la pubblicazione di informazioni e oggetti (inclusi i riferimenti al presente documento) alla Risorsa vietata dai presenti Termini e condizioni e dalla legge applicabile.
  </li>
 </ul>
 <h4>
- 2.2. Using the Resource, the User shall not: "</h4>
-<ul className="h-ml-10" style={{listStyleType: "none"}}>
+ 2.2. Utilizzando la risorsa, l'utente non deve: "</h4>
+<ul className = "h-ml-10" style = {{listStyleType: "none"}}>
  <li>
-  2.2.1. log in as a User on behalf or instead of another person (“false account”). However, the User can log in for and on behalf of other individual or legal entity subject to receipt of necessary well-documented authorities
+  2.2.1. accedere come utente per conto o al posto di un'altra persona ("account falso"). Tuttavia, l'Utente può accedere in nome e per conto di un'altra persona fisica o giuridica previa ricezione delle necessarie autorità ben documentate
  </li>
  <li>
-  2.2.2. confuse User concerning his/her personality using login and password of any other registered User;
+  2.2.2. confondere l'Utente riguardo alla sua personalità utilizzando login e password di qualsiasi altro Utente registrato;
  </li>
  <li>
-  2.2.3. illegally download, store, post, distribute or provide access to or in any other way use the intellectual property of Users and the third parties;
+  2.2.3. scaricare, archiviare, pubblicare, distribuire o fornire accesso illegalmente o in altro modo utilizzare la proprietà intellettuale degli utenti e di terzi;
  </li>
  <li>
-  2.2.4. perform bulk mailing to the addresses of other Resource Users without their consents;
+  2.2.4. eseguire invii in blocco agli indirizzi di altri utenti risorsa senza il loro consenso;
  </li>
  <li>
-  2.2.5. use software and pursue any other actions aimed to interference with the normal operation of the Resource or Users personal areas;
+  2.2.5. utilizzare software e perseguire ogni altra azione volta ad interferire con il normale funzionamento delle aree personali della Risorsa o degli Utenti;
  </li>
  <li>
-  2.2.6. download, store, post, distribute and provide access to, or in any other way use viruses, li&gt; and other malware;
+  2.2.6. scaricare, archiviare, pubblicare, distribuire e fornire accesso o utilizzare in qualsiasi altro modo virus, li & gt; e altri malware;
  </li>
  <li>
-  2.2.7. in any way, including, but not limited to, fraudulently, be way of breach of faith or crack, endeavor to get access to other User’s login and password;
+  2.2.7. in qualsiasi modo, incluso, ma non limitato a, fraudolentemente, essere un mezzo di violazione della fede o crack, tentare di ottenere l'accesso al login e alla password di altri utenti;
  </li>
  <li>
-  2.2.8. perform illegal collection and processing of other individuals’ personal data
+  2.2.8. eseguire la raccolta e il trattamento illegali dei dati personali di altre persone
  </li>
  <li>
-  2.2.9. use the Resource otherwise but as provided herein, except when such actions were directly permitted to the User pursuant to a separate agreement with the Administrator;
+  2.2.9. utilizzare la Risorsa in altro modo ma come previsto nel presente documento, tranne quando tali azioni erano direttamente consentite all'Utente in base a un accordo separato con l'Amministratore;
  </li>
  <li>
-  2.2.10. reproduce, duplicate, copy, sell, carry out trade transactions and resell access to using of the Resource for any purposes, except when such actions were directly permitted to the User pursuant to a separate agreement with the Administrator;
+  2.2.10. riprodurre, duplicare, copiare, vendere, effettuare transazioni commerciali e rivendere l'accesso all'utilizzo della Risorsa per qualsiasi scopo, tranne quando tali azioni fossero direttamente consentite all'Utente in base a un accordo separato con l'Amministratore;
  </li>
  <li>
-  2.2.11. post any other information, which is undesirable, disagrees with the purposes of creation of the Resource, encroaches Users’ interests or otherwise presents itself as undesirable for being posted to the Resource;
+  2.2.11. pubblicare qualsiasi altra informazione, che sia indesiderabile, in disaccordo con gli scopi della creazione della Risorsa, invadendo gli interessi degli Utenti o altrimenti si presenti come indesiderabile per essere pubblicata nella Risorsa;
  </li>
 </ul>
 <h4>
- 2.3. Each User shall warrant and acknowledge that: "</h4>
-<ul className="h-ml-10" style={{listStyleType: "none"}}>
+ 2.3. Ciascun utente garantisce e riconosce che: "</h4>
+<ul className = "h-ml-10" style = {{listStyleType: "none"}}>
  <li>
-  2.3.1. he/she undertakes full responsibility for obtaining all necessary permits in relation to any User Content, which he/she represents, downloads, or displays;
+  2.3.1. si assume la piena responsabilità per l'ottenimento di tutti i permessi necessari in relazione a qualsiasi Contenuto utente, che rappresenta, scarica o visualizza;
  </li>
  <li>
-  2.3.2. any User content represented, downloaded or displayed by him/her does not infringe any copyrights, patents, rights for trademarks, firm names, commercial secrets or any other personal or proprietary rights of any third party (
+  2.3.2. qualsiasi contenuto dell'Utente rappresentato, scaricato o visualizzato da lui / lei non viola alcun copyright, brevetto, diritto per marchi, nomi di società, segreti commerciali o altri diritti personali o proprietari di terze parti (
   <b>
-   "Third party rights")
+   "Diritti di terze parti")
   </b>
-  ; and
+  ; e
  </li>
  <li>
-  2.3.3. he/she is entitled and authorized for sale, trade, distribution or export, or for an offer for sale, trade, distribution or export of products and services described in User content, and such sale, trade, distribution or export, or offer does not infringe any Third party rights.
+  2.3.3. ha il diritto e l'autorizzazione per la vendita, il commercio, la distribuzione o l'esportazione o per un'offerta di vendita, scambio, distribuzione o esportazione di prodotti e servizi descritti nel contenuto dell'utente e tale vendita, commercio, distribuzione o esportazione o offerta non non violare alcun diritto di terze parti.
  </li>
 </ul>
 <h2>
- 3. Posting of announcements by the User
+ 3. Pubblicazione di annunci da parte dell'Utente
 </h2>
 <p>
- 3.1. The administrator may request User to provide the documents confirming the legitimacy of posting of announcements in relation to goods and services.
+ 3.1. L'amministratore può richiedere all'Utente di fornire i documenti che confermano la legittimità della pubblicazione di annunci in relazione a beni e servizi.
 </p>
 <p>
- 3.2. The User, who posts announcements with regard to the sale of goods and services to the Resource, shall place information about them in accordance with these Terms and Conditions and provide precise and complete information about the goods and services, as well as about the terms and conditions of sale of them. When the User places information about goods or services, he/she hereby confirms being legally authorized to sell these goods or render such services pursuant to laws of states, in which they are sold, as well as that he/she has obtained all necessary approvals.
+ 3.2. L'Utente, che pubblica annunci in merito alla vendita di beni e servizi alla Risorsa, inserirà informazioni su di essi in conformità con questi Termini e Condizioni e fornirà informazioni precise e complete sui beni e servizi, nonché sui termini e condizioni di vendita degli stessi. Quando l'Utente inserisce informazioni su beni o servizi, con la presente conferma di essere legalmente autorizzato a vendere tali beni o fornire tali servizi ai sensi delle leggi degli stati in cui vengono venduti, nonché di aver ottenuto tutte le approvazioni necessarie .
 </p>
 <p>
- 3.3. The User warrants that goods/services he/she offers correspond with quality norms established by the legislation of states, in which they are sold, and are free of the third parties’ claims.
+ 3.3. L'Utente garantisce che i beni / servizi che offre corrispondono alle norme di qualità stabilite dalla legislazione degli stati in cui vengono venduti e sono liberi da pretese di terzi.
 </p>
 <p>
- 3.4. The User warrants that goods/services he/she offers provided that any special permits are needed for sale or rendering of them will be sold/rendered in accordance with the requirements of states, which special authorities will be empowered to supervise such User’s activity.
+ 3.4. L'Utente garantisce che i beni / servizi che offre a condizione che siano necessari permessi speciali per la vendita o la loro fornitura saranno venduti / resi in conformità con i requisiti degli stati, le cui autorità speciali avranno il potere di supervisionare l'attività di tale Utente.
 </p>
 <p>
- 3.5. The User shall thoroughly check all information about goods and services posted by him/her to the Resource, and, in case of any incorrect information detected, add necessary data in the description of goods or services. If no possibility exists to do so, the User shall adjust incorrect information by having annulled the announcement and posted information about goods or services again.
+ 3.5. L'Utente deve controllare accuratamente tutte le informazioni su beni e servizi da lui inserite nella Risorsa e, in caso di rilevamento di informazioni errate, aggiungere i dati necessari nella descrizione dei prodotti o servizi. Se non esiste alcuna possibilità in tal senso, l'Utente dovrà modificare le informazioni errate annullando l'annuncio e pubblicando nuovamente informazioni su beni o servizi.
 </p>
 <p>
- 3.6. Delivery conditions should be included in a goods description, and services terms and conditions should form a part of the service description. Goods sale and service terms and conditions developed by the User shall not interfere with these Terms and Conditions and the applicable legislation of states, for which they are sold.
+ 3.6. Le condizioni di consegna dovrebbero essere incluse in una descrizione delle merci e i termini e le condizioni dei servizi dovrebbero far parte della descrizione del servizio. I termini e le condizioni di vendita e di servizio dei beni sviluppati dall'Utente non devono interferire con i presenti Termini e condizioni e con la legislazione applicabile degli stati per i quali vengono venduti.
 </p>
 <p>
- 3.7. Price of goods or services shall be exact. If it is perceived to be changed due to any specific circumstances, the terms and conditions of price change shall be provided in an announcement.
+ 3.7. Il prezzo dei beni o dei servizi deve essere esatto. Se si ritiene che sia cambiato a causa di circostanze specifiche, i termini e le condizioni di modifica del prezzo devono essere forniti in un annuncio.
 </p>
 <p>
- 3.8. The User is not allowed to post or distribute: "</p>
-<ul className="h-ml-10" style={{listStyleType: "none"}}>
+ 3.8. L'utente non è autorizzato a pubblicare o distribuire: "</p>
+<ul className = "h-ml-10" style = {{listStyleType: "none"}}>
  <li>
-  - false, misleading or deceitful information;
+  - informazioni false, fuorvianti o ingannevoli;
  </li>
  <li>
-  - disreputable, defamatory, threatening or harassing, improper, unacceptable information;
+  - informazioni poco raccomandabili, diffamatorie, minacciose o moleste, improprie, inaccettabili;
  </li>
  <li>
-  - discriminative information, or information that facilitates discrimination on the basis of race, sex, religion, nationality, invalidity, sexual orientation or age;
+  - informazioni discriminatorie o informazioni che facilitano la discriminazione sulla base di razza, sesso, religione, nazionalità, invalidità, orientamento sessuale o età;
  </li>
  <li>
-  - information which violates these Rules;
+  - informazioni che violano il presente Regolamento;
  </li>
  <li>
-  - information which violates applicable laws and regulations (including, without limitation, those regulating export control, consumer protection, unfair competition or false advertising, intellectual property rights);
+  - informazioni che violano leggi e regolamenti applicabili (inclusi, senza limitazione, quelli che regolano il controllo delle esportazioni, la protezione dei consumatori, la concorrenza sleale o la falsa pubblicità, i diritti di proprietà intellettuale);
  </li>
  <li>
-  - direct or indirect references to any other web sites, which comprise any content being able to violate these Rules;
+  - riferimenti diretti o indiretti a qualsiasi altro sito web, che comprende qualsiasi contenuto che possa violare il presente Regolamento;
  </li>
  <li>
-  - vulgar abusive language;
+  - linguaggio volgare offensivo;
  </li>
  <li>
-  - advocacy of hate, violence, discrimination, racism, xenophobia, ethnic conflicts;
+  - difesa di odio, violenza, discriminazione, razzismo, xenofobia, conflitti etnici;
  </li>
  <li>
-  - appeals to violence and unlawful actions;
+  - appelli alla violenza e alle azioni illegali;
  </li>
  <li>
-  - data infringing personal (non-proprietary) rights and intellectual property rights of the third parties;
+  - dati che violano i diritti personali (non proprietari) e i diritti di proprietà intellettuale di terzi;
  </li>
  <li>
-  - information that facilitates fraud, deception or breach of faith;
+  - informazioni che facilitano la frode, l'inganno o la violazione della fede;
  </li>
  <li>
-  - information leading to transactions with stolen or counterfeit objects;
+  - informazioni che portano a transazioni con oggetti rubati o contraffatti;
  </li>
  <li>
-  - information violating or encroaching on the third party’s property, commercial secret or right to privacy;
+  - informazioni che violano o invadono la proprietà, il segreto commerciale o il diritto alla privacy di terzi;
  </li>
  <li>
-  - personal or identifying information about other persons without their express consent;
+  - informazioni personali o identificative di altre persone senza il loro consenso espresso;
  </li>
  <li>
-  - information comprising data which may encroach on privacy right, abuse anybody’s honor, merit or business reputation;
+  - informazioni comprendenti dati che possono violare il diritto alla privacy, abusare dell'onore, del merito o della reputazione aziendale di qualcuno;
  </li>
  <li>
-  - information comprising slander or threats directed against whosoever;
+  - informazioni comprendenti calunnie o minacce dirette contro chiunque;
  </li>
  <li>
-  - information of pornographic nature;
+  - informazioni di natura pornografica;
  </li>
  <li>
-  - information which may inflict damage to under-ages;
+  - informazioni che possono arrecare danno a minorenni;
  </li>
  <li>
-  - information leading to transactions with any equipment which may hinder network interoperability;
+  - informazioni che portano a transazioni con qualsiasi apparecchiatura che possa ostacolare l'interoperabilità della rete;
  </li>
  <li>
-  - false or misleading information;
+  - informazioni false o fuorvianti;
  </li>
  <li>
-  - viruses or any other techniques being able to damage the Resource, Administrator or other Users;
+  - virus o qualsiasi altra tecnica in grado di danneggiare la risorsa, l'amministratore o altri utenti;
  </li>
  <li>
-  - information about services deemed to be immoral, such as prostitution or other forms contradicting moral or legal norms;
+  - informazioni su servizi ritenuti immorali, come la prostituzione o altre forme in contraddizione con norme morali o legali;
  </li>
  <li>
-  - references or information about websites competing with the Resource services;
+  - riferimenti o informazioni su siti web in concorrenza con i servizi di risorse;
  </li>
  <li>
-  - information representing “spam”, “chain letters”, “pyramids schemes” or undesirable or deceitful commercial advertising;
+  - informazioni che rappresentano "spam", "catene di Sant'Antonio", "schemi piramidali" o pubblicità commerciale indesiderabile o ingannevole;
  </li>
  <li>
-  - information distributed by information agencies;
+  - informazioni distribuite dalle agenzie di informazione;
  </li>
  <li>
-  - information offering to earn over the Internet without employer’s actual address or direct contacts indicated;
+  - offerta di informazioni per guadagnare su Internet senza indicare l'indirizzo effettivo del datore di lavoro o contatti diretti;
  </li>
  <li>
-  - information of multistage and network marketing or any other activity, which requires recruiting of other members, subagents, sub-distributors, etc.;
+  - informazioni di multistage e network marketing o qualsiasi altra attività che richieda il reclutamento di altri membri, subagenti, sub-distributori, ecc .;
  </li>
  <li>
-  - information of solely promotional nature with no offers of specific goods or services;
+  - informazioni di natura esclusivamente promozionale senza offerte di beni o servizi specifici;
  </li>
  <li>
-  - information or announcements about counterfeit and imitated goods or unauthorized copies. Unauthorized copies include also goods having been acquired by illegal means, pirated or stolen. Such goods may infringe intellectual property rights, and trademark rights as well;
+  - informazioni o annunci su merci contraffatte, imitate o copie non autorizzate. Le copie non autorizzate includono anche beni che sono stati acquisiti con mezzi illegali, piratati o rubati. Tali merci possono violare i diritti di proprietà intellettuale e anche i diritti di marchio;
  </li>
  <li>
-  - information or announcements on sale being able otherwise to violate legislation of the state, which this announcement is intended for.
+  - informazioni o annunci in vendita che possano altrimenti violare la legislazione dello Stato cui è destinato il presente bando.
  </li>
 </ul>
 <p>
 </p>
 <h2>
- 4. Intellectual property rights
+ 4. Diritti di proprietà intellettuale
 </h2>
 <p>
- 4.1. If User posts legally owned content to the Resource, he/she hereby grants to other users and the Administrator non-exclusive rights for its use solely in the scope of functionality provided by the Resource, except when such use damages or may damage legally protected right holder’s interests.
+ 4.1. Se l'Utente pubblica contenuto legalmente posseduto nella Risorsa, concede ad altri utenti e all'Amministratore diritti non esclusivi per il suo utilizzo esclusivamente nell'ambito della funzionalità fornita dalla Risorsa, tranne quando tale uso danneggia o può danneggiare il diritto legalmente protetto interessi del titolare.
 </p>
 <p>
- 4.2. The User also grants to the Administrator a non-exclusive right to use content, which is located on the Resource and legally owned by him/her, without compensation so that the Administrator would be able to ensure operation of the Resource to the extent determined by its functionality and architecture. The abovementioned non-exclusive right is provided for the period of posting of content to the Resource covering all states over the world. The Administrator is entitled to assign rights described in this clause to the third parties.
+ 4.2. L'Utente concede inoltre all'Amministratore un diritto non esclusivo di utilizzare il contenuto, che si trova sulla Risorsa e legalmente di sua proprietà, senza compenso, in modo che l'Amministratore possa garantire il funzionamento della Risorsa nella misura determinata da la sua funzionalità e architettura. Il suddetto diritto non esclusivo è previsto per il periodo di pubblicazione dei contenuti nella Risorsa che copre tutti gli stati del mondo. L'Amministratore ha il diritto di cedere i diritti descritti in questa clausola a terzi.
 </p>
 <p>
- 4.3. Any use of the Resource or any content on the Resource, except that permitted by these Terms and Conditions or in the event of express right holder’s consent to such use, without the prior written consent of a right holder is strictly prohibited.
+ 4.3. È severamente vietato qualsiasi utilizzo della Risorsa o di qualsiasi contenuto della Risorsa, ad eccezione di quanto consentito dai presenti Termini e condizioni o in caso di consenso espresso del titolare del diritto a tale utilizzo, senza il previo consenso scritto del titolare del diritto.
 </p>
 <p>
- 4.4. Responsibility for violation of exclusive rights. The User shall be solely responsible for any content or other information, which he/she downloads or in any other way make publicly available (posts) on the Resource, or by its means. The User shall not download, distribute or post content to the Resource if he/she is not properly entitled to such activity. In case of infringement of rights being detected, the rules of filing of notification on the infringement of rights stipulated herein shall be used.
+ 4.4. Responsabilità per violazione dei diritti esclusivi. L'Utente è l'unico responsabile per qualsiasi contenuto o altra informazione che scarica o in qualsiasi altro modo rende pubblicamente disponibile (post) sulla Risorsa, o tramite i suoi mezzi. L'Utente non scaricherà, distribuirà o pubblicherà contenuti sulla Risorsa se non è adeguatamente autorizzato a tale attività. In caso di accertamento di violazione dei diritti, si applicano le regole di presentazione della notifica di violazione dei diritti qui previste.
 </p>
 <p>
- 4.5. The Administrator may, but not shall, review the Resource for a presence of any prohibited content and may delete or displace (without notice) any content at its discretion, for any reason or without it, including but not limited to deletion or displacement of content which violates these Terms and Conditions, laws and/or may infringe rights, inflict damages or endanger safety of other Users or the third parties.
+ 4.5. L'Amministratore può, ma non deve, rivedere la Risorsa per la presenza di qualsiasi contenuto proibito e può eliminare o spostare (senza preavviso) qualsiasi contenuto a sua discrezione, per qualsiasi motivo o senza di esso, inclusi ma non limitati alla cancellazione o allo spostamento del contenuto che viola i presenti Termini e condizioni, leggi e / o può violare i diritti, infliggere danni o mettere in pericolo la sicurezza di altri Utenti o di terzi.
 </p>
 <p>
- 4.6. Materials on the Resource, except those posted by the User, including but not limited to texts, software, scripts, graphics, photos, sounds, music, videos, interactive functions, etc. (
+ 4.6. Materiali sulla Risorsa, ad eccezione di quelli pubblicati dall'Utente, inclusi ma non limitati a testi, software, script, grafica, foto, suoni, musica, video, funzioni interattive, ecc. (
  <b>
-  "Materials"
+  "Materiali"
  </b>
- ) and trademarks, service marks and logos included in it (
+ ) e marchi, marchi di servizio e loghi inclusi in esso (
  <b>
   "Marks"
  </b>
- ) belong to the Administrator representing items of copyright and of any other intellectual property rights. Unauthorized use of such Materials and Marks without prior notice of the Administrator is not allowed.
+ ) appartengono all'Amministratore che rappresentano elementi di copyright e di qualsiasi altro diritto di proprietà intellettuale. Non è consentito l'uso non autorizzato di tali Materiali e Marchi senza preavviso dell'Amministratore.
 </p>
 <h2>
- 5. Notice for Claims of Intellectual Property Violations and Copyright Infringement
+ 5. Avviso per reclami di violazioni della proprietà intellettuale e violazione del copyright
 </h2>
 <p>
- 5.1. If you are a holder of intellectual property rights or a person authorized to act in the name of a holder of intellectual property rights and you reasonably believe that information which is posted to the Resource someway infringes your intellectual property rights or intellectual property rights of a person, in which name you act, you may provide notification to the Administrator requiring to delete such material. In this regard, you shall warrant that your appeal has a legal basis, and you act in good faith according to law.
+ 5.1. Se sei un titolare di diritti di proprietà intellettuale o una persona autorizzata ad agire in nome di un titolare di diritti di proprietà intellettuale e ritieni ragionevolmente che le informazioni pubblicate nella Risorsa in qualche modo violino i tuoi diritti di proprietà intellettuale o diritti di proprietà intellettuale di una persona , con il nome in cui agisci, puoi fornire una notifica all'amministratore che richiede di eliminare tale materiale. A questo proposito, garantirai che il tuo ricorso ha una base giuridica e agirai in buona fede secondo la legge.
 </p>
 <p>
- 5.2. Providing relevant notification concerning infringement of rights you shall ensure that your request corresponds to the form below and includes the following: "</p>
-<ul className="h-ml-10" style={{listStyleType: "none"}}>
+ 5.2. Fornendo notifiche pertinenti relative alla violazione dei diritti, assicurati che la tua richiesta corrisponda al modulo sottostante e includa quanto segue: "</p>
+<ul className = "h-ml-10" style = {{listStyleType: "none"}}>
  <li>
-  - an appeal should include a physical or electronic signature of a person empowered for acting in the name of a holder of an exclusive right, which is believed to be infringed;
+  - un ricorso dovrebbe includere una firma fisica o elettronica di una persona abilitata ad agire in nome di un titolare di un diritto esclusivo, che si ritiene sia stato violato;
  </li>
  <li>
-  - the items of intellectual property right, rights on which were supposedly infringed, shall be specified. If several items exist, the entire list of such items shall be provided;
+  - devono essere specificati gli elementi del diritto di proprietà intellettuale, i cui diritti sarebbero stati violati. Se esistono più elementi, deve essere fornito l'intero elenco di tali elementi;
  </li>
  <li>
-  - you shall specify materials (with an indication of specific URL-pages), which are stated to infringe rights or themselves are the objects of infringement;
+  - devi specificare i materiali (con l'indicazione di specifiche pagine URL), che si afferma violino i diritti o siano essi stessi oggetto di violazione;
  </li>
  <li>
-  - you shall provide contact information so that the Administrator would be able to contact you, for example, address, phone number, and email address;
+  - fornirai le informazioni di contatto in modo che l'Amministratore possa contattarti, ad esempio indirizzo, numero di telefono e indirizzo e-mail;
  </li>
  <li>
-  - signed the application with regard to your faithful and reasonable belief in that material being the objects of complaint concerning infringement of intellectual property rights are used without a right holder’s or it's representative’s consent, and also that this is not allowed by law;
+  - ha firmato la domanda in relazione alla tua fedele e ragionevole convinzione che il materiale oggetto di reclamo relativo alla violazione dei diritti di proprietà intellettuale venga utilizzato senza il consenso del titolare del diritto o del suo rappresentante e anche che ciò non è consentito dalla legge;
  </li>
  <li>
-  - signed the application with regard to that a holder of intellectual property rights releases the Administrator from any third parties' claims related to deletion of relevant materials by the Administrator;
+  - ha firmato la richiesta in relazione al fatto che un titolare di diritti di proprietà intellettuale solleva l'Amministratore da qualsiasi pretesa di terze parti relativa alla cancellazione di materiali pertinenti da parte dell'Amministratore;
  </li>
  <li>
-  - signed the application with regard to that information contained in a notification is accurate under penalty of perjury, and you are authorized to act in the name of a holder of an exclusive right, which has been supposedly infringed;
+  - ha firmato la domanda in merito alla correttezza delle informazioni contenute in una notifica sotto pena di spergiuro, e si è autorizzati ad agire in nome di un titolare di un diritto esclusivo, presumibilmente violato;
  </li>
  <li>
-  - statutory regulations indicated which you believe to be violated in connection to using of disputable content;
+  - norme di legge indicate che ritieni siano state violate in relazione all'utilizzo di contenuti contestabili;
  </li>
  <li>
-  - state indicated, in which territory you believe the rights to be infringed;
+  - stato indicato, in quale territorio si ritiene siano stati violati i diritti;
  </li>
  <li>
-  - copies of documents establishing rights for an object of intellectual property right, which is subject to security, as well as a document that confirms powers for acting in the holder’s name, in attachments to your appeal.
+  - copie di documenti che stabiliscono diritti per un oggetto del diritto di proprietà intellettuale, che è soggetto a sicurezza, nonché un documento che conferma i poteri per agire in nome del titolare, in allegato al suo ricorso.
  </li>
  <li>
-{"  - relevant notification shall be sent to email " + EMAIL_SUPPORT + ""}
+{"- la notifica pertinente deve essere inviata all'indirizzo email " + EMAIL_SUPPORT + ""}
  </li>
 </ul>
 <p>
 </p>
 <h2>
- 6. Antispam policy
+ 6. Politica antispam
 </h2>
 <p>
- These Rules strictly prohibit mailing out of undesirable advertisements via email, or of any other undesirable messages, or by means of the Resource. The administrator may periodically control letters delivery within the Resource for spam mailouts.
+ Queste Regole proibiscono rigorosamente l'invio di messaggi pubblicitari indesiderati tramite e-mail, o di altri messaggi indesiderati o tramite la Risorsa. L'amministratore può controllare periodicamente la consegna delle lettere all'interno della Risorsa per i messaggi di spam.
 </p>
 <h2>
- 7. Limitation of liability
+ 7. Limitazione di responsabilità
 </h2>
 <p>
- 7.1. ALL SERVICES RENDERED BY THE ADMINISTRATOR ARE RENDERED “AS IS”, “AS AVAILABLE” AND “WITH ALL FAULTS”, AND THE ADMINISTRATOR DISCLAIMS ALL WARRANTIES, EXPRESSED OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY GUARANTIES REGARDING CONDITION, QUALITY, LIFE DURATION, PERFORMANCE, ACCURACY, RELIABILITY, COMMERCIAL VALUE AND SUITABILITY FOR SPECIFIC PURPOSES. ALL SUCH WARRANTIES AND LIABILITIES ARE HEREBY EXCLUDED.
+ 7.1. TUTTI I SERVIZI FORNITI DALL'AMMINISTRATORE VENGONO FORNITI "COME SONO", "COME DISPONIBILI" E "CON TUTTI I DIFETTI", E L'AMMINISTRATORE NON RICONOSCE ALCUNA GARANZIA, ESPRESSA O IMPLICITA, INCLUSE, SENZA LIMITAZIONE, QUALSIASI GARANZIA RIGUARDANTE LE CONDIZIONI, LA QUALITÀ, LA DURATA DELLA VITA, PRECISIONE, AFFIDABILITÀ, VALORE COMMERCIALE E IDONEITÀ A SCOPI SPECIFICI. TUTTE TALI GARANZIE E RESPONSABILITÀ SONO QUI ESCLUSE.
 </p>
 <p>
- 7.2. THE ADMINISTRATOR MAKES NO WARRANTIES CONCERNING AUTHENTICITY, ACCURACY, CORRECTNESS, RELIABILITY, QUALITY, STABILITY, COMPLETENESS OR CURRENCY OF ANY INFORMATION PROVIDED BY MEANS OF THE RESOURCE; THE ADMINISTRATOR MAKES NO WARRANTIES CONCERNING THAT MANUFACTURING, IMPORT, EXPORT, OFFER, DISPLAYING, PURCHASE, SALE AND/OR USE OF PRODUCTS OR SERVICES, WHICH ARE OFFERED OR DISPLAYED ON THE RESOURCE DO NOT INFRINGE ANY THIRD PARTIES’ RIGHTS; AND THE ADMINISTRATOR MAKES NO WARRANTIES OR REPRESENTATIONS OF WHATSOEVER NATURE CONCERNING ANY PRODUCTS OR SERVICES OFFERED OR PROVIDED ON THE RESOURCE.
+ 7.2. L'AMMINISTRATORE NON FORNISCE ALCUNA GARANZIA RIGUARDANTE L'AUTENTICITÀ, L'ACCURATEZZA, LA CORRETTEZZA, L'AFFIDABILITÀ, LA QUALITÀ, LA STABILITÀ, LA COMPLETEZZA O LA VALUTA DI QUALSIASI INFORMAZIONE FORNITA MEDIANTE LA RISORSA; L'AMMINISTRATORE NON FORNISCE ALCUNA GARANZIA RIGUARDANTE CHE LA PRODUZIONE, IMPORTAZIONE, ESPORTAZIONE, OFFERTA, VISUALIZZAZIONE, ACQUISTO, VENDITA E / O UTILIZZO DI PRODOTTI O SERVIZI, CHE SONO OFFERTI O VISUALIZZATI SULLA RISORSA NON VIOLANO I DIRITTI DI TERZI; E L'AMMINISTRATORE NON FORNISCE ALCUNA GARANZIA O DICHIARAZIONE DI QUALSIASI NATURA RIGUARDANTE QUALSIASI PRODOTTO O SERVIZIO OFFERTO O FORNITO SULLA RISORSA.
 </p>
 <p>
- 7.3. Any data downloaded or in any other way acquired by means of the Resource are created at each User’s discretion, and each User shall be fully responsible for any damages inflicted to the computer system or loss of data, which may arise as a result of downloading of any such data.
+ 7.3. Tutti i dati scaricati o in altro modo acquisiti tramite la Risorsa vengono creati a discrezione di ciascun Utente, e ciascun Utente sarà pienamente responsabile per eventuali danni inflitti al sistema informatico o perdita di dati, che possono derivare dal download di tali dati.
 </p>
 <p>
- 7.4. The Administrator and affiliated parties shall bear no responsibility for materials posted by the Users, as well as for goods and services offered by the User for trade. The Administrator disclaims all warranties regarding that quality of goods and services acquired by means of the Resource will be consistent with a buyer’s expectations and/or demands. The Administrator makes no warranties about that goods, services or information ordered by means of the Resource will be provided by the Resource User in accordance with a buyer’s expectations.
+ 7.4. L'Amministratore e le parti affiliate non si assumono alcuna responsabilità per i materiali pubblicati dagli Utenti, nonché per i beni e servizi offerti dall'Utente per il commercio. L'Amministratore declina ogni garanzia in merito alla qualità dei beni e dei servizi acquisiti tramite la Risorsa che sarà coerente con le aspettative e / o le richieste dell'acquirente. L'Amministratore non fornisce alcuna garanzia in merito al fatto che i beni, i servizi o le informazioni ordinati tramite la Risorsa saranno forniti dall'Utente della Risorsa in conformità con le aspettative dell'acquirente.
 </p>
 <h2>
- 8. Indemnity
+ 8. Indennità
 </h2>
 <p>
- 8.1. Each User agrees to be obliged to indemnify the Administrator, affiliated parties, directors, officials and employees from any and all losses, claims, liabilities (as well as from legal costs to the fullest extent), which may arise following Users’ use of the Resource, as a result of violation of any condition of the Terms and Conditions, or violation of representations and warranties made by him/her towards the Administrator.
+ 8.1. Ogni Utente accetta di essere obbligato a risarcire l'Amministratore, le parti affiliate, i direttori, i funzionari e i dipendenti da qualsiasi perdita, reclamo, responsabilità (nonché dai costi legali nella misura massima), che possono sorgere a seguito dell'utilizzo del Risorsa, a seguito di violazione di qualsiasi condizione dei Termini e condizioni, o violazione di dichiarazioni e garanzie da lui rese nei confronti dell'Amministratore.
 </p>
 <p>
- 8.2. Each User hereby agrees to indemnify the Administrator, affiliated parties, directors, officials and employees from any and all losses, claims, liabilities, which may arise, whether directly or indirectly, as a result of any claims, made by holders/claimants of the Third parties or other parties’ rights, related to the goods and services offered or displayed on the Resource. Each User hereby acknowledges that the Administrator shall have no liabilities or responsibilities against you with regard to any data posted by any other persons, as well as those discreditable or illegal, and risk of losses related to such data remains entirely with each User.
+ 8.2. Ogni Utente con la presente accetta di indennizzare l'Amministratore, le parti affiliate, i direttori, i funzionari e i dipendenti da qualsiasi e tutte le perdite, reclami, responsabilità, che possono sorgere, direttamente o indirettamente, come risultato di qualsiasi reclamo, avanzato dai titolari / ricorrenti del Diritti di terzi o di altre parti, relativi ai beni e servizi offerti o visualizzati sulla Risorsa. Ogni Utente con la presente riconosce che l'Amministratore non avrà alcuna responsabilità nei tuoi confronti in relazione ai dati pubblicati da altre persone, nonché a quelli discreditabili o illegali, e il rischio di perdite relative a tali dati rimane interamente a carico di ciascun Utente.
 </p>
 <p>
- 8.3. The Administrator shall not be responsible for any expressed or implicit, penalty, accidental or consequential losses or damage of whatsoever nature (including, but not limited to, losses related to loss of profit or saving, termination of business, loss of information, loss of benefit), incurred as a result of transactions, negligence, delinquency, or in any other way, or any other losses related to the following actions: "</p>
-<ul className="h-ml-10" style={{listStyleType: "none"}}>
+ 8.3. L'Amministratore non sarà responsabile per eventuali, espresse o implicite, penalità, perdite accidentali o consequenziali o danni di qualsiasi natura (inclusi, ma non limitati a, perdite relative a mancato guadagno o risparmio, cessazione dell'attività, perdita di informazioni, perdita vantaggio), sostenute a seguito di transazioni, negligenza, delinquenza o in qualsiasi altro modo o qualsiasi altra perdita correlata alle seguenti azioni: "</p>
+<ul className = "h-ml-10" style = {{listStyleType: "none"}}>
  <li>
-  - use or impossibility of use of the Resource;
+  - utilizzo o impossibilità di utilizzo della Risorsa;
  </li>
  <li>
-  - in case of any defects of goods, patterns, data, information or services purchased of otherwise acquired from the User or by any other party by means of the Resource;
+  - in caso di eventuali difetti di beni, modelli, dati, informazioni o servizi acquistati o altrimenti acquisiti dall'Utente o da qualsiasi altra parte tramite la Risorsa;
  </li>
  <li>
-  - infringement of the third-party's rights or claims, or requirements for production, import, export, distribution, offer, display, acquisition, sale and/or use of User’s products or services, offered or displayed on the Resource, which may infringe or may be purported as infringing the third parties’ rights; or a claim of any party related to rights protection;
+  - violazione dei diritti o delle rivendicazioni di terzi, o dei requisiti per la produzione, importazione, esportazione, distribuzione, offerta, visualizzazione, acquisizione, vendita e / o utilizzo dei prodotti o servizi dell'Utente, offerti o visualizzati sulla Risorsa, che potrebbero violare o può essere ritenuto violare i diritti di terzi; o una rivendicazione di qualsiasi parte relativa alla protezione dei diritti;
  </li>
  <li>
-  - unauthorized third parties’ access to any User’s data or personal information;
+  - accesso non autorizzato di terzi ai dati o alle informazioni personali di qualsiasi Utente;
  </li>
  <li>
-  - applications or actions of any Resource User; or
+  - applicazioni o azioni di qualsiasi Resource User; o
  </li>
  <li>
-  - other actions related to use of Resource and arising by negligence, as well.
+  - anche altre azioni relative all'uso della Risorsa e derivanti da negligenza.
  </li>
 </ul>
 <p>
 </p>
 <h2>
- 9. Enforcement
+ 9. Applicazione
 </h2>
 <p>
- 9.1. The Administrator reserves a right to delete or block access to information posted by User without notice in the event of: "</p>
-<ul className="h-ml-10" style={{listStyleType: "none"}}>
+ 9.1. L'amministratore si riserva il diritto di eliminare o bloccare l'accesso alle informazioni pubblicate dall'Utente senza preavviso in caso di: "</p>
+<ul className = "h-ml-10" style = {{listStyleType: "none"}}>
  <li>
-  - receiving of mandatory judgments of competent public authorities;
+  - ricezione di sentenze obbligatorie delle autorità pubbliche competenti;
  </li>
  <li>
-  - claim of a holder of intellectual property rights to terminate infringement of his/her rights by a user on the Resource; other infringements of rights or legal interests of other Resource Users, of legal entities or individuals upon their reasonable appeal;
+  - rivendicazione di un titolare di diritti di proprietà intellettuale per porre fine alla violazione dei suoi diritti da parte di un utente sulla Risorsa; altre violazioni dei diritti o degli interessi legali di altri Utenti delle Risorse, di persone giuridiche o individui su loro ragionevole ricorso;
  </li>
  <li>
-  - detecting information, which posting to the Resource is prohibited under these Rules.
+  - rilevamento di informazioni, la cui pubblicazione nella risorsa è vietata in base a queste regole.
  </li>
 </ul>
 <p>
 </p>
 <p>
- 9.2. The Administrator shall be entitled to block access to the information posted by users to the Resource at its sole discretion having provided a user with relevant substantiation.
+ 9.2. L'Amministratore ha il diritto di bloccare l'accesso alle informazioni pubblicate dagli utenti nella Risorsa a sua esclusiva discrezione, dopo aver fornito all'utente le prove pertinenti.
 </p>
 <h2>
- 10. Users and organizations interaction
+ 10. Interazione tra utenti e organizzazioni
 </h2>
 <p>
- 10.1. The Administrator disclaims any responsibility for User’s interaction with any organizations and/or persons in the course of using of the Resource. This includes, but not limited to, payments for and delivery of goods and services, as well as any other interaction in relation to other organizations and/or individuals. Transactions are concluded only between Users and such organizations and/or individuals. The Administrator disclaims responsibility for such interactions or other losses incurred following such relations or interactions. If any dispute arises between you and one or several other users, you shall indemnify the Administrator, its officials, employees, agents and successors from any and all claims, requirements and losses (whether direct or indirect) of whatsoever kind or nature, which arise or relate to such disputes and /or goods and services.
+ 10.1. L'Amministratore declina ogni responsabilità per l'interazione dell'Utente con organizzazioni e / o persone durante l'utilizzo della Risorsa. Ciò include, a titolo esemplificativo ma non esaustivo, pagamenti e consegna di beni e servizi, nonché qualsiasi altra interazione in relazione ad altre organizzazioni e / o individui. Le transazioni vengono concluse solo tra gli Utenti e tali organizzazioni e / o individui. L'Amministratore declina ogni responsabilità per tali interazioni o altre perdite subite a seguito di tali rapporti o interazioni. In caso di controversia tra te e uno o più altri utenti, dovrai indennizzare l'Amministratore, i suoi funzionari, dipendenti, agenti e successori da qualsiasi rivendicazione, richiesta e perdita (diretta o indiretta) di qualsiasi tipo o natura, che si presenti. o si riferiscono a tali controversie e / o beni e servizi.
 </p>
 <h2>
- 11. Mandatory Arbitration.
+ 12. Miscellanee
 </h2>
 <p>
- 11.1. Please read this Section carefully. YOU AND ADMINISTRATOR, AND EACH OF OUR RESPECTIVE AGENTS, CORPORATE PARENTS, SUBSIDIARIES, AFFILIATES, PREDECESSORS IN INTEREST, SUCCESSORS AND ASSIGNS, AGREE TO ARBITRATION (EXCEPT FOR MATTERS THAT MAY BE TAKEN TO SMALL CLAIMS COURT), AS THE EXCLUSIVE FORM OF DISPUTE RESOLUTION EXCEPT AS PROVIDED FOR BELOW, FOR ALL DISPUTES AND CLAIMS ARISING OUT OF OR RELATING TO THIS TERMS AND CONDITIONS OR THE SERVICE, UNLESS YOU ARE LOCATED IN A JURISDICTION THAT PROHIBITS THE EXCLUSIVE USE OF ARBITRATION FOR DISPUTE RESOLUTION. Arbitration is more informal than a lawsuit in court. Arbitration uses a neutral arbitrator instead of a judge or jury, allows for more limited discovery than in court, and is subject to very limited review by courts. Arbitrators can award the same damages and relief that a court can award. Please visit www.adr.org for more information about arbitration.
+{"12.1. Salvo quanto diversamente previsto, se una qualsiasi disposizione dei presenti Termini e condizioni è ritenuta non valida, nulla o per qualsiasi motivo inapplicabile, tale disposizione sarà cancellata e non pregiudicherà la validità e l'applicabilità delle restanti disposizioni. In a nostra esclusiva discrezione, possiamo assegnare i presenti Termini e condizioni e, in tal caso, pubblicheremo un avviso su cosmobox.it "}
 </p>
 <p>
-{' 11.2. Commencing Arbitration. A party intending to seek arbitration must first send to the other, by an international courier with a tracking mechanism, a written notice of intent to arbitrate (a “Notice”), or, in the absence of a mailing address provided by you to Administrator, via any other method available to Administrator, including via e-mail. The Notice to Administrator must be addressed to ' + SITE_DOT_COM + '. The Notice must (i) describe the nature and basis of the claim or dispute", and (ii) set forth the specific relief sought (the "Demand"). If you and Administrator do not reach an agreement to resolve the claim within 30 days after the Notice is received, then you or Administrator may commence an arbitration proceeding as set forth below or file a claim in small claims court. THE AMERICAN ARBITRATION ASSOCIATION ("AAA") WILL ADMINISTER THE ARBITRATION IN ACCORDANCE WITH ITS COMMERCIAL ARBITRATION RULES AND THE SUPPLEMENTARY PROCEDURES FOR CONSUMER RELATED DISPUTES (THE "Rules"), AS MODIFIED BY THIS TERMS AND CONDITIONS. The Rules and AAA forms are available online at http://www.adr.org. If you are required to pay a filing fee to commence an arbitration against Administrator, then Administrator will promptly reimburse you for your confirmed payment of the filing fee upon Administrator\'s receipt of a Notice at the Arbitration Notice Address that you have commenced arbitration along with a receipt evidencing payment of the filing fee, unless your Demand is equal to or greater than $1,000 or was filed in bad faith, in which case you are solely responsible for the payment of the filing fee.'}
+ 12.2. La nostra incapacità di agire rispetto a una violazione da parte tua o di altri non rinuncia al nostro diritto di agire in relazione a violazioni successive o simili. Non garantiamo che intraprenderemo azioni contro tutte le violazioni dei presenti Termini e condizioni.
 </p>
 <p>
- 11.3. Arbitration Proceeding. The arbitration will be in English. A single independent and impartial arbitrator with his or her primary place of business in Alexandria, Virginia will be appointed pursuant to the Rules, as modified herein. You and Administrator agree to comply with the following rules, which are intended to streamline the dispute resolution process and reduce the costs and burdens on the parties: (i) the arbitration will be conducted online and/or be solely based on written submissions, the specific manner to be chosen by the party initiating the arbitration", (ii) the arbitration will not require any personal appearance by the parties or witnesses unless otherwise mutually agreed in writing by the parties; and (iii) any judgment on the award the arbitrator renders may be entered in any court of competent jurisdiction.
+ 12.3. Le politiche pubblicate sui nostri siti possono essere modificate di volta in volta. Le modifiche hanno effetto quando vengono pubblicate nella risorsa.
 </p>
-<p>
- 11.4. No Class Actions. TO THE FULLEST EXTENT PERMITTED UNDER LAW, YOU AND ADMINISTRATOR AGREE THAT YOU AND ADMINISTRATOR MAY BRING CLAIMS AGAINST THE OTHER ONLY IN YOUR OR ITS INDIVIDUAL CAPACITY AND NOT AS A PLAINTIFF OR CLASS MEMBER IN ANY PURPORTED CLASS OR REPRESENTATIVE PROCEEDING. FURTHER, YOU AGREE THAT THE ARBITRATOR MAY NOT CONSOLIDATE PROCEEDINGS OF MORE THAN ONE PERSON'S CLAIMS, AND MAY NOT OTHERWISE PRESIDE OVER ANY FORM OF A REPRESENTATIVE OR CLASS PROCEEDING, AND THAT IF THIS SPECIFIC PROVISO IS FOUND TO BE UNENFORCEABLE, THEN THE ENTIRETY OF THIS MANDATORY ARBITRATION SECTION WILL BE NULL AND VOID.
-</p>
-<p>
- 11.5. The decision of the Arbitrator. Barring extraordinary circumstances, the arbitrator will issue his or her decision within 120 days from the date the arbitrator is appointed. The arbitrator may extend this time limit for an additional 30 days in the interests of justice. All arbitration proceedings will be closed to the public and confidential, and all records relating thereto will be permanently sealed, except as necessary to obtain court confirmation of the arbitration award. The award of the arbitrator will be in writing and will include a statement setting forth the reasons for the disposition of any claim. The arbitrator will apply the laws of the State of California in conducting the arbitration. You acknowledge that these terms and your use of the Service evidence a transaction involving interstate commerce. The United States Federal Arbitration Act will govern the interpretation, enforcement, and proceedings pursuant to this Section 11.
-</p>
-<p>
- 11.6. Equitable Relief. The foregoing provisions of this Section 11 do not apply to any claim in which either party seeks equitable relief to protect such party’s copyrights, trademarks, or patents. For the avoidance of doubt, however, you acknowledge that, in the event Administrator or a third party breaches this Terms and Conditions, the damage or harm, if any, caused to you will not entitle you to seek injunctive or other equitable relief against Administrator, and your only remedy will be for monetary damages, subject to the limitations of liability set forth in this Terms and Conditions.
-</p>
-<p>
- 11.7. Claims. You and Administrator agree that notwithstanding any other rights a party may have under law or equity, any cause of action arising out of or related to this Terms and Conditions or the Service, excluding a claim for indemnification, must commence within one year after the cause of action accrues. Otherwise, such cause of action is permanently barred.
-</p>
-<p>
- 11.8. Improperly Filed Claims. All claims you bring against Administrator must be resolved in accordance with this Section. All claims filed or brought contrary to this Section will be considered improperly filed. Should you file a claim contrary to this Section, Administrator may recover attorneys' fees and reimbursement of its costs provided that Administrator has notified you in writing of the improperly filed claim, and you have failed to promptly withdraw the claim.
-</p>
-<p>
- 11.9. Modifications. In the event that Administrator makes any future change to the "Mandatory Arbitration" paragraph set forth above (other than a change to Administrator's Arbitration Notice Address), you may reject any such change by sending us written notice within thirty (30) days of the change to Administrator's Arbitration Notice Address, in which case your account with Administrator and your license to use the Service will terminate immediately, and this Section, as in effect immediately prior to the amendments you reject, will survive the termination of this Terms and Conditions.
-</p>
-<h2>
- 12. Miscellanies
-</h2>
-<p>
-{" 12.1. Except as otherwise provided, if any provision of this Terms and Conditions is held to be invalid, void or for any reason unenforceable, such provision shall be struck out and shall not affect the validity and enforceability of the remaining provisions. In our sole discretion, we may assign this Terms and Conditions, and in such event, we will post a notice on " + SITE_DOT_COM + ""}
-</p>
-<p>
- 12.2. Our failure to act with respect to a breach by you or others does not waive our right to act with respect to subsequent or similar breaches. We do not guarantee we will take action against all breaches of this Terms and Conditions.
-</p>
-<p>
- 12.3. The policies posted on our sites may be changed from time to time. Changes take effect when we post them on the Resource.
-</p>
+
  </div>
 </div>
    </div>

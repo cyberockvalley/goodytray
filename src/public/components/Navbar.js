@@ -331,7 +331,7 @@ class Navbar extends Component {
               </button>
               <a style={{height: "30px", width: "30px", fontSize: "1.5em"}} onClick={this.toggleNavbar} className="navbar-toggle md-hide-up fa fa-2x fa-search"></a>
               <Link to="/sell" style={{height: "35px"}} className="navbar-toggle fw-button--type-warning">{getText("SELL")}</Link>
-              <Link onClick={this.closeNavbar} to="/" className="navbar-brand logo font-bask-normal">
+              <Link onClick={this.closeNavbar} to="/" className="navbar-brand logo font-bask-normal" style={{display: 'flex', alignItems: 'center'}}>
                 <img src={`${getText("LOGO_PATH")}`} width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
                 <span>{SITE_NAME}</span>
               </Link>

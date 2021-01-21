@@ -20,13 +20,16 @@ import Register from './Register'
 import Login from './Login'
 
 import Sell from './SellEdit'
+import EmailPasswordReset from './EmailPasswordReset'
+import EmailAccountVerification from './EmailAccountVerification'
+import { SEARCH_PATHS } from '../utils/RoutePaths'
 
 const MultipleRoutesLogin = (props) => (
   <div className="App">
     <Route path="/(|index.html|index.php|index.js)" 
       render={(propz) => <Landing {...propz} user={props.initialData.user} />}
     />
-    <Route path="/search" 
+    <Route path={SEARCH_PATHS} 
       render={(propz) => <SearchPage {...propz} user={props.initialData.user} />}
     />
     <Route 

@@ -11,15 +11,15 @@ class Footer extends Component {
                 <div className="footer-title">{getText("PLACE_AN_ADVERT_ON")} {SITE_NAME}</div>
                 <div className="footer-grids">
                     <div className="footer-grid">
-                        <img className="img-responsive" src="/public/res/images/static/easy.png"/>
+                        <div className="fa fa-check-square" style={{fontSize: '6em'}}></div>
                         <div style={{marginRight: "10px"}}>{getText("FOOTER_EASY")}</div>
                     </div>
                     <div className="footer-grid">
-                        <img className="img-responsive" src="/public/res/images/static/fast.png"/>
+                        <div className="fa fa-clock-o" style={{fontSize: '6em'}}></div>
                         <div>{getText("FOOTER_FAST")}</div>
                     </div>
                     <div className="footer-grid">
-                        <img className="img-responsive" src="/public/res/images/static/secure.png"/>
+                        <div className="fa fa-lock" style={{fontSize: '6em'}}></div>
                         <div>{getText("FOOTER_SECURE")}</div>
                     </div>
                 </div>

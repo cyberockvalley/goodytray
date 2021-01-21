@@ -14,13 +14,14 @@ import Privacy from './Privacy'
 import Tos from './Tos'
 import EmailAccountVerification from './EmailAccountVerification'
 import EmailPasswordReset from './EmailPasswordReset'
+import { SEARCH_PATHS } from '../utils/RoutePaths'
 
 const MultipleRoutes = (props) => (
   <div className="App">
     <Route exact path="/(|index.html|index.php|index.js|test)" 
       render={(propz) => <Landing {...propz} user={props.initialData.user} />}
     />
-    <Route path="/search" 
+    <Route path={SEARCH_PATHS} 
       render={(propz) => <SearchPage {...propz} user={props.initialData.user} />}
     />
     <Route path="/register" 

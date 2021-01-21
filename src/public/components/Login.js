@@ -192,7 +192,7 @@ restorePass = () => {
                             id="email"
                             value={this.state.email}
                             onChange={this.onChange}/>
-                          <span id="email_error" className="fw-field__error qa-fw-field__error" dangerouslySetInnerHTML={{__html: this.state.email_error}}>
+                          <span id="email_error" className="fw-field__error field-error qa-fw-field__error" dangerouslySetInnerHTML={{__html: this.state.email_error}}>
                           </span>
                         </div>
 
@@ -204,7 +204,7 @@ restorePass = () => {
                             id="password"
                             value={this.state.password}
                             onChange={this.onChange}/>
-                          <span id="password_error" className="fw-field__error qa-fw-field__error" dangerouslySetInnerHTML={{__html: this.state.password_error}}>
+                          <span id="password_error" className="fw-field__error field-error qa-fw-field__error" dangerouslySetInnerHTML={{__html: this.state.password_error}}>
                           </span>
                         </div>                          
                       </div>

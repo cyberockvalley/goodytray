@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import {Link} from "react-router-dom"
 import { register } from './UserFunctions'
-import {isValidNumber, isValidEmail, id, cls, shuffleHash, randomHashString, addQueryParam} from '../utils/Funcs'
+import {isValidNumber, isValidEmail, id, cls, shuffleHash, randomHashString, addQueryParam, getQuery} from '../utils/Funcs'
 import Navbar from './Navbar'
 import Footer from "./Footer"
 import queryString from 'querystring'
 import { getText } from '../../../Constants'
+import Swal from 'sweetalert2'
 
 class Register extends Component {
     constructor(props) {
@@ -122,8 +123,16 @@ class Register extends Component {
                 */
                if(res.login_token != null) {
                     localStorage.setItem("login_token", res.login_token)
-                    //redirect to after after login page
-                    window.location.href = "/profile"
+                    Swal.fire('', res.message, 'success')
+                    .then(() => {
+                        const q = getQuery(this, 'next')
+                        if(q) {
+                            window.location.href = decodeURI(q)
+                
+                        } else {
+                            window.location.href = "/profile"
+                        }
+                    })
                } else if(res.form_errors != null) {
                    for(var key in res.form_errors) {
                     console.log("error_key: "+ key)

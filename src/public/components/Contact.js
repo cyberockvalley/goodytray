@@ -26,10 +26,10 @@ class Contact extends Component {
       </div>
       <div className="b-tip__content-wrapper">
        <div className="h-bold h-font-16 h-mb-5">
-        {SITE_NAME + " customer support team is always ready to answer your questions and provide all the necessary assistance."}
+        {getText("CONTACT_P_1")}
        </div>
        <div className="h-font-14">
-        {SITE_NAME + "  customer care department - you can email your questions, suggestions, and comments at "}
+        {getText("CONTACT_P_2")}
         <a href={"mailto:" + EMAIL_SUPPORT}>{EMAIL_SUPPORT}</a>
        </div>
       </div>

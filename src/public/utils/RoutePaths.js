@@ -3,11 +3,11 @@ export const HOME_PATHS = [
 ]
 
 export const PRODUCTS_PATHS = [
-    '/products'
+    '/products/'
 ]
 
 export const PRODUCT_PATHS = [
-    '/products/:title/:id', 'products/:title/:preview/:id'
+    '/products/:title/:id/', 'products/:title/:preview/:id/'
 ]
 
 export const PRODUCT = [
@@ -15,28 +15,28 @@ export const PRODUCT = [
 ]
 
 export const SEARCH_PATHS = [
-    '/search'
+    '/search/', '/search/flash/:flash/', '/search/scat/:subCatId/', '/search/country/:countryId/', '/search/state/:stateId/', '/search/city/:cityId/', '/search/:catKey/'
 ]
 
 export const CREATE_TIPS_PATHS = [
-    '/create-ad-tips'
+    '/create-ad-tips/'
 ]
 
 export const LOGIN_PATHS = [
-    '/login'
+    '/login/'
 ]
 export const REGISTER_PATHS = [
-    '/register'
+    '/register/'
 ]
 
 export const FOOTER_PATHS = [
-    '/about', '/contact', '/privacy', '/tos'
+    '/about/', '/contact/', '/privacy/', '/tos/'
 ]
 
 export const GUEST_PATHS = LOGIN_PATHS.concat(REGISTER_PATHS)
 
 export const USER_PATHS = [
-    '/profile', '/settings', '/messages', '/messages/:id'/*, '/notifications'*/
+    '/profile/', '/settings/', '/messages/', '/messages/:id'/*, '/notifications'*/
 ]
 
 export const EMAIL_VERIFICATION_PATHS = [

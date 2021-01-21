@@ -9,25 +9,25 @@ export const productLink = (title, id, forceView) => {
 }
 
 export const flashLink = () => {
-    return `/search/?flash=1`
+    return `/search/flash/1`
 }
 
 export const catLink = (name, id) => {
-    return `/search/?cat=${id}`
+    return `/search/${name}`
 }
 
 export const subCatLink = (name, id) => {
-    return `/search/?sub_cat=${id}`
+    return `/search/scat/${id}`
 }
 
 export const countryLink = (name, id) => {
-    return `/search/?country=${id}`
+    return `/search/country/${id}`
 }
 
 export const stateLink = (name, id) => {
-    return `/search/?state=${id}`
+    return `/search/state/${id}`
 }
 
 export const cityLink = (name, id) => {
-    return `/search/?city=${id}`
+    return `/search/city/${id}`
 }

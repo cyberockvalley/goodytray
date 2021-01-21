@@ -5,6 +5,8 @@ const cors = require("cors")
 import { intOrMin, logger } from "../utils/Funcs"
 //logger.disableLogger()
 
+const User = require("../models/User")
+
 const Product = require("../models/Product")
 const TopAd = require("../models/TopAd")
 const Cat = require("../models/Cat")
@@ -23,7 +25,7 @@ const Sequelize = require("sequelize")
 
 import fs from "fs"
 import { nameToId, EXCHANGE_RATE } from "../utils/ExpressFunc"
-import { request } from "http"
+import {mailer, send} from "./mailerware"
 
 const andQuery = function(query, filter) {
     return query.includes("WHERE")? query + " AND " + filter : query + " WHERE " + filter
@@ -35,7 +37,7 @@ const orderQuery = function(query, filter) {
     return query.includes("ORDER BY")? query + ", " + filter : query + " ORDER BY " + filter
 }
 
-products.get("/approve/:id", checkUserAuth, (req, res) => {
+products.post("/approve/:id", checkUserAuth, (req, res) => {
     if(!res.locals.token_user) {
         res.json({auth_required: true})
 
@@ -44,19 +46,51 @@ products.get("/approve/:id", checkUserAuth, (req, res) => {
 
     } else {
         if(!req.params.id) {
-            okResponse(res, {status: 0, message: "Identifier not supplied"})
+            okResponse(res, {status: 0, message: getText("INVALID_ITEM")})
         }
         var id = parseInt(req.params.id)
-        Product.update(
-        { reviewed: 1 },
-        { where: { id: id } }
-        )
-        .then(result =>
-            okResponse(res, {status: 1})
-        )
-        .catch(err =>
-            okResponse(res, {status: 0, message: ERROR_DB_OP})
-        )
+        Product.findOne({
+            where: {
+                id: id
+            }
+        })
+        .then(p => {
+            if(!p) {
+                okResponse(res, {status: -2, message: getText("INVALID_ITEM")})
+
+            } else {
+                p.update({reviewed: 1})
+                .then(prod => {
+                    var userId = prod.user_id
+                    User.findOne({
+                        where: {
+                            id: userId
+                        }
+                    })
+                    .then(user => {
+                        var mail = {
+                            mailSubject: getText("MAILER_APPROVE_SUBJECT"),
+                            mailMsg: prod.title + ' ' + getText("MAILER_APPROVE_MSG")
+                        }
+                        send(user.email, mail, (error, ok) => {
+                            if(error) {
+                                okResponse(res, {status: 0, message: getText("INVALID_ITEM")})
+
+                            } else {
+                                okResponse(res, {status: 1})
+                            }
+                        })
+                    })
+
+                })
+                .catch(err => {
+                    okResponse(res, {status: -4, message: getText("INVALID_ITEM"), err: SHOW_DB_ERROR? err : ""})
+                })
+            }
+        })
+        .catch(err => {
+            okResponse(res, {status: -44, message: getText("INVALID_ITEM"), err: SHOW_DB_ERROR? err : ""})
+        })
     }
 })
 products.get("/pending", checkUserAuth, (req, res) => {
@@ -215,8 +249,8 @@ products.get("/", checkUserAuth, async function(req, res) {
     const today = new Date()
     const page = req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0? parseInt(req.query.page) : 1
     var hasNext = false, hasPrev = page > 1
-    const select = "SELECT * FROM products"
-    const selectCount = "SELECT COUNT(id) AS id FROM products"
+    const select = "SELECT products.* FROM `products` INNER JOIN cats ON products.cat_id=cats.id"
+    const selectCount = "SELECT COUNT(products.id) AS id FROM `products` INNER JOIN cats ON products.cat_id=cats.id"
     var query = ""
     query = andQuery(query, "reviewed>0")
     const replacements = []
@@ -272,61 +306,46 @@ products.get("/", checkUserAuth, async function(req, res) {
         }
     }
 
-    var cat_id = req.query.cat_id
-    if(cat_id && !isNaN(parseInt(cat_id)) || (req.query.cat_name && req.query.cat_name.length > 0)) {
-        if(!cat_id || isNaN(parseInt(cat_id))) {
-            var cat_id = await nameToId(req.query.cat_name, 'cats')
-            //res.json({h: 1, cat_id: cat_id, cat_name: req.query.cat_name, enc: encodeURIComponent("Mobile Phones &amp; Tablets")})
-
-        }
-        if(cat_id != null) {
-            query = andQuery(query, "cat_id = ?")
-            replacements.push(cat_id)
-        }
+    var cat_key = req.query.cat_key
+    if(cat_key && cat_key.length > 0) {
+        query = andQuery(query, "cats.identifier = ?")
+        replacements.push(cat_key)
     }
 
     var sub_cat_id = req.query.sub_cat_id
-    if(sub_cat_id && !isNaN(parseInt(sub_cat_id)) || (req.query.sub_cat_name && req.query.sub_cat_name.length > 0)) {
-        if(!sub_cat_id || isNaN(parseInt(sub_cat_id))) {
-            var sub_cat_id = await nameToId(req.query.sub_cat_name, 'sub_cats')
-        }
+    if(sub_cat_id && !isNaN(parseInt(sub_cat_id))) {
         if(sub_cat_id != null) {
             query = andQuery(query, "sub_cat_id = ?")
             replacements.push(sub_cat_id)
         }
+        
     }
 
     var country_id = req.query.country_id
-    if(country_id && !isNaN(parseInt(country_id)) || (req.query.country_name && req.query.country_name.length > 0)) {
-        if(!country_id || isNaN(parseInt(country_id))) {
-            var country_id = await nameToId(req.query.country_name, 'countries')
-        }
+    if(country_id && !isNaN(parseInt(country_id))) {
         if(country_id != null) {
             query = andQuery(query, "country_id = ?")
             replacements.push(country_id)
         }
+        
     }
 
     var state_id = req.query.state_id
-    if(state_id && !isNaN(parseInt(state_id)) || (req.query.state_name && req.query.state_name.length > 0)) {
-        if(!state_id || isNaN(parseInt(state_id))) {
-            var state_id = await nameToId(req.query.state_name, 'states')
-        }
+    if(state_id && !isNaN(parseInt(state_id))) {
         if(state_id != null) {
             query = andQuery(query, "state_id = ?")
             replacements.push(state_id)
         }
+        
     }
 
     var city_id = req.query.city_id
-    if(city_id && !isNaN(parseInt(city_id)) || (req.query.city_name && req.query.city_name.length > 0)) {
-        if(!city_id || isNaN(parseInt(city_id))) {
-            var city_id = await nameToId(req.query.city_name, 'cities')
-        }
+    if(city_id && !isNaN(parseInt(city_id))) {
         if(city_id != null) {
             query = andQuery(query, "city_id = ?")
             replacements.push(city_id)
         }
+        
     }
 
     const attr = req.query.attr
@@ -349,12 +368,12 @@ products.get("/", checkUserAuth, async function(req, res) {
 
     const priceMin = req.query.price_min
     if(priceMin && priceMin > 0) {
-        query = andQuery(query, "global_price >= ?")
+        query = andQuery(query, "price >= ?")
         replacements.push(priceMin)
     }
     const priceMax = req.query.price_max
     if(priceMax && priceMax > 0) {
-        query = andQuery(query, "global_price <= ?")
+        query = andQuery(query, "price <= ?")
         replacements.push(priceMax)
     }
 
@@ -427,7 +446,7 @@ products.get("/", checkUserAuth, async function(req, res) {
                     mapToModel: true
                 })
                 .then(products => {
-                    res.json({status: 1, message: getText("SUCCESS"), list: products, has_prev: hasPrev, has_next: hasNext, counts: counts[0].id})
+                   res.json({counts: counts[0].id, status: 1, message: getText("SUCCESS"), list: products, has_prev: hasPrev, has_next: hasNext})
                 })
                 .catch(e => {
                     res.json({status: 0, message: ERROR_DB_OP, list: null, has_prev: hasPrev, has_next: hasNext})

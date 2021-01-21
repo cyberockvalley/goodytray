@@ -8,13 +8,13 @@ const Sequelize = require("sequelize")
 const Op = Sequelize.Op
 const db = require("../database/db")
 
-import {ERROR_DB_OP, getText} from "../../../Constants"
+import {CAT_ID_FLASH_AD, ERROR_DB_OP, getText} from "../../../Constants"
 
 //get cats
 cats.get("/", function(req, res) {
     Cat.findAll({
         where: {
-            weight: {[Op.lt]: 2}
+            id: {[Op.ne]: CAT_ID_FLASH_AD}
         },
         order: [
             ['weight', 'DESC'],

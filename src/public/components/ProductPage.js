@@ -14,6 +14,7 @@ import Footer from "./Footer"
 import en from 'javascript-time-ago/locale/en'
 import { productLink, subCatLink, catLink } from "../utils/LinkBuilder"
 import Swal from "sweetalert2"
+import Carousel from "./widgets/Carousel"
 
 // Add locale-specific relative date/time formatting rules.
 TimeAgo.addLocale(getTimeLocale())
@@ -61,8 +62,9 @@ class ProductPage extends Component {
     albumController = () => {
         const carousel = $(".carousel")
         console.log("CAROUSEL", carousel)
-        $('.carousel').carousel({ })
-        .on('slid.bs.carousel', function () {
+        carousel.carousel({ })
+        .on('slid', function () {
+            console.log("CAROUSEL_ACTIVE", 111)
             var curSlide = $('div.item.active');
             this.setState({carousel_index: curSlide.index()});
             console.log("CAROUSEL_ACTIVE", curSlide.index()+1)
@@ -87,6 +89,7 @@ class ProductPage extends Component {
                 console.log("Product", product)
                 product.date = new Date(product.created)
                 this.setState({product: product})
+                
 
                 const poster = {}
                 poster.username = response.data.details.poster_username
@@ -104,6 +107,15 @@ class ProductPage extends Component {
                 //set attributes
                 var attrs = response.data.details.attrs
                 console.log("the_attrs", attrs.split(","))
+
+                if(product.reviewed == 0) {
+                    Swal.fire({
+                        title: getText("PRODUCT_NOT_REVIEWED"), 
+                        text: getText("PRODUCT_NOT_REVIEWED_BODY"), 
+                        type: 'error',
+                        cancelButtonText: getText("OK")
+                    })
+                }
 
                 
                 this.state.similar_ads_params = "not_id="+this.state.product.id+"&cat_id="+this.state.product.cat_id+"&sub_cat_id="+this.state.product.sub_cat_id
@@ -147,10 +159,10 @@ class ProductPage extends Component {
                     cancelButtonText: getText("OK")
                 })
                 .then(() => {
+
+                    console.log("No product from response:", response.data, API_ROOT + "products/details?id="+id)
                     this.props.history.goBack()
                 })
-
-                console.log("No product from response:", response.data, API_ROOT + "products/details?id="+id)
             }
 
         })
@@ -189,6 +201,15 @@ class ProductPage extends Component {
         this.setState({carousel_flex_basis: flexBasis+"px"})
         this.setState({carousel_index: carousel_index})
         return
+    }
+
+    similarAdPostLink = () => {
+        var link = "/sell?cat="+this.state.product.cat_id+"&sub_cat="+this.state.product.sub_cat_id
+        if(this.state.product.country_id == getText("COUNTRY_ID")) {
+            link += "&country="+this.state.product.country_id+"&state="+this.state.product.state_id+"&city="+this.state.product.city_id
+        }
+
+        return link
     }
 
     expandPhoto = () => {
@@ -455,38 +476,38 @@ class ProductPage extends Component {
                             
                             </div>
                             <div className={this.state.photo_expanded?"b-carousel-expand-button active":"b-carousel-expand-button"} onClick={this.expandPhoto}>
-                            <svg className="h-block full-screen" style={{width: "22px", height: "22px", maxWidth: "22px", maxHeight: "22px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
-                            <use xlinkHref="#full-screen">
-                            </use>
-                            </svg>
+                                <svg className="h-block full-screen" style={{width: "22px", height: "22px", maxWidth: "22px", maxHeight: "22px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
+                                    <use xlinkHref="#full-screen">
+                                    </use>
+                                </svg>
                             </div>
                             <div className="b-carousel-counter">
-                            <svg className="h-mr-5 photo" style={{width: "14px", height: "16px", maxWidth: "14px", maxHeight: "16px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
-                            <use xlinkHref="#photo">
-                            </use>
-                            </svg>
-                            {
-                                this.state.product && this.state.product.photos?
-                                <div className="qa-carousel-counter">
-                                    {this.state.carousel_index + 1 +"/"+this.state.product.photos.split(",").length}
-                                </div>
-                                :
-                                ""
-                            }
+                                <svg className="h-mr-5 photo" style={{width: "14px", height: "16px", maxWidth: "14px", maxHeight: "16px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
+                                    <use xlinkHref="#photo">
+                                    </use>
+                                </svg>
+                                {
+                                    this.state.product && this.state.product.photos?
+                                    <div className="qa-carousel-counter">
+                                        {this.state.carousel_index + 1 +"/"+this.state.product.photos.split(",").length}
+                                    </div>
+                                    :
+                                    ""
+                                }
                             </div>
                             <div data-v-ced4779e="">
-                            <a href=".productCarousel" data-slide="prev" data-index="-2" className="b-carousel-arrow b-carousel-arrow-left" data-v-ced4779e="">
-                            <svg className="h-mr-3 arrow-left" data-index="-2" data-v-ced4779e="" style={{width: "15px", height: "32px", maxWidth: "15px", maxHeight: "32px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
-                                <use xlinkHref="#arrow-left" data-index="-2">
-                                </use>
-                            </svg>
-                            </a>
-                            <a href=".productCarousel" data-slide="next" data-index="-1" className="b-carousel-arrow b-carousel-arrow-right" data-v-ced4779e="">
-                            <svg className="h-ml-3 arrow-right" data-index="-1" data-v-ced4779e="" style={{width: "15px", height: "32px", maxWidth: "15px", maxHeight: "32px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
-                                <use xlinkHref="#arrow-right" data-index="-1">
-                                </use>
-                            </svg>
-                            </a>
+                                <a href=".productCarousel" data-slide="prev" data-index="-2" className="b-carousel-arrow b-carousel-arrow-left" data-v-ced4779e="">
+                                    <svg className="h-mr-3 arrow-left" data-index="-2" data-v-ced4779e="" style={{width: "15px", height: "32px", maxWidth: "15px", maxHeight: "32px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
+                                        <use xlinkHref="#arrow-left" data-index="-2">
+                                        </use>
+                                    </svg>
+                                </a>
+                                <a href=".productCarousel" data-slide="next" data-index="-1" className="b-carousel-arrow b-carousel-arrow-right" data-v-ced4779e="">
+                                    <svg className="h-ml-3 arrow-right" data-index="-1" data-v-ced4779e="" style={{width: "15px", height: "32px", maxWidth: "15px", maxHeight: "32px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
+                                        <use xlinkHref="#arrow-right" data-index="-1">
+                                        </use>
+                                    </svg>
+                                </a>
                             </div>
                             </div>
                             <div className="h-flex">
@@ -525,56 +546,8 @@ class ProductPage extends Component {
                             </div>
                             {
                                 this.state.product && this.state.product.photos?
-                                <div className={"qa-carousel-expand b-carousel-expand-wrapper"+(this.state.photo_expanded?"":" hide")}>
-                                <div className="h-pos-rel">
-                                    <div className="carousel slide productCarousel" data-ride="carousels">
-                                        {
-                                            <div className="carousel-inner">
-                                            {
-                                                this.state.product.photos.split(",").map((photo, i) => (
-                                                    <div className={"item"+(i == 0?" active":"")}>
-                                                        <img className="b-carousel-expand-image" src={photo.trim()}/>
-                                                    </div>
-                                                ))
-                                            }
-                                        </div>
-                                        }
-                                    </div>
-                                
-                                </div>
-                                <div className="b-carousel-counter">
-                                <svg className="h-mr-5 photo" style={{width: "14px", height: "16px", maxWidth: "14px", maxHeight: "16px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
-                                <use xlinkHref="#photo">
-                                </use>
-                                </svg>
-                                <div className="qa-carousel-counter">
-                                    {this.state.carousel_index + 1 +"/"+this.state.product.photos.split(",").length}
-                                </div>
-                                </div>
-                                <div onClick={this.cancelExpansion} style={{position: "absolute", right: "20px", bottom: "20px"}}>
-                                    <svg className="h-block full-screen-exit" style={{cursor: "pointer", width: "24px", height: "24px", maxWidth: "24px", maxHeight: "24px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
-                                        <use xlinkHref="#full-screen-exit">
-                                        </use>
-                                    </svg>
-                                </div>
-
-                                <div data-v-ced4779e="">
-                                <a data-target=".productCarousel" data-slide="prev" data-index="-2" className="b-carousel-arrow b-carousel-arrow-left" data-v-ced4779e="">
-                                <svg className="h-mr-3 arrow-left" data-index="-2" data-v-ced4779e="" style={{width: "15px", height: "32px", maxWidth: "15px", maxHeight: "32px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
-                                <use xlinkHref="#arrow-left" data-index="-2">
-                                </use>
-                                </svg>
-                                </a>
-                                <a data-target=".productCarousel" data-slide="next" data-index="-1" className="b-carousel-arrow b-carousel-arrow-right" data-v-ced4779e="">
-                                <svg className="h-ml-3 arrow-right" data-index="-1" data-v-ced4779e="" style={{width: "15px", height: "32px", maxWidth: "15px", maxHeight: "32px", fill: "rgb(242, 242, 242)", stroke: "inherit"}}>
-                                <use xlinkHref="#arrow-right" data-index="-1">
-                                </use>
-                                </svg>
-                                </a>
-                                </div>
-                            </div>
-                            :
-                            ""
+                                <Carousel show={this.state.photo_expanded} thatState={this.state} photos={this.state.product.photos} hideHandler={this.cancelExpansion} />
+                                : null
                             }
                         </div>
                         </div>
@@ -619,11 +592,6 @@ class ProductPage extends Component {
                             </svg>
                             <span>
                                 {
-                                    !timeAgo.format(this.state.product.date, 'time').toLowerCase().includes("just") 
-                                        && 
-                                    !timeAgo.format(this.state.product.date, 'time').toLowerCase().includes("ago")?
-                                    getText("POSTED") + " " + timeAgoText(timeAgo.format(this.state.product.date, 'time')) + " " +getText("AGO_LOWERCASE")
-                                    :
                                     getText("POSTED") + " " + timeAgoText(timeAgo.format(this.state.product.date, 'time'))
                                 }
                             </span>
@@ -837,11 +805,6 @@ class ProductPage extends Component {
                                     new Date() - this.state.poster.last_seen_date <= (MAX_ONLINE_INDICATOR_IN_MINS * 60 * 1000)?
                                     getText("ONLINE")
                                     :
-                                    !timeAgo.format(this.state.poster.last_seen_date, 'time').toLowerCase().includes("just") 
-                                        && 
-                                    !timeAgo.format(this.state.poster.last_seen_date, 'time').toLowerCase().includes("ago")?
-                                    timeAgo.format(this.state.poster.last_seen_date, 'time') + " " + getText("AGO_LOWERCASE")
-                                    :
                                     timeAgo.format(this.state.poster.last_seen_date, 'time')
                                 }
                                 </div>
@@ -947,7 +910,7 @@ class ProductPage extends Component {
                         </div>
                         <div className="b-advert-seller-block b-advert-big-button-outer" data-v-67bc6bc4="">
                         <div className="b-button-wrapper">
-                            <a className="cap-case qa-post-ad-like-this b-button b-button--primary b-button--biggest-size" href={"/sell?cat="+this.state.product.cat_id+"&sub_cat="+this.state.product.sub_cat_id+"&country="+this.state.product.country_id+"&state="+this.state.product.state_id+"&city="+this.state.product.city_id} rel="nofollow">
+                            <a className="cap-case qa-post-ad-like-this b-button b-button--primary b-button--biggest-size" href={this.similarAdPostLink()} rel="nofollow">
                             {getText("POST_AD_LIKE_THIS")}
                             </a>
                         </div>
@@ -1053,11 +1016,6 @@ class ProductPage extends Component {
                                         </use>
                                         </svg>
                                         {
-                                            !timeAgo.format(new Date(ad.created), 'time').toLowerCase().includes("just") 
-                                            && 
-                                            !timeAgo.format(new Date(ad.created), 'time').toLowerCase().includes("ago")?
-                                            timeAgo.format(new Date(ad.created), 'time') + " " + getText("AGO_LOWERCASE")
-                                            :
                                             timeAgo.format(new Date(ad.created), 'time')
                                         }
                                         <span className="h-ml-5 hide" data-v-9681c3a6="">

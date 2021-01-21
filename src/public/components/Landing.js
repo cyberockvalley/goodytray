@@ -401,7 +401,7 @@ class Landing extends Component {
                                 </a>
                                 {
                                     this.state.cats.slice(0, 3).map((cat, index) => (
-                                        <Link className="mobile-cats-tab-link" key={index} to={this.state.cats && this.state.cats.length > 0 && this.state.cats[0].id == CAT_ID_FLASH_AD? flashLink() : catLink(cat.name, cat.id)}>
+                                        <Link className="mobile-cats-tab-link" key={index} to={this.state.cats && this.state.cats.length > 0 && this.state.cats[0].id == CAT_ID_FLASH_AD? flashLink() : catLink(cat.indentifier, cat.id)}>
                                             {
                                                 cat.id == CAT_ID_FLASH_AD || cat.id == CAT_ID_GROUP_AD || cat.id == CAT_ID_UNKNOWN?
                                                 <svg style={{ width: "32px", height: "32px", maxWidth: "32px", maxHeight: "32px", fill: "rgb(114, 183, 71)", stroke: "inherit" }} data-index={index} data-id={cat.id}>       
@@ -451,7 +451,7 @@ class Landing extends Component {
                                                                                 {
                                                                                     this.state.cats.map((cat, index) => (
                                                                                         cat.id == CAT_ID_FLASH_AD? null :
-                                                                                        this.buildCat(cat, index, cat.total_products, catLink(cat.name, cat.id))
+                                                                                        this.buildCat(cat, index, cat.total_products, catLink(cat.indentifier, cat.id))
                                                                                     ))
                                                                                 }
 

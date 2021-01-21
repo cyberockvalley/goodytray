@@ -90,7 +90,7 @@ class EmailPasswordReset extends React.Component {
                                             placeholder={getText("ENTER_PWD")}
                                             value={this.state.password}
                                             onChange={this.onChange}/>
-                                        <span id="password_error" className="fw-field__error qa-fw-field__error" dangerouslySetInnerHTML={{__html: this.state.password_error}}></span>
+                                        <span id="password_error" className="fw-field__error field-error qa-fw-field__error" dangerouslySetInnerHTML={{__html: this.state.password_error}}></span>
                                     </div>
 
                                     <div id="password-group" className="form-group input-group-lg">
@@ -102,7 +102,7 @@ class EmailPasswordReset extends React.Component {
                                             placeholder={getText("RETYPE_PWD")}
                                             value={this.state.password2}
                                             onChange={this.onChange}/>
-                                        <span id="password2_error" className="fw-field__error qa-fw-field__error" dangerouslySetInnerHTML={{__html: this.state.password2_error}}></span>
+                                        <span id="password2_error" className="fw-field__error field-error qa-fw-field__error" dangerouslySetInnerHTML={{__html: this.state.password2_error}}></span>
                                     </div>                          
                                 </div>
                                 {

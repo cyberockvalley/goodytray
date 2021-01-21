@@ -40,7 +40,7 @@ export const userDetails = async (id) => {
             [Op.or]: [{id: {[Op.eq]: id}}, {email: {[Op.eq]: id}}]
         }, 
         attributes: {
-            exclude: ['password', 'cookie', 'cookie_exp', 'validated', 'ver_key']
+            exclude: ['password', 'cookie', 'cookie_exp', 'validated', 'email_verification_key', 'password_reset_key']
         }
     })
     .then(user => {

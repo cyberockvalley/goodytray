@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { Link } from "react-router-dom"
-import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS, FACEBOOK_PAGE_LINK, FACEBOOK_PAGE_NAME, getText } from "../../../Constants"
+import { API_ROOT, SERVER_ADDR, ERROR_NET_UNKNOWN, NO_PROFILE_PHOTO_IMAGE, MAX_ONLINE_INDICATOR_IN_MINS, FACEBOOK_PAGE_LINK, FACEBOOK_PAGE_NAME, getText, getTimeLocale } from "../../../Constants"
 import { getIdFromPath, commaNum } from "../utils/Funcs";
 const browser = require("../utils/Browser")
 var dateFormat = require('dateformat');
@@ -9,14 +9,13 @@ import Footer from "./Footer"
 import TimeAgo from 'javascript-time-ago'
 
 // Load locale-specific relative date/time formatting rules.
-import en from 'javascript-time-ago/locale/en'
 import { productLink } from "../utils/LinkBuilder";
 
 // Add locale-specific relative date/time formatting rules.
-TimeAgo.addLocale(en)
+TimeAgo.addLocale(getTimeLocale())
  
 // Create relative date/time formatter.
-const timeAgo = new TimeAgo('en-US');
+const timeAgo = new TimeAgo(getText("LOCALE_DASH"));
 
 class SellerPage extends Component {
     constructor() {
@@ -137,11 +136,6 @@ class SellerPage extends Component {
           {
                 new Date() - new Date(this.state.seller.last_seen) <= (MAX_ONLINE_INDICATOR_IN_MINS * 60 * 1000)?
                 "online"
-                :
-                !timeAgo.format(new Date(this.state.seller.last_seen), 'time').toLowerCase().includes("just") 
-                    && 
-                !timeAgo.format(new Date(this.state.seller.last_seen), 'time').toLowerCase().includes("ago")?
-                timeAgo.format(new Date(this.state.seller.last_seen), 'time')
                 :
                 timeAgo.format(new Date(this.state.seller.last_seen), 'time')
             }

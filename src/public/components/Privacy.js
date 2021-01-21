@@ -26,7 +26,7 @@ class About extends Component {
         <Link to="/" className="logo font-bask-normal">
             <img src={`${getText("LOGO_PATH")}`} width="45" alt="logo" className="d-inline-block align-middle mr-2"/>
         </Link>
-        Privacy Policy
+        politica sulla riservatezza
     </h1>
     
 <div className="b-about-wrapper container">
@@ -35,270 +35,270 @@ class About extends Component {
    {getText("PRIVACY_POLICY")}
   </h1>
   <p>
-{"   This Privacy Policy explains what personal data is collected when you use the " + SITE_DOT_COM + " any " + SITE_DOT_COM + " mobile application (“"}
+  La presente Informativa sulla privacy spiega quali dati personali vengono raccolti quando si utilizza cosmobox.it qualsiasi applicazione mobile cosmobox.it (
    <b>
-{"    " + SITE_NAME + ""}
+    {"CosmoBox"}
    </b>
-   ”) and the services provided through it (together with the “
+   ") E i servizi forniti attraverso di essa (insieme al"
    <b>
-    Service
+    Servizio
    </b>
-   ”), how such personal data will be used, shared.
+   "), Come verranno utilizzati e condivisi tali dati personali.
   </p>
   <p>
-   BY USING THE SERVICE, YOU PROMISE US THAT (I) YOU HAVE READ, UNDERSTAND AND AGREE TO THIS PRIVACY POLICY, AND (II) YOU ARE OVER 16 YEARS OF AGE (OR HAVE HAD YOUR PARENT OR GUARDIAN READ AND AGREE TO THIS PRIVACY POLICY FOR YOU). If you do not agree or are unable to make this promise, you must not use the Service. In such case, you must contact the support team via online chat or email to (a) request deletion of your account and data.
+   UTILIZZANDO IL SERVIZIO, CI PROMETTI DI (I) AVER LETTO, COMPRESO E ACCETTATO LA PRESENTE POLITICA SULLA PRIVACY E (II) HAI OLTRE 16 ANNI DI ETÀ (O HAI AVUTO IL TUO GENITORE O TUTORE LEGGERO E ACCETTATO LA PRESENTE POLITICA SULLA PRIVACY PER TE). Se non sei d'accordo o non sei in grado di fare questa promessa, non devi utilizzare il Servizio. In tal caso, è necessario contattare il team di supporto tramite chat online o e-mail per (a) richiedere la cancellazione del proprio account e dei dati.
   </p>
   <p>
-   “
+   "
    <b>
-    Process
+    Processi
    </b>
-   ”, in respect of personal data, includes to collect, store, and disclose to others.
+   ", In relazione ai dati personali, include la raccolta, l'archiviazione e la divulgazione ad altri.
   </p>
   <h3>
-   TABLE OF CONTENTS
+   SOMMARIO
   </h3>
-  <ul className="h-ml-15 h-list-style-none">
+  <ul className = "h-ml-15 h-list-style-none">
    <li>
     <h4>
      <a href="#1">
-      1. PERSONAL DATA CONTROLLER
+      1. TITOLARE DEL TRATTAMENTO DEI DATI PERSONALI
      </a>
     </h4>
    </li>
    <li>
     <h4>
      <a href="#2">
-      2. CATEGORIES OF PERSONAL DATA WE COLLECT
+      2. CATEGORIE DI DATI PERSONALI CHE RACCOGLIAMO
      </a>
     </h4>
    </li>
    <li>
     <h4>
      <a href="#3">
-      3. DATA PROTECTION PRINCIPLES
+      3. PRINCIPI DI PROTEZIONE DEI DATI
      </a>
     </h4>
    </li>
    <li>
     <h4>
      <a href="#4">
-      4. FOR WHAT PURPOSES WE PROCESS PERSONAL DATA
+      4. PER QUALI FINALITÀ TRATTIAMO I DATI PERSONALI
      </a>
     </h4>
    </li>
    <li>
     <h4>
      <a href="#5">
-      5. UNDER WHAT LEGAL BASES WE PROCESS YOUR PERSONAL DATA
+      5. SU QUALI BASI GIURIDICHE TRATTIAMO I SUOI ​​DATI PERSONALI
      </a>
     </h4>
    </li>
    <li>
     <h4>
      <a href="#6">
-      6. WITH WHOM WE SHARE YOUR PERSONAL DATA
+      6. CON CHI CONDIVIDIAMO I TUOI DATI PERSONALI
      </a>
     </h4>
    </li>
    <li>
     <h4>
      <a href="#7">
-      7. HOW YOU CAN EXERCISE YOUR PRIVACY RIGHTS
+      7. COME PUOI ESERCITARE I TUOI DIRITTI SULLA PRIVACY
      </a>
     </h4>
    </li>
    <li>
     <h4>
      <a href="#8">
-      8. AGE LIMITATION
+      8. LIMITAZIONE DI ETÀ
      </a>
     </h4>
    </li>
    <li>
     <h4>
      <a href="#9">
-      9. CHANGES TO THIS PRIVACY POLICY
+      9. MODIFICHE ALLA PRESENTE POLITICA SULLA PRIVACY
      </a>
     </h4>
    </li>
    <li>
     <h4>
      <a href="#10">
-      10. DATA RETENTION
+      10. CONSERVAZIONE DEI DATI
      </a>
     </h4>
    </li>
    <li>
     <h4>
      <a href="#11">
-      11. CONTACT US
+      11. CONTATTACI
      </a>
     </h4>
    </li>
   </ul>
-  <h3 id="1">
-   1. PERSONAL DATA CONTROLLER
+  <h3 id = "1">
+   1. TITOLARE DEL TRATTAMENTO DEI DATI PERSONALI
   </h3>
   <p>
-{"   " + SITE_DOT_COM + " will be the controller of your personal data."}
+{"cosmobox.it sarà il titolare del trattamento dei tuoi dati personali."}
   </p>
-  <h3 id="2">
-   2. CATEGORIES OF PERSONAL DATA WE COLLECT
+  <h3 id = "2">
+   2. CATEGORIE DI DATI PERSONALI CHE RACCOGLIAMO
   </h3>
   <p>
-   We collect data you give us voluntarily (for example, an email address). We also collect data automatically (for example, your IP address).
+   Raccogliamo i dati che ci fornisci volontariamente (ad esempio, un indirizzo email). Raccogliamo anche dati automaticamente (ad esempio, il tuo indirizzo IP).
   </p>
-  <ol className="h-ml-15">
+  <ol className = "h-ml-15">
    <li>
     <h5>
-     Data you give us
+     Dati che ci fornisci
     </h5>
     <p>
-     You may be asked to provide us information about yourself when you register for and/or use the Service. This information includes: "first name, phone number, email (together “Required Information”), last name, photo, address details, working hours.
+     È possibile che ti venga chiesto di fornirci informazioni su di te quando ti registri e / o utilizzi il Servizio. Queste informazioni includono: "nome, numero di telefono, e-mail (insieme" Informazioni richieste "), cognome, foto, dettagli dell'indirizzo, orario di lavoro.
     </p>
     <p>
-     To use our Service and register an account, you will need to provide Required Information. You will be able to use the Service even if you do not give this data to us, but some Service’s functionality may be limited to you (for example, if you do no register an account, you will not be able to chat with other users, post ads, see contact details of other users).
+     Per utilizzare il nostro servizio e registrare un account, dovrai fornire le informazioni richieste. Sarai in grado di utilizzare il Servizio anche se non ci fornisci questi dati, ma alcune funzionalità del Servizio potrebbero essere limitate a te (ad esempio, se non registri un account, non sarai in grado di chattare con altri utenti , pubblicare annunci, vedere i dettagli di contatto di altri utenti).
     </p>
     <p>
-     Sometimes you may also need to provide to us additional information in the communication with our Support Team in order to fulfill your request (for example, if your account was previously blocked, we may ask you to confirm your identity by providing an ID document).
+     A volte potrebbe anche essere necessario fornirci ulteriori informazioni nella comunicazione con il nostro team di supporto al fine di soddisfare la tua richiesta (ad esempio, se il tuo account è stato precedentemente bloccato, potremmo chiederti di confermare la tua identità fornendo un documento di identità).
     </p>
    </li>
    <li>
     <h5>
-     Data provided to us by third parties
+     Dati forniti a noi da terze parti
     </h5>
-    When you decide to log in using Facebook or Google, we get personal data from your Facebook or Google account. This includes your profile image, name, and Facebook ID, Google ID, friends list. For more information, please refer to the Facebook Permissions Reference (describes the categories of information, which Facebook may share with third parties and the set of requirements) and to the Facebook Data policy. In addition, Facebook lets you control the choices you made when connecting your Facebook profile to the App on their Apps and Websites page. To know more about how Google processes your data, visit its Privacy Policy.
+    Quando decidi di accedere utilizzando Facebook o Google, otteniamo dati personali dal tuo account Facebook o Google. Ciò include la tua immagine del profilo, nome e ID Facebook, ID Google, elenco di amici. Per ulteriori informazioni, fare riferimento al Riferimento per le autorizzazioni di Facebook (descrive le categorie di informazioni che Facebook può condividere con terze parti e la serie di requisiti) e alla Politica sui dati di Facebook. Inoltre, Facebook ti consente di controllare le scelte che hai effettuato quando colleghi il tuo profilo Facebook all'App sulla loro pagina App e siti web. Per saperne di più su come Google tratta i tuoi dati, visita la sua Privacy Policy.
    </li>
    <li>
     <h5>
-     Data we collect automatically:
+     Dati che raccogliamo automaticamente:
     </h5>
-    <ul className="h-ml-15">
+    <ul className = "h-ml-15">
      <li>
       <h5>
-       Data about how you found us
+       Dati su come ci hai trovato
       </h5>
-      We collect data about your referring URL (that is, the place on the Web where you were when you tapped on our ad).
+      Raccogliamo dati sul tuo URL di riferimento (ovvero il punto sul Web in cui ti trovavi quando hai toccato il nostro annuncio).
      </li>
      <li>
       <h5>
-       Device and Location data.
+       Dati del dispositivo e della posizione.
       </h5>
-      We collect data from your device. Examples of such data include language settings, IP address, time zone, type and model of a device, device settings, operating system, Internet service provider, mobile carrier, hardware ID, and Facebook ID.
+      Raccogliamo dati dal tuo dispositivo. Esempi di tali dati includono impostazioni della lingua, indirizzo IP, fuso orario, tipo e modello di un dispositivo, impostazioni del dispositivo, sistema operativo, provider di servizi Internet, operatore di telefonia mobile, ID hardware e ID Facebook.
      </li>
      <li>
       <h5>
-       Usage data
+       Dati di utilizzo
       </h5>
-      We record how you interact with our Service. For example, we log the features, and content you interact with, how often you use the Service, how long you are on the Service, what sections you use, how many ads you watch.
+      Registriamo come interagisci con il nostro servizio. Ad esempio, registriamo le funzionalità e il contenuto con cui interagisci, quanto spesso utilizzi il Servizio, quanto tempo sei sul Servizio, quali sezioni utilizzi, quanti annunci guardi.
      </li>
      <li>
       <h5>
-       Advertising IDs
+       ID pubblicità
       </h5>
-      We collect your Apple Identifier for Advertising (“IDFA”) or Google Advertising ID (“AAID”) (depending on the operating system of your device). You can typically reset these numbers through the settings of your device’s operating system (but we do not control this).
+      Raccogliamo il tuo Apple Identifier for Advertising ("IDFA") o Google Advertising ID ("AAID") (a seconda del sistema operativo del tuo dispositivo). In genere puoi reimpostare questi numeri tramite le impostazioni del sistema operativo del tuo dispositivo (ma non lo controlliamo).
      </li>
      <li>
       <h5>
-       Transaction data
+       Dati di transazione
       </h5>
-      When you make payments through the Service, you need to provide financial account data, such as your credit card number, to our third-party service providers. We do not collect or store full credit card number data, though we may receive credit card-related data, data about the transaction, including date, time and amount of the transaction, the type of payment method used.
+      Quando effettui pagamenti tramite il Servizio, devi fornire i dati del conto finanziario, come il numero della tua carta di credito, ai nostri fornitori di servizi di terze parti. Non raccogliamo né memorizziamo i dati completi del numero di carta di credito, sebbene potremmo ricevere dati relativi alla carta di credito, dati sulla transazione, inclusi data, ora e importo della transazione, il tipo di metodo di pagamento utilizzato.
      </li>
      <li>
       <h5>
-       Cookies
+       Biscotti
       </h5>
-      A cookie is a small text file that is stored on a user's computer for record-keeping purposes. Cookies can be either session cookies or persistent cookies. A session cookie expires when you close your browser and is used to make it easier for you to navigate our Service. A persistent cookie remains on your hard drive for an extended period of time. We also use tracking pixels that set cookies to assist with delivering online advertising. Cookies are used, in particular, to automatically recognize you the next time you visit our Website. As a result, the information, which you have earlier entered in certain fields on the Website may automatically appear the next time when you use our Service. Cookie data will be stored on your device and most of the times only for a limited time period.
+      Un cookie è un piccolo file di testo che viene memorizzato sul computer di un utente per scopi di archiviazione. I cookie possono essere cookie di sessione o cookie persistenti. Un cookie di sessione scade quando chiudi il browser e viene utilizzato per semplificarti la navigazione nel nostro Servizio. Un cookie persistente rimane sul tuo disco rigido per un periodo di tempo prolungato. Utilizziamo anche pixel di tracciamento che impostano i cookie per assistere nella fornitura di pubblicità online. I cookie vengono utilizzati, in particolare, per riconoscerti automaticamente la prossima volta che visiti il ​​nostro sito web. Di conseguenza, le informazioni che hai inserito in precedenza in determinati campi del sito Web potrebbero apparire automaticamente la prossima volta che utilizzi il nostro servizio. I dati dei cookie verranno memorizzati sul tuo dispositivo e la maggior parte delle volte solo per un periodo di tempo limitato.
      </li>
     </ul>
    </li>
   </ol>
-  <h3 id="3">
-   3. DATA PROTECTION PRINCIPLES
+  <h3 id = "3">
+   3. PRINCIPI DI PROTEZIONE DEI DATI
   </h3>
   <p>
-   In our data protection practices we strive to, in particular, to provide that personal data is:
+   Nelle nostre pratiche di protezione dei dati ci sforziamo, in particolare, di fornire che i dati personali siano:
   </p>
-  <ol className="h-ml-15">
+  <ol className = "h-ml-15">
    <li>
-    processed in accordance with specific, legitimate and lawful purpose consented to by you",
+    trattati in conformità a finalità specifiche, legittime e lecite da te autorizzate ",
    </li>
    <li>
-    is adequate, accurate and without prejudice to the dignity of a human person;
+    è adeguato, accurato e senza pregiudizio per la dignità di una persona umana;
    </li>
    <li>
-    stored only for the period within which it is reasonably needed; and
+    conservato solo per il periodo entro il quale è ragionevolmente necessario; e
    </li>
    <li>
-    secured against reasonably foreseeable hazards and breaches such as theft, cyberattack, viral attack, dissemination, manipulations of any kind, damage by rain, fire or exposure to other natural elements.
+    protetto contro pericoli e violazioni ragionevolmente prevedibili quali furto, attacco informatico, attacco virale, diffusione, manipolazioni di qualsiasi tipo, danni da pioggia, fuoco o esposizione ad altri elementi naturali.
    </li>
   </ol>
-  <h3 id="4">
-   4. FOR WHAT PURPOSES WE PROCESS YOUR PERSONAL DATA
+  <h3 id = "4">
+   4. PER QUALI FINALITÀ TRATTIAMO I SUOI ​​DATI PERSONALI
   </h3>
   <p>
-   We process your personal data: "</p>
-  <ol className="h-ml-15">
+   Trattiamo i tuoi dati personali: "</p>
+  <ol className = "h-ml-15">
    <li>
     <h5>
-     To provide our Service
+     Per fornire il nostro servizio
     </h5>
-    This includes enabling you to use the Service in a seamless manner and preventing or addressing Service errors or technical issues.
+    Ciò include la possibilità di utilizzare il Servizio in modo trasparente e prevenire o risolvere errori del Servizio o problemi tecnici.
    </li>
    <li>
     <h5>
-     To customize your experience
+     Per personalizzare la tua esperienza
     </h5>
-    We process your personal data to adjust the content of the Service and make offers tailored to your personal preferences and interests.
+    Elaboriamo i tuoi dati personali per adattare il contenuto del Servizio e fare offerte su misura in base alle tue preferenze e interessi personali.
    </li>
    <li>
     <h5>
-     To manage your account and provide you with customer support
+     Per gestire il tuo account e fornirti assistenza clienti
     </h5>
-    We process your personal data to respond to your requests for technical support, Service information or to any other communication you initiate. This includes accessing your account to address technical support requests. For this purpose, we may send you, for example, notifications or emails about the performance of our Service, security, payment transactions, notices regarding our Terms and Conditions of Use or this Privacy Policy.
+    Trattiamo i tuoi dati personali per rispondere alle tue richieste di supporto tecnico, informazioni sui servizi o qualsiasi altra comunicazione da te avviata. Ciò include l'accesso al tuo account per rispondere alle richieste di supporto tecnico. A tal fine, potremmo inviarti, ad esempio, notifiche o e-mail sulle prestazioni del nostro Servizio, sicurezza, transazioni di pagamento, avvisi riguardanti i nostri Termini e condizioni d'uso o la presente Informativa sulla privacy.
    </li>
    <li>
     <h5>
-     To communicate with you regarding your use of our Service
+     Per comunicare con te in merito al tuo utilizzo del nostro Servizio
     </h5>
     <p>
-{"     We communicate with you, for example, by push notifications or in the chat. As a result, you may, for example, receive a notification whether on the Website or via email that you received a new message on " + SITE_NAME + ". To opt out of receiving push notifications, you need to change the settings on your browser or mobile device. To opt out of the certain type of emails, you need to follow an unsubscribe link located in the footer of the email by contacting our support team at " + EMAIL_SUPPORT + " or in your profile setting."}
+{"Comunichiamo con te, ad esempio, tramite notifiche push o nella chat. Di conseguenza, potresti, ad esempio, ricevere una notifica sul sito web o tramite email che hai ricevuto un nuovo messaggio suCosmoBox Per disattivare la ricezione delle notifiche push, è necessario modificare le impostazioni del browser o del dispositivo mobile. Per disattivare determinati tipi di e-mail, è necessario seguire un collegamento di annullamento dell'iscrizione situato nel piè di pagina dell'e-mail contattando il nostro supporto team su "+ EMAIL_SUPPORT +" o nelle impostazioni del tuo profilo. "}
     </p>
     <p>
-     The services that we use for these purposes may collect data concerning the date and time when the message was viewed by our users, as well as when they interacted with it, such as by clicking on links included in the message.
-    </p>
-   </li>
-   <li>
-    <h5>
-     To research and analyze your use of the Service
-    </h5>
-{"    This helps us to better understand our business, analyze our operations, maintain, improve, innovate, plan, design, and develop " + SITE_NAME + " and our new products. We also use such data for statistical analysis purposes, to test and improve our offers. This enables us to better understand what features and sections of " + SITE_NAME + " our users like more, what categories of users use our Service. As a consequence, we often decide how to improve " + SITE_NAME + " based on the results obtained from this processing. For example, if we discover that Jobs section is not as popular as others, we may focus on improving it."}
-   </li>
-   <li>
-    <h5>
-     To send you marketing communications
-    </h5>
-    <p>
-{"     We process your personal data for our marketing campaigns. We may add your email address to our marketing list. As a result, you will receive information about our products, such as for example, special offers, and products of our partners. If you do not want to receive marketing emails from us, you can unsubscribe following instructions in the footer of the marketing emails, by contacting our support team at " + EMAIL_SUPPORT + " or in your profile setting."}
-    </p>
-    <p>
-     We may also show you advertisements on the Website, and send you push notifications for marketing purposes. To opt out of receiving push notifications, you need to change the settings on your device or/and browser.
+     I servizi che utilizziamo per questi scopi possono raccogliere dati riguardanti la data e l'ora in cui il messaggio è stato visualizzato dai nostri utenti, nonché quando hanno interagito con esso, ad esempio facendo clic sui collegamenti inclusi nel messaggio.
     </p>
    </li>
    <li>
     <h5>
-     To personalize our ads
+     Per ricercare e analizzare l'utilizzo del Servizio
+    </h5>
+{"Questo ci aiuta a comprendere meglio la nostra attività, analizzare le nostre operazioni, mantenere, migliorare, innovare, pianificare, progettare e sviluppareCosmoBoxe i nostri nuovi prodotti. Utilizziamo tali dati anche per scopi di analisi statistica, per testare e migliorare le nostre offerte. Questo ci consente di capire meglio quali funzioni e sezioni di "+ SITE_NAME +" piacciono di più ai nostri utenti, quali categorie di utenti utilizzano il nostro Servizio. Di conseguenza, spesso decidiamo come migliorare "+ SITE_NAME +" in base a i risultati ottenuti da questa elaborazione. Ad esempio, se scopriamo che la sezione Lavori non è così popolare come le altre, potremmo concentrarci sul suo miglioramento. "}
+   </li>
+   <li>
+    <h5>
+     Per inviarti comunicazioni di marketing
     </h5>
     <p>
-     We and our partners use your personal data to tailor ads and possibly even show them to you at the relevant time. For example, if you have visited our Website, you might see ads of our products, for example, in your Facebook’s feed.
+{"Elaboriamo i tuoi dati personali per le nostre campagne di marketing. Potremmo aggiungere il tuo indirizzo email al nostro elenco di marketing. Di conseguenza, riceverai informazioni sui nostri prodotti, come ad esempio offerte speciali e prodotti dei nostri partner. Se non desideri ricevere email di marketing da noi, puoi annullare l'iscrizione seguendo le istruzioni nel piè di pagina delle email di marketing, contattando il nostro team di supporto su "+ EMAIL_SUPPORT +" o nelle impostazioni del tuo profilo. "}
     </p>
     <p>
-     We may target advertising to you through a variety of ad networks and exchanges, using data from advertising technologies on and off of our Services like unique cookie, or similar tracking technology, pixel, device identifiers, geolocation, operation system information, email.
+     Potremmo anche mostrarti annunci pubblicitari sul sito web e inviarti notifiche push per scopi di marketing. Per disattivare la ricezione delle notifiche push, è necessario modificare le impostazioni sul dispositivo o / e sul browser.
+    </p>
+   </li>
+   <li>
+   <h5>
+     Per personalizzare i nostri annunci
+    </h5>
+    <p>
+     Noi ei nostri partner utilizziamo i tuoi dati personali per personalizzare gli annunci e possibilmente anche per mostrarteli al momento opportuno. Ad esempio, se hai visitato il nostro sito Web, potresti vedere annunci dei nostri prodotti, ad esempio, nel feed di Facebook.
+    </p>
+    <p>
+     Potremmo indirizzare la pubblicità all'utente attraverso una varietà di reti e scambi pubblicitari, utilizzando i dati delle tecnologie pubblicitarie all'interno e all'esterno dei nostri Servizi come cookie univoci o tecnologie di tracciamento simili, pixel, identificatori di dispositivi, geolocalizzazione, informazioni sul sistema operativo, e-mail.
     </p>
     <p>
      <b>
-      How to opt out or influence personalized advertising
+      Come rinunciare o influenzare la pubblicità personalizzata
      </b>
     </p>
     <p>
@@ -306,7 +306,7 @@ class About extends Component {
     <h5>
      iOS:
     </h5>
-    On your iPhone or iPad, go to “Settings,” then “Privacy” and tap “Advertising” to select “Limit Ad Track”. In addition, you can reset your advertising identifier (this also may help you to see less of personalized ads) in the same section.
+    Sul tuo iPhone o iPad, vai su "Impostazioni", quindi "Privacy" e tocca "Pubblicità" per selezionare "Limita traccia annuncio". Inoltre, puoi reimpostare il tuo identificatore pubblicitario (questo potrebbe anche aiutarti a vedere meno annunci personalizzati) nella stessa sezione.
     <p>
     </p>
     <p>
@@ -314,46 +314,46 @@ class About extends Component {
     <h5>
      Android:
     </h5>
-    To opt-out of ads on an Android device, simply open the Google Settings app on your mobile phone, tap “Ads” and enable “Opt out of interest-based ads”. In addition, you can reset your advertising identifier in the same section (this also may help you to see less of personalized ads).
+    Per disattivare gli annunci su un dispositivo Android, è sufficiente aprire l'app Impostazioni Google sul telefono cellulare, toccare "Annunci" e abilitare "Disattiva annunci basati sugli interessi". Inoltre, puoi reimpostare il tuo identificatore pubblicitario nella stessa sezione (questo potrebbe anche aiutarti a vedere meno annunci personalizzati).
     <p>
     </p>
     <p>
-     To learn even more about how to affect advertising choices on various devices, please look at the information available
+     Per saperne di più su come influenzare le scelte pubblicitarie su vari dispositivi, guarda le informazioni disponibili
      <a href="http://www.networkadvertising.org/mobile-choice">
-      here
+      Qui
      </a>
      .
     </p>
     <p>
-     In addition, you may get useful information and opt out of some interest-based advertising, by visiting the following links:
+     Inoltre, è possibile ottenere informazioni utili e disattivare la pubblicità basata sugli interessi visitando i seguenti collegamenti:
     </p>
     <ol className="h-ml-15">
-     <li>
-      Network Advertising Initiative –
+    <li>
+      Iniziativa per la pubblicità in rete -
       <a href="http://optout.networkadvertising.org/">
        http://optout.networkadvertising.org/
       </a>
      </li>
      <li>
-      Digital Advertising Alliance –
+      Digital Advertising Alliance -
       <a href="http://optout.aboutads.info/">
        http://optout.aboutads.info/
       </a>
      </li>
      <li>
-      Digital Advertising Alliance (Canada) –
+      Digital Advertising Alliance (Canada) -
       <a href="http://youradchoices.ca/choices">
        http://youradchoices.ca/choices
       </a>
      </li>
      <li>
-      Digital Advertising Alliance (EU) –
+      Digital Advertising Alliance (UE) -
       <a href="http://www.youronlinechoices.com/">
        http://www.youronlinechoices.com/
       </a>
      </li>
      <li>
-      DAA AppChoices page –
+      Pagina DAA AppChoices -
       <a href="http://www.aboutads.info/appchoices">
        http://www.aboutads.info/appchoices
       </a>
@@ -364,23 +364,23 @@ class About extends Component {
     <p>
     </p>
     <h5>
-     Browsers:
+     Browser:
     </h5>
     <p>
-     It is also may be possible to stop your browser from accepting cookies altogether by changing your browser’s cookie settings. You can usually find these settings in the “options” or “preferences” menu of your browser. The following links may be helpful, or you can use the “Help” option in your browser.
+     È anche possibile impedire al browser di accettare completamente i cookie modificando le impostazioni dei cookie del browser. Di solito puoi trovare queste impostazioni nel menu "Opzioni" o "Preferenze" del tuo browser. I seguenti link possono essere utili, oppure puoi usare l'opzione "Aiuto" nel tuo browser.
     </p>
     <ol className="h-ml-15">
-     <li>
-      Cookie settings in Internet Explorer
+    <li>
+      Impostazioni dei cookie in Internet Explorer
      </li>
      <li>
-      Cookie settings in Firefox
+      Impostazioni dei cookie in Firefox
      </li>
      <li>
-      Cookie settings in Chrome
+      Impostazioni dei cookie in Chrome
      </li>
      <li>
-      Cookie settings in Safari web and iOS
+      Impostazioni dei cookie in Safari web e iOS
      </li>
     </ol>
     <p>
@@ -389,11 +389,11 @@ class About extends Component {
      <b>
       Google
      </b>
-     allows its users to <a href="https//adssettings.google.com/authenticated?hl=ru">
-      opt out of Google’s personalized ads
+     consente ai suoi utenti di <a href="https//adssettings.google.com/authenticated?hl=ru">
+      disattivare gli annunci personalizzati di Google
      </a>
-     and to <a href="https://tools.google.com/dlpage/gaoptout/">
-      prevent their data from being used by Google Analytics.
+     e a <a href="https://tools.google.com/dlpage/gaoptout/">
+      impedire che i loro dati vengano utilizzati da Google Analytics.
      </a>
     </p>
     <p>
@@ -401,205 +401,206 @@ class About extends Component {
     <p>
      <b>
       Facebook
-     </b> also allows its users to influence the types of ads they see on Facebook. To find how to control the ads you see on Facebook, please go <a href="https//www.facebook.com/help/146952742043748?helpref=related">
-      here
-     </a> or adjust your ads settings on <a href="https//www.facebook.com/ads/preferences/?entry_product=ad_settings_screen">
+     </b> consente inoltre ai suoi utenti di influenzare i tipi di annunci che vedono su Facebook. Per scoprire come controllare gli annunci che vedi su Facebook, vai a <a href="https//www.facebook.com/help/146952742043748?helpref=related">
+      Qui
+     </a> o modifica le impostazioni degli annunci su <a href="https//www.facebook.com/ads/preferences/?entry_product=ad_settings_screen">
       Facebook
      </a>
     </p>
-    <ol className="h-ml-15">
+    <ol className = "h-ml-15">
      <li>
       <h5>
-       To enforce our Terms and Conditions of Use and to prevent and combat fraud
+       Per far rispettare i nostri Termini e condizioni d'uso e per prevenire e combattere le frodi
       </h5>
-      We use personal data to enforce our agreements and contractual commitments, to detect, prevent, and combat fraud. As a result of such processing, we may share your information with others, including law enforcement agencies (in particular, if a dispute arises in connection with our Terms and Conditions of Use).
+      Utilizziamo i dati personali per far rispettare i nostri accordi e impegni contrattuali, per rilevare, prevenire e combattere le frodi. Come risultato di tale elaborazione, potremmo condividere le tue informazioni con altri, comprese le forze dell'ordine (in particolare, se sorge una controversia in relazione ai nostri Termini e condizioni d'uso).
      </li>
      <li>
       <h5>
-       To comply with legal obligations
+       Per adempiere ad obblighi di legge
       </h5>
-      We may process, use, or share your data when the law requires it, in particular, if a law enforcement agency requests your data by available legal means.
+      Potremmo elaborare, utilizzare o condividere i tuoi dati quando la legge lo richiede, in particolare, se un'agenzia delle forze dell'ordine richiede i tuoi dati con i mezzi legali disponibili.
      </li>
      <li>
       <h5>
-       To process your payments
+       Per elaborare i tuoi pagamenti
       </h5>
-      We provide paid products and/or services within the Service. For this purpose, we use third-party services for payment processing (for example, payment processors). As a result of this processing, you will be able to make a payment and use the paid features of the Service.
+      Forniamo prodotti e / o servizi a pagamento all'interno del Servizio. A tal fine, utilizziamo servizi di terze parti per l'elaborazione dei pagamenti (ad esempio, processori di pagamento). Come risultato di questa elaborazione, sarai in grado di effettuare un pagamento e utilizzare le funzionalità a pagamento del Servizio.
      </li>
     </ol>
     <p>
     </p>
    </li>
   </ol>
-  <h3 id="5">
-   5. UNDER WHAT LEGAL BASES WE PROCESS YOUR PERSONAL DATA
+  <h3 id = "5">
+   5. SU QUALI BASI GIURIDICHE TRATTIAMO I SUOI ​​DATI PERSONALI
   </h3>
   <p>
-   We process your personal data, in particular, under the following legal bases:
+   Trattiamo i tuoi dati personali, in particolare, secondo le seguenti basi giuridiche:
   </p>
   <ol className="h-ml-15">
-   <li>
-    your consent",
+  <li>
+    il tuo consenso ",
    </li>
    <li>
-    to perform our contract with you;
+    per eseguire il nostro contratto con te;
    </li>
    <li>
     <p>
-     for our (or others') legitimate interests; Under this legal basis we, in particular: "</p>
+    per i nostri legittimi interessi (o di altri); In base a questa base giuridica, in particolare: "
+    </p>
     <ul className="h-ml-15">
-     <li>
+    <li>
       <p>
-       communicate with you regarding your use of our Service
+       comunicare con te in merito al tuo utilizzo del nostro servizio
       </p>
       <p>
-       This includes, for example, sending you push notifications reminding you that you have unread messages. The legitimate interest we rely on for this purpose is our interest to encourage you to use our Service more often. We also take into account the potential benefits to you.
-      </p>
-     </li>
-     <li>
-      <p>
-       research and analyze your use of the Service
-      </p>
-      <p>
-       Our legitimate interest for this purpose is our interest in improving our Service so that we understand users’ preferences and are able to provide you with a better experience (for example, to make the use of our mobile application easier and more enjoyable, or to introduce and test new features).
+       Ciò include, ad esempio, l'invio di notifiche push che ti ricordano che hai messaggi non letti. L'interesse legittimo su cui facciamo affidamento per questo scopo è il nostro interesse per incoraggiarti a utilizzare il nostro servizio più spesso. Teniamo anche conto dei potenziali vantaggi per te.
       </p>
      </li>
      <li>
       <p>
-       send you marketing communications
+       ricercare e analizzare l'utilizzo del Servizio
       </p>
       <p>
-       The legitimate interest we rely on for this processing is our interest to promote our Service in a measured and appropriate way.
-      </p>
-     </li>
-     <li>
-      <p>
-       personalize our ads
-      </p>
-      <p>
-       The legitimate interest we rely on for this processing is our interest to promote our Service in a reasonably targeted way.
+       Il nostro legittimo interesse per questo scopo è il nostro interesse a migliorare il nostro Servizio in modo da comprendere le preferenze degli utenti e essere in grado di fornirti un'esperienza migliore (ad esempio, per rendere l'uso della nostra applicazione mobile più facile e divertente, o per introdurre e testare nuove funzionalità).
       </p>
      </li>
      <li>
       <p>
-       enforce our Terms and Conditions of Use and to prevent and combat fraud
+       inviarti comunicazioni di marketing
       </p>
       <p>
-       Our legitimate interests for this purpose are enforcing our legal rights, preventing and addressing fraud and unauthorized use of the Service, non-compliance with our Terms and Conditions of Use.
+       L'interesse legittimo su cui facciamo affidamento per questo trattamento è il nostro interesse a promuovere il nostro Servizio in modo misurato e appropriato.
       </p>
      </li>
      <li>
       <p>
-       to comply with legal obligations.
+       personalizzare i nostri annunci
+      </p>
+      <p>
+       L'interesse legittimo su cui facciamo affidamento per questo trattamento è il nostro interesse a promuovere il nostro Servizio in modo ragionevolmente mirato.
+      </p>
+     </li>
+     <li>
+      <p>
+       applicare i nostri Termini e condizioni d'uso e per prevenire e combattere le frodi
+      </p>
+      <p>
+       I nostri interessi legittimi per questo scopo sono far valere i nostri diritti legali, prevenire e affrontare le frodi e l'uso non autorizzato del Servizio, il mancato rispetto dei nostri Termini e condizioni d'uso.
+      </p>
+     </li>
+     <li>
+      <p>
+       per adempiere ad obblighi di legge.
       </p>
      </li>
     </ul>
    </li>
   </ol>
-  <h3 id="6">
-   6. WITH WHOM WE SHARE YOUR PERSONAL DATA
+  <h3 id = "6">
+   6. CON CHI CONDIVIDIAMO I TUOI DATI PERSONALI
   </h3>
   <p>
-   We share information with third parties that help us operate, provide, improve, integrate, customize, support, and market our Service. We may share some sets of personal data, in particular, for purposes and with parties indicated in Section 2 of this Privacy Policy. The types of third parties we share information with include, in particular:
+   Condividiamo informazioni con terze parti che ci aiutano a gestire, fornire, migliorare, integrare, personalizzare, supportare e commercializzare il nostro Servizio. Potremmo condividere alcuni set di dati personali, in particolare, per le finalità e con le parti indicate nella Sezione 2 della presente Informativa sulla privacy. I tipi di terze parti con cui condividiamo le informazioni includono, in particolare:
   </p>
   <ol className="h-ml-15">
-   <li>
+  <li>
     <h5>
-     Service providers
+     Fornitori di servizi
     </h5>
     <p>
-     We share personal data with third parties that we hire to provide services or perform business functions on our behalf, based on our instructions. We may share your personal information with the following types of service providers:
+     Condividiamo i dati personali con terze parti che assumiamo per fornire servizi o svolgere funzioni aziendali per nostro conto, in base alle nostre istruzioni. Potremmo condividere le tue informazioni personali con i seguenti tipi di fornitori di servizi:
     </p>
-    <ul className="h-ml-15">
+    <ul className = "h-ml-15">
      <li>
-      cloud storage providers (Amazon, DigitalOcean, Hetzner)
+      fornitori di cloud storage (Amazon, DigitalOcean, Hetzner)
      </li>
      <li>
-      data analytics providers (Facebook, Google, Appsflyer)
+      fornitori di analisi dei dati (Facebook, Google, Appsflyer)
      </li>
      <li>
-      marketing partners (in particular, social media networks, marketing agencies, email delivery services", such as Facebook, Google, Mailfire)
+      partner di marketing (in particolare, reti di social media, agenzie di marketing, servizi di consegna di posta elettronica ", come Facebook, Google, Mailfire)
      </li>
     </ul>
    </li>
    <li>
     <h5>
-     Law enforcement agencies and other public authorities
+     Forze dell'ordine e altre autorità pubbliche
     </h5>
     <p>
-     We may use and disclose personal data to enforce our Terms and Conditions of Use, to protect our rights, privacy, safety, or property, and/or that of our affiliates, you or others, and to respond to requests from courts, law enforcement agencies, regulatory agencies, and other public and government authorities, or in other cases provided for by law.
+     Possiamo utilizzare e divulgare i dati personali per far rispettare i nostri Termini e condizioni d'uso, per proteggere i nostri diritti, privacy, sicurezza o proprietà e / o quelli dei nostri affiliati, voi o altri, e per rispondere alle richieste dei tribunali, delle forze dell'ordine agenzie, agenzie di regolamentazione e altre autorità pubbliche e governative o in altri casi previsti dalla legge.
     </p>
    </li>
    <li>
     <h5>
-     Third parties as part of a merger or acquisition
+     Terze parti nell'ambito di una fusione o acquisizione
     </h5>
     <p>
-     As we develop our business, we may buy or sell assets or business offerings. Customers’ information is generally one of the transferred business assets in these types of transactions. We may also share such information with any affiliated entity (e.g. parent company or subsidiary) and may transfer such information in the course of a corporate transaction, such as the sale of our business, a divestiture, merger, consolidation, or asset sale, or in the unlikely event of bankruptcy.
+     Man mano che sviluppiamo la nostra attività, possiamo acquistare o vendere beni o offerte commerciali. Le informazioni dei clienti sono generalmente una delle risorse aziendali trasferite in questi tipi di transazioni. Potremmo anche condividere tali informazioni con qualsiasi entità affiliata (ad es. Società madre o sussidiaria) e possiamo trasferire tali informazioni nel corso di una transazione aziendale, come la vendita della nostra attività, una cessione, fusione, consolidamento o vendita di attività, o nell'improbabile caso di fallimento.
     </p>
    </li>
   </ol>
-  <h3 id="7">
-   7. HOW YOU CAN EXERCISE YOUR PRIVACY RIGHTS
+  <h3 id = "7">
+   7. COME PUOI ESERCITARE I TUOI DIRITTI SULLA PRIVACY
   </h3>
   <p>
-   To be in control of your personal data, you have the following rights: "</p>
+   Per avere il controllo dei tuoi dati personali, hai i seguenti diritti: "</p>
   <p>
    <b>
-    Accessing / reviewing / updating / correcting your personal data.
+    Accesso / revisione / aggiornamento / correzione dei dati personali.
    </b>
-{"   You may review, edit, or change the personal data that you had previously provided to " + SITE_NAME + " in the settings section on the Website."}
+{"   Puoi rivedere, modificare o cambiare i dati personali che avevi precedentemente fornito a CosmoBox nella sezione delle impostazioni del sito web."}
   </p>
   <p>
-{"   You may also request a copy of your personal data collected during your use of the Service at " + EMAIL_SUPPORT + "."}
-  </p>
-  <p>
-   <b>
-    Deleting your personal data.
-   </b>
-{"   You can request the erasure of your personal data by sending us an email at " + EMAIL_SUPPORT + "."}
-  </p>
-  <p>
-   When you request deletion of your personal data, we will use reasonable efforts to honor your request. In some cases we may be legally required to keep some of the data for a certain time", in such event, we will fulfill your request after we have complied with our obligations.
+{"   Puoi anche richiedere una copia dei tuoi dati personali raccolti durante l'utilizzo del Servizio su "+ EMAIL_SUPPORT +". "}
   </p>
   <p>
    <b>
-    Objecting to or restricting the use of your personal data (including for direct marketing purposes).
+    Cancellazione dei tuoi dati personali.
    </b>
-{"   You can ask us to stop using all or some of your personal data or limit our use thereof by sending a request at " + EMAIL_SUPPORT + "."}
+{"Puoi richiedere la cancellazione dei tuoi dati personali inviandoci un'email a " + EMAIL_SUPPORT + "."}
+  </p>
+  <p>
+   Quando richiedi la cancellazione dei tuoi dati personali, faremo ogni ragionevole sforzo per onorare la tua richiesta. In alcuni casi potremmo essere legalmente obbligati a conservare alcuni dati per un certo tempo ", in tal caso, adempiremo alla tua richiesta dopo aver adempiuto ai nostri obblighi.
   </p>
   <p>
    <b>
-    The right to lodge a complaint with the supervisory authority.
+    Opporsi o limitare l'uso dei tuoi dati personali (anche per scopi di marketing diretto).
    </b>
-   We would love you to contact us directly, so we could address your concerns. Nevertheless, you have the right to lodge a complaint with a competent data protection supervisory authority.
+{"Puoi chiederci di interrompere l'utilizzo di tutti o alcuni dei tuoi dati personali o di limitarne l'utilizzo inviando una richiesta a " + EMAIL_SUPPORT + "."}
   </p>
-  <h3 id="8">
-   8. AGE LIMITATION
+  <p>
+   <b>
+    Il diritto di proporre reclamo all'autorità di controllo.
+   </b>
+   Ci piacerebbe che ci contattassi direttamente, così potremmo rispondere alle tue preoccupazioni. Tuttavia, hai il diritto di proporre reclamo a un'autorità di controllo della protezione dei dati competente.
+  </p>
+  <h3 id = "8">
+   8. LIMITAZIONE DI ETÀ
   </h3>
   <p>
-{"   We do not knowingly process personal data from persons under 16 years of age. If you learn that anyone younger than 16 has provided us with personal data, please contact us at " + EMAIL_SUPPORT + "."}
+{"Non elaboriamo consapevolmente dati personali di persone di età inferiore a 16 anni. Se apprendi che qualcuno di età inferiore a 16 anni ci ha fornito dati personali, ti preghiamo di contattarci all'indirizzo " + EMAIL_SUPPORT + "."}
   </p>
-  <h3 id="9">
-   9. CHANGES TO THIS PRIVACY POLICY
+  <h3 id = "9">
+   9. MODIFICHE ALLA PRESENTE POLITICA SULLA PRIVACY
   </h3>
   <p>
-   We may modify this Privacy Policy from time to time. If we decide to make material changes to this Privacy Policy, you will be notified through our Service or by other available means and will have an opportunity to review the revised Privacy Policy. By continuing to access or use the Service after those changes become effective, you agree to be bound by the revised Privacy Policy.
+   Di tanto in tanto potremmo modificare la presente Informativa sulla privacy. Se decidiamo di apportare modifiche sostanziali alla presente Informativa sulla privacy, sarai informato tramite il nostro Servizio o con altri mezzi disponibili e avrai l'opportunità di rivedere l'Informativa sulla privacy rivista. Continuando ad accedere o utilizzare il Servizio dopo che tali modifiche diventano effettive, accetti di essere vincolato dall'Informativa sulla privacy rivista.
   </p>
-  <h3 id="10">
-   10. DATA RETENTION
+  <h3 id = "10">
+   10. CONSERVAZIONE DEI DATI
   </h3>
   <p>
-{"   We will store your personal data for as long as it is reasonably necessary for achieving the purposes set forth in this Privacy Policy (including providing the Service to you), which includes (but is not limited to) the period during which you have a " + SITE_NAME + " account. We will also retain and use your personal data as necessary to comply with our legal obligations, resolve disputes, and enforce our agreements."}
+{"Conserveremo i tuoi dati personali per tutto il tempo ragionevolmente necessario per il raggiungimento degli scopi stabiliti nella presente Informativa sulla privacy (inclusa la fornitura del Servizio all'utente), che include (ma non è limitato a) il periodo durante il quale hai un account CosmoBox. Conserveremo e utilizzeremo i tuoi dati personali anche se necessario per ottemperare ai nostri obblighi legali, risolvere controversie e far rispettare i nostri accordi. "}
   </p>
-  <h3 id="11">
-   11.CONTACT US
+  <h3 id = "11">
+   11.CONTATTACI
   </h3>
   <p>
-{"   You may contact us at any time for details regarding this Privacy Policy and its previous versions. For any questions concerning your account or your personal data please contact us at " + EMAIL_SUPPORT + "."}
+{"Puoi contattarci in qualsiasi momento per i dettagli relativi alla presente Informativa sulla privacy e alle sue versioni precedenti. Per qualsiasi domanda relativa al tuo account o ai tuoi dati personali, contattaci all'indirizzo " + EMAIL_SUPPORT + "."}
   </p>
   <p>
-   Effective as of January 2020
+   In vigore da gennaio 2020
   </p>
  </div>
 </div>

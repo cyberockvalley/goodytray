@@ -11623,6 +11623,7 @@ h2[data-v-0453356a] {
   text-align: center;
 }
 .b-advert-safety-list {
+  list-style-type: disc;
   font-size: 14px;
   line-height: 1.5;
   -webkit-align-self: flex-start;

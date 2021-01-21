@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { SITE_TITLE, API_ROOT, PAID_AD_NAME, STATIC_IMAGES_CLIENT_DIR, getText, CAT_ID_FLASH_AD, CAT_ID_GROUP_AD, CAT_ID_UNKNOWN } from "../../../Constants"
 import { productLink, catLink, countryLink } from "../utils/LinkBuilder"
-import { commaNum, getQuery, id, remove } from "../utils/Funcs"
+import { commaNum, getParam, getQuery, id, remove } from "../utils/Funcs"
 import queryString from 'querystring'
 import { Link } from "react-router-dom"
 import Navbar from './Navbar'
@@ -107,14 +107,14 @@ class SearchPage extends Component {
             }
         }
     }
-
+    
     getEndPoint = () => {
         var endpoint = API_ROOT + "products?views_order=1"
         if(this.state.flash && parseInt(this.state.flash) == 1) {
-          endpoint == API_ROOT + "products/flash"
+          return API_ROOT + "products/flash"
 
         } else {
-          if(this.state.cat > -1)endpoint+="&cat_id="+this.state.cat
+          if(this.state.cat_key)endpoint+="&cat_key="+this.state.cat_key
           if(this.state.sub_cat > -1)endpoint+="&sub_cat_id="+this.state.sub_cat
           if(this.state.country > -1)endpoint+="&country_id="+this.state.country
           if(this.state.state > -1)endpoint+="&state_id="+this.state.state
@@ -134,9 +134,9 @@ class SearchPage extends Component {
                   }
               }
           }
+          return endpoint
         }
         
-        return endpoint
     }
 
     checkResultCount = (onCount) => {
@@ -219,7 +219,7 @@ class SearchPage extends Component {
     onCatChanged () {
         this.resetCustomInputs()
         this.setState({sub_cat_loading: true})
-        var index = this.state.cat_id_to_cay_index[this.state.cat]
+        var index = this.state.cat_id_to_cat_index[this.state.cat_id]
         var list = this.state.cats[index].sub_cats
         this.state.sub_cats = list
         this.setState({sub_cats: list})
@@ -271,22 +271,31 @@ class SearchPage extends Component {
 
     mapCatIdToIndex = data => {
       var map = {}
-      for (let index = 0; index < data.length; index++) {
-        const element = data[index];
-        map[element.id] = index
-      }
-      this.setState({cat_id_to_cay_index: map})
+      try {
+        for (let index = 0; index < data.length; index++) {
+          const element = data[index];
+          map[element.id] = index
+  
+          if(data[index].indentifier == this.state.cat_key) {
+            this.setState({cat_id: data[index].id})
+            this.onCatChanged()
+          }
+        }
+        this.setState({cat_id_to_cat_index: map})
+
+      } catch(e) {}
       
     }
     
     componentDidMount() {
         console.log("ATTR", getQuery(this, "attr"))
-        this.setState({flash: getQuery(this, "flash")})
-        this.setState({cat_id: getQuery(this, "cat")})
-        this.setState({sub_cat_id: getQuery(this, "sub_cat")})
-        this.setState({country_id: getQuery(this, "country")})
-        this.setState({state_id: getQuery(this, "state")})
-        this.setState({city_id: getQuery(this, "city")})
+        
+        this.setState({flash: getParam(this, "flash")})
+        this.setState({cat_key: getParam(this, "catKey")})
+        this.setState({sub_cat: getParam(this, "subCatId")})
+        this.setState({country: getParam(this, "countryId")})
+        this.setState({state: getParam(this, "stateId")})
+        this.setState({city: getParam(this, "cityId")})
         this.setState({q: getQuery(this, "q")})
         this.setState({attr: getQuery(this, "attr")})
 
@@ -295,16 +304,7 @@ class SearchPage extends Component {
             this.applyFilter({preventDefault: () => {}})
           }
         })
-/*
-        let apiPath
-        if(flash && !isNaN(flash) && parseInt(flash) == 1) {
-          apiPath = "products/flash"
 
-        } else {
-          apiPath = `products/?cat=${catId}&sub_cat=${subCatId}&country=${country}&state=${state}&city=${city}&title=${title}&city=${city}&attr=${attr}`
-
-        }
-*/
         this.setState({loading_products: true})
 
         //get cats & sub cats
@@ -315,7 +315,6 @@ class SearchPage extends Component {
                 this.setState({cats: resp.data})
             }
         })
-        
         
         if(getText("IS_NOT_GLOBAL")) {
           this.state.country = getText("COUNTRY_ID")
@@ -511,7 +510,7 @@ class SearchPage extends Component {
            {getText("CAT")}
           </label>
           <div className="form-group">
-            <select className="form-control" name="cat" value={this.state.cat} onChange={this.handleChange}>
+            <select className="form-control" name="cat" value={this.state.cat_id} onChange={this.handleChange}>
               <option value="-1">--- {getText("CHOOSE_CAT")} ---</option>
               {this.state.cats.map((cat, index) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -614,7 +613,7 @@ class SearchPage extends Component {
     </div>
    </div>
    <button type="submit" className="cap-case b-filters__submit-btn b-button b-button--primary b-button--border-radius b-button--shadow b-button--size-full h-mt-10">
-    {getText("APPLY_FILTERS")} ({this.state.result_count})
+    {getText("APPLY_FILTERS")} {/*({this.state.result_count})*/}
    </button>
   </form>
  </div>

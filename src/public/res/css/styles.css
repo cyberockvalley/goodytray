@@ -117,7 +117,7 @@ a.js-handle-link-event:hover {color: #fff !important;}
 @media only screen and (max-width : 992px) {
 	.md-hide-down {display:none !important}
 	.h-width-120{width: 100% !important}
-	.navbar-brand > img{display: none !important}
+	.navbar-brand > img{/*display: none !important*/}
 	.navbar-brand{padding: 15px 10px !important; font-size: 18px !important;}
 }
 
@@ -1320,9 +1320,11 @@ a.btn-over-orange:hover {
     box-shadow: 0 0 0 3px #f5a623 !important;
 }
 
-.fw-field__error:empty {
+.field-error:empty {
 	display: none !important;
 }
-.fw-field__error {
+.field-error {
 	display: block !important;
 }
+
+.about-page h1, .about-page h2, .about-page h3 {font-weight: bold;}
